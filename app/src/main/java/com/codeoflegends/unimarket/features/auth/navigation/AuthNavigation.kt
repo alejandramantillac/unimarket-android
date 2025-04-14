@@ -11,5 +11,14 @@ fun NavGraphBuilder.authNavigation(
 ) {
 
     composable(Routes.Login.route) {
+        LoginScreen(manager, Routes.Home.route)
+    }
+
+    composable(Routes.Register.route) {
+        // RegisterScreen(authViewModel)
+    }
+
+    composable(Routes.ForgotPassword.route) {
+        // ForgotPasswordScreen(authViewModel)
     }
 }
