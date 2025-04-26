@@ -9,7 +9,6 @@ import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthState
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.TokenRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +16,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val jwtDecoder: JwtDecoder,
@@ -29,6 +27,9 @@ class AuthViewModel @Inject constructor(
 
     private val _loginEvent = MutableSharedFlow<AuthResult<Unit>>()
     val loginEvent = _loginEvent.asSharedFlow()
+
+    private val _registerEvent = MutableSharedFlow<AuthResult<Unit>>()
+    val registerEvent = _registerEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -65,6 +66,16 @@ class AuthViewModel @Inject constructor(
             Log.d("AuthViewModel", "Login result: $result")
             _authState.value = _authState.value.copy(isLoading = false)
             _loginEvent.emit(result)
+        }
+    }
+
+    fun register(email: String, password: String){
+        viewModelScope.launch {
+            _authState.value = _authState.value.copy(isLoading = true)
+            val result = authRepository.register(email, password)
+            Log.d("AuthViewModel", "Register result: $result")
+            _authState.value = _authState.value.copy(isLoading = false)
+            _registerEvent.emit(result)
         }
     }
 

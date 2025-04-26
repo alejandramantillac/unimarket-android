@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.auth.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -111,6 +112,16 @@ fun LoginScreen(
                 ) {
                     Text("Login")
                 }
+
+                Text(
+                    text = "¿No tienes una cuenta? Regístrate aquí",
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable {
+                            manager.navController.navigate(Routes.Register.route)
+                        },
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
             if (isLoading) {
                 Box(
