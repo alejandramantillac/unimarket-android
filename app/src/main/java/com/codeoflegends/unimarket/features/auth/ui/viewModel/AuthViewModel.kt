@@ -9,6 +9,7 @@ import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthState
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.TokenRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val jwtDecoder: JwtDecoder,
