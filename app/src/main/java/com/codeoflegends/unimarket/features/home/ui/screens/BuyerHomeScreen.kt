@@ -1,15 +1,13 @@
 package com.codeoflegends.unimarket.features.home.ui.screens
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
@@ -20,25 +18,63 @@ fun BuyerHomeScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
     next: String = "/"
 ) {
-    val isLoading by manager.authViewModel.authState.collectAsState()
-        .run { remember { derivedStateOf { value.isLoading } } }
-
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-
     val authState by manager.authViewModel.authState.collectAsState()
 
-    // Mostrar información del token solo si el usuario está autenticado
-    val logedUserInfo = if (authState.state == AuthStateType.AUTHENTICATED) {
-        "User ID: ${authState.userId}\nRoles: ${authState.authorities}"
-    } else {
-        "No estás autenticado"
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "¡Bienvenido a UniMarket!",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                if (authState.state == AuthStateType.AUTHENTICATED) {
+                    Text(
+                        text = "Usuario: ${authState.userId}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "Rol: ${authState.authorities}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                } else {
+                    Text(
+                        text = "No estás autenticado",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = { /* Aquí podrías navegar a otra sección */ },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(text = "Explorar Productos")
+        }
     }
-
-    Text(
-        text = logedUserInfo,
-        modifier = Modifier.fillMaxWidth()
-    )
-
-
 }
