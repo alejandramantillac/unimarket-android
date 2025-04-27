@@ -10,4 +10,5 @@ interface AuthRepository {
     suspend fun logout(): AuthResult<Unit>
     fun observeAuthState(): Flow<AuthState>
     suspend fun isUserLoggedIn(): Boolean
+    suspend fun forgotPassword(email: String): AuthResult<Unit>
 }

@@ -62,6 +62,10 @@ class AuthViewModel @Inject constructor(
         )
     }
 
+    suspend fun sendForgotPasswordRequest(email: String): AuthResult<Unit> {
+        return authRepository.forgotPassword(email)
+    }
+
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true)
