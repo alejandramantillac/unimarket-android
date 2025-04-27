@@ -47,17 +47,18 @@ class AuthViewModel @Inject constructor(
     }
 
     private suspend fun updateAuthState(isAuthenticated: Boolean) {
-        val permissions = if (isAuthenticated) {
+        val tokenPayload = if (isAuthenticated) {
             val token = tokenRepository.getAccessToken()
             Log.d("AuthViewModel", "Token: $token")
-            token?.let { jwtDecoder.decodePermissions(it) } ?: emptyList()
+            token?.let { jwtDecoder.decodePayload(it) } ?: JwtDecoder.JwtPayload()
         } else {
-            emptyList()
+            JwtDecoder.JwtPayload()
         }
 
         _authState.value = AuthState(
             state = if (isAuthenticated) AuthStateType.AUTHENTICATED else AuthStateType.ANONYMOUS,
-            authorities = permissions
+            authorities = tokenPayload.userRole,
+            userId = tokenPayload.userId
         )
     }
 

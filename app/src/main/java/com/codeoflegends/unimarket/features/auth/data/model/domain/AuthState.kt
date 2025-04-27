@@ -4,7 +4,8 @@ data class AuthState(
     val state: AuthStateType = AuthStateType.IDLE,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val authorities: List<String> = emptyList()
+    val authorities: String = "",
+    val userId: String = "",
 ) {
     fun hasPermission(permission: String): Boolean {
         return authorities.contains(permission)

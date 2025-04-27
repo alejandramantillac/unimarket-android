@@ -4,7 +4,9 @@ import com.codeoflegends.unimarket.features.auth.data.model.request.LoginRequest
 import com.codeoflegends.unimarket.features.auth.data.model.request.RegisterRequest
 import com.codeoflegends.unimarket.features.auth.data.model.response.LoginResponse
 import com.codeoflegends.unimarket.features.auth.data.model.request.RefreshTokenRequest
+import com.codeoflegends.unimarket.features.auth.data.model.response.RoleResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AuthService {
@@ -16,4 +18,7 @@ interface AuthService {
 
     @POST("/users/register")
     suspend fun register(@Body request: RegisterRequest): Unit
+
+    @GET("/roles")
+    suspend fun getRoles(): RoleResponse
 }

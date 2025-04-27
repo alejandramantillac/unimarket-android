@@ -27,4 +27,6 @@ class DataStoreManager @Inject constructor(
     suspend fun clear() {
         dataStore.edit { it.clear() }
     }
+
+
 }

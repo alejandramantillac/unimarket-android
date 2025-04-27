@@ -10,6 +10,7 @@ import com.codeoflegends.unimarket.core.extension.secureComposable
 import com.codeoflegends.unimarket.features.auth.navigation.authNavigation
 import com.codeoflegends.unimarket.features.auth.ui.viewModel.AuthViewModel
 import com.codeoflegends.unimarket.features.auth.ui.components.RequirePermission
+import com.codeoflegends.unimarket.features.home.navigation.homeNavigation
 
 @Composable
 fun AppNavigation(
@@ -23,8 +24,9 @@ fun AppNavigation(
 
         // Auth routes
         authNavigation(manager)
+        homeNavigation(manager)
 
-        /* Ejemplos de uso de secureComposable */
+        /* Ejemplos de uso de secureComposable
         secureComposable(
             route = Routes.Home.route,
             manager = manager
@@ -37,6 +39,8 @@ fun AppNavigation(
                 Text("Logout")
             }
         }
+
+         */
 
         /*Es lo mismo de arriba, solo que con permisos requeridos, solo para que se vea el uso */
         secureComposable(

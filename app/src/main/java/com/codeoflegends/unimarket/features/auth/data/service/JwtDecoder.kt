@@ -10,16 +10,7 @@ import javax.inject.Singleton
 class JwtDecoder @Inject constructor() {
     private val gson = Gson()
 
-    fun decodePermissions(token: String): List<String> {
-        return try {
-            val payload = decodePayload(token)
-            payload.permissions
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
-
-    private fun decodePayload(token: String): JwtPayload {
+    suspend fun decodePayload(token: String): JwtPayload {
         val parts = token.split(".")
         if (parts.size != 3) throw IllegalArgumentException("Invalid JWT format")
 
@@ -27,11 +18,18 @@ class JwtDecoder @Inject constructor() {
             Base64.decode(parts[1], Base64.URL_SAFE),
             Charsets.UTF_8
         )
-        return gson.fromJson(payloadJson, JwtPayload::class.java)
+
+        val payload = gson.fromJson(payloadJson, JwtPayload::class.java)
+
+        return payload
     }
 
-    private data class JwtPayload(
-        @SerializedName("permissions")
-        val permissions: List<String> = emptyList()
+    data class JwtPayload(
+        @SerializedName("id")
+        val userId: String = "",
+
+        @SerializedName("role")
+        val userRole: String = ""
     )
+
 }
