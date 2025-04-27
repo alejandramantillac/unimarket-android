@@ -20,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
+import com.codeoflegends.unimarket.features.home.components.AuthButton
+import com.codeoflegends.unimarket.features.home.components.AuthTextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,12 +45,10 @@ fun ForgotPasswordScreen(manager: NavigationManager, route: String) {
                     errorMessage = "Error al enviar la solicitud: ${result.exception.message ?: "Error desconocido"}"
                     successMessage = ""
                 }
-
                 AuthResult.Loading -> TODO()
             }
         }
     }
-
 
     Scaffold { innerPadding ->
         Column(
@@ -64,25 +64,26 @@ fun ForgotPasswordScreen(manager: NavigationManager, route: String) {
             ) {
                 Text(text = "Forgot Password", style = MaterialTheme.typography.headlineLarge)
 
-                TextField(
+
+                AuthTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = "Email",
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Button(
-                    onClick = {
-                        onSend(email)
-                    }, shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Send")
-                }
 
+                AuthButton(
+                    text = "Send",
+                    onClick = { onSend(email) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                
                 if (successMessage.isNotEmpty()) {
                     Text(text = successMessage, color = MaterialTheme.colorScheme.primary)
                 }
+
 
                 if (errorMessage.isNotEmpty()) {
                     Text(text = errorMessage, color = MaterialTheme.colorScheme.error)

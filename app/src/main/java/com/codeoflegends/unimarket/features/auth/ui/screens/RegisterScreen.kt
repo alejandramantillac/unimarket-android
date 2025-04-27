@@ -76,14 +76,12 @@ fun RegisterScreen(
                 modifier = Modifier.padding(8.dp).fillMaxWidth(0.8f),
             )
 
-
             AuthTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = "Password",
                 modifier = Modifier.padding(8.dp).fillMaxWidth(0.8f),
             )
-
 
             AuthButton(
                 text = if (isLoading) "Cargando..." else "Registrar",
@@ -92,7 +90,6 @@ fun RegisterScreen(
                 },
                 modifier = Modifier.padding(14.dp).fillMaxWidth(0.8f),
             )
-
 
             ClickableTextLink(
                 text = "¿Ya tienes una cuenta? Inicia sesión",
