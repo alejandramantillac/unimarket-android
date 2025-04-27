@@ -33,6 +33,16 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
 import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import com.codeoflegends.unimarket.features.home.components.AuthButton
+import com.codeoflegends.unimarket.features.home.components.AuthTextField
+import com.codeoflegends.unimarket.features.home.components.ClickableTextLink
+import com.codeoflegends.unimarket.features.home.components.ErrorDialog
 
 @Composable
 fun LoginScreen(
@@ -41,12 +51,15 @@ fun LoginScreen(
 ) {
     val isLoading by manager.authViewModel.authState.collectAsState()
         .run { remember { derivedStateOf { value.isLoading } } }
-    
+
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     manager.authViewModel.loginEvent.CollectAsEventEffect {
-        when(it) {
+        when (it) {
             is AuthResult.Success -> {
                 manager.navController.navigateIfAuthorized(next, manager) {
                     popUpTo(Routes.Login.route) { inclusive = true }
@@ -60,86 +73,69 @@ fun LoginScreen(
         }
     }
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    if (showErrorDialog) {
-        AlertDialog(
-            onDismissRequest = { showErrorDialog = false },
-            title = { Text("Error de inicio de sesión") },
-            text = { Text(errorMessage) },
-            confirmButton = {
-                TextButton(onClick = { showErrorDialog = false }) {
-                    Text("Aceptar")
-                }
-            }
-        )
+    ErrorDialog(show = showErrorDialog, message = errorMessage) {
+        showErrorDialog = false
     }
 
     Scaffold { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            contentAlignment = Alignment.Center
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(text = "Login")
+                Text(
+                    text = "¡Bienvenido a Unimarket!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.Black
+                )
 
-                TextField(
+                Text(
+                    text = "Inicia sesión para continuar con tus compras",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(top = 4.dp, bottom = 32.dp)
+                )
+
+                AuthTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = "Correo"
                 )
 
-                TextField(
+                AuthTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = "Contraseña",
+                    visualTransformation = PasswordVisualTransformation()
                 )
 
-                Button(
-                    onClick = {
-                        manager.authViewModel.login(email, password)
-                    }, shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Login")
-                }
-
-                Text(
-                    text = "¿No tienes una cuenta? Regístrate aquí",
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .clickable {
-                            manager.navController.navigate(Routes.Register.route)
-                        },
-                    color = MaterialTheme.colorScheme.primary
+                ClickableTextLink(
+                    text = "¿Olvidaste tu contraseña?",
+                    onClick = { manager.navController.navigate(Routes.ForgotPassword.route) },
+                    alignEnd = true
                 )
 
-                Text(
-                    text = "Olvide mi contraseña, recuperar",
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .clickable {
-                            manager.navController.navigate(Routes.ForgotPassword.route)
-                        },
-                    color = MaterialTheme.colorScheme.primary
+                AuthButton(
+                    text = "Iniciar Sesión",
+                    onClick = { manager.authViewModel.login(email, password) }
+                )
+
+                ClickableTextLink(
+                    text = "¿No tienes una cuenta? Regístrate",
+                    onClick = { manager.navController.navigate(Routes.Register.route) }
                 )
             }
+
             if (isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                CircularProgressIndicator()
             }
         }
     }
