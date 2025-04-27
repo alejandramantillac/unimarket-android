@@ -5,6 +5,7 @@ import com.codeoflegends.unimarket.features.auth.data.service.AuthService
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthState
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
+import com.codeoflegends.unimarket.features.auth.data.model.request.ForgotPasswordRequest
 import com.codeoflegends.unimarket.features.auth.data.model.request.RegisterRequest
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.TokenRepository
@@ -67,5 +68,18 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun isUserLoggedIn(): Boolean {
         return tokenRepository.hasValidToken()
+    }
+
+    override suspend fun forgotPassword(email: String): AuthResult<Unit> {
+        return try {
+            val response = authService.forgotPassword(ForgotPasswordRequest(email))
+            if (response.message == "Correo enviado exitosamente") {
+                AuthResult.Success(Unit)
+            } else {
+                AuthResult.Error(Exception(response.message))
+            }
+        } catch (e: Exception) {
+            AuthResult.Error(e)
+        }
     }
 }

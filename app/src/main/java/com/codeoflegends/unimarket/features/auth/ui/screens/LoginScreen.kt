@@ -122,6 +122,16 @@ fun LoginScreen(
                         },
                     color = MaterialTheme.colorScheme.primary
                 )
+
+                Text(
+                    text = "Olvide mi contraseña, recuperar",
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .clickable {
+                            manager.navController.navigate(Routes.ForgotPassword.route)
+                        },
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
             if (isLoading) {
                 Box(
