@@ -11,13 +11,13 @@ fun NavGraphBuilder.homeNavigation(
     manager: NavigationManager
 ) {
     composable(Routes.Home.route) {
-        BuyerHomeScreen(manager, Routes.Home.route)
+        BuyerHomeScreen(manager)
     }
 
     secureComposable (
         route = Routes.Home.route,
         manager = manager
     ) {
-        BuyerHomeScreen(manager, Routes.Home.route)
+        BuyerHomeScreen(manager)
     }
 }

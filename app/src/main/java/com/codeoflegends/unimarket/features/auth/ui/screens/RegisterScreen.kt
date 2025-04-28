@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,11 +23,13 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
 import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
-import com.codeoflegends.unimarket.features.home.components.AuthButton
-import com.codeoflegends.unimarket.features.home.components.AuthTextField
-import com.codeoflegends.unimarket.features.home.components.ClickableTextLink
-import com.codeoflegends.unimarket.features.home.components.ErrorDialog
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
+import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
+import com.codeoflegends.unimarket.core.ui.components.ErrorDialog
+import com.codeoflegends.unimarket.core.ui.components.MainLayout
 
 @Composable
 fun RegisterScreen(
@@ -46,62 +46,84 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
 
     manager.authViewModel.registerEvent.CollectAsEventEffect {
-        when(it) {
+        when (it) {
             is AuthResult.Success -> {
                 manager.navController.navigateIfAuthorized(next, manager) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
             }
+
             is AuthResult.Error -> {
                 errorMessage = it.exception.message ?: "Error al registrarse"
                 showErrorDialog = true
             }
+
             else -> {}
         }
     }
 
-    Scaffold { innerPadding ->
+
+    MainLayout(
+        barOptions = AppBarOptions(
+            show = true, showBackButton = true, onBackClick = {
+                manager.navController.popBackStack()
+            }
+        ),
+    ) {
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
 
-            AuthTextField(
+            Text(
+                text = "Regístrate",
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            SimpleTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = "Email",
-                modifier = Modifier.padding(8.dp).fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.8f),
             )
 
-            AuthTextField(
+            SimpleTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = "Password",
-                modifier = Modifier.padding(8.dp).fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.8f),
             )
 
-            AuthButton(
-                text = if (isLoading) "Cargando..." else "Registrar",
+            MainButton(
+                text = "Registrar",
+                isLoading = isLoading,
                 onClick = {
-                    if (!isLoading) manager.authViewModel.register(email, password)
+                    manager.authViewModel.register(email, password)
                 },
-                modifier = Modifier.padding(14.dp).fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .padding(14.dp)
+                    .fillMaxWidth(0.8f),
             )
 
             ClickableTextLink(
                 text = "¿Ya tienes una cuenta? Inicia sesión",
-                onClick = { manager.navController.navigate(Routes.Login.route) },
-                alignEnd = false
+                onClick = {
+                    manager.navController.navigate(Routes.Login.route) {
+                        popUpTo(Routes.Register.route) { inclusive = true }
+                    }
+                },
             )
         }
     }
-
-
     ErrorDialog(
         show = showErrorDialog,
+        title = "Error de registro",
         message = errorMessage,
         onDismiss = { showErrorDialog = false }
     )

@@ -11,12 +11,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 
 @Composable
 fun BuyerHomeScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
-    next: String = "/"
 ) {
     val authState by manager.authViewModel.authState.collectAsState()
 
@@ -24,18 +24,14 @@ fun BuyerHomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
-
         Text(
             text = "¡Bienvenido a UniMarket!",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -67,14 +63,16 @@ fun BuyerHomeScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
+        MainButton(
             onClick = { /* otra secccion que podamos añadir de manera futura o cambiemos */ },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(text = "Explorar Productos")
-        }
+            text = "Explorar Productos"
+        )
+
+        MainButton(
+            onClick = { manager.authViewModel.logout() },
+            modifier = Modifier.fillMaxWidth(),
+            text = "Cerrar sesión"
+        )
     }
 }
