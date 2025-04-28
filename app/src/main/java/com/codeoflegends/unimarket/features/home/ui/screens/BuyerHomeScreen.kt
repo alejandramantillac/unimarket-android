@@ -70,7 +70,7 @@ fun BuyerHomeScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { /* Aquí podrías navegar a otra sección */ },
+            onClick = { /* otra secccion que podamos añadir de manera futura o cambiemos */ },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp)
         ) {
