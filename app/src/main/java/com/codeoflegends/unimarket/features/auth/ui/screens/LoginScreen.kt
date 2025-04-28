@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +30,7 @@ import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
 import com.codeoflegends.unimarket.core.ui.components.ErrorDialog
-import com.codeoflegends.unimarket.core.ui.components.LoadingOverlay
+import com.codeoflegends.unimarket.core.ui.components.MainLayout
 
 @Composable
 fun LoginScreen(
@@ -72,7 +71,7 @@ fun LoginScreen(
         showErrorDialog = false
     }
 
-    LoadingOverlay(isLoading) {
+    MainLayout(pageLoading=isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize(),
@@ -85,6 +84,7 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+
                 Text(
                     text = "¡Bienvenido a Unimarket!",
                     style = MaterialTheme.typography.headlineMedium,

@@ -2,9 +2,9 @@ package com.codeoflegends.unimarket.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF55129F)
+val primaryLight = Color(0xFF6E34B8)
 val onPrimaryLight = Color(0xFFFFFFFF)
-val primaryContainerLight = Color(0xFF6E34B8)
+val primaryContainerLight = Color(0xFF55129F)
 val onPrimaryContainerLight = Color(0xFFDBBFFF)
 val secondaryLight = Color(0xFF000000)
 val onSecondaryLight = Color(0xFFFFFFFF)
@@ -38,9 +38,9 @@ val surfaceContainerLight = Color(0xFFF1EDEC)
 val surfaceContainerHighLight = Color(0xFFEBE7E7)
 val surfaceContainerHighestLight = Color(0xFFE5E2E1)
 
-val primaryDark = Color(0xFF55129F)
+val primaryDark = Color(0xFF6E34B8)
 val onPrimaryDark = Color(0xFFD8B9FF)
-val primaryContainerDark = Color(0xFF6E34B8)
+val primaryContainerDark = Color(0xFF55129F)
 val onPrimaryContainerDark = Color(0xFFDBBFFF)
 val secondaryDark = Color(0xFFC6C6C6)
 val onSecondaryDark = Color(0xFF303030)

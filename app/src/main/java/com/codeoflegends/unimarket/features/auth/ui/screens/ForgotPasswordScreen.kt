@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
 import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,41 +52,48 @@ fun ForgotPasswordScreen(manager: NavigationManager) {
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(text = "Forgot Password", style = MaterialTheme.typography.headlineLarge)
-
-
-            SimpleTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = "Email",
-                modifier = Modifier.fillMaxWidth()
-            )
-
-
-            MainButton(
-                text = "Send",
-                onClick = { onSend(email) },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-
-            if (successMessage.isNotEmpty()) {
-                Text(text = successMessage, color = MaterialTheme.colorScheme.primary)
+    MainLayout(
+        barOptions = AppBarOptions(
+            show = true, showBackButton = true, onBackClick = {
+                manager.navController.popBackStack()
             }
+        ),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(text = "Contraseña olvidada", style = MaterialTheme.typography.headlineMedium)
+
+                SimpleTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = "Correo electrónico",
+                    modifier = Modifier.fillMaxWidth()
+                )
 
 
-            if (errorMessage.isNotEmpty()) {
-                Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                MainButton(
+                    text = "Solicitar reestablecimiento",
+                    onClick = { onSend(email) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+
+                if (successMessage.isNotEmpty()) {
+                    Text(text = successMessage, color = MaterialTheme.colorScheme.primary)
+                }
+
+
+                if (errorMessage.isNotEmpty()) {
+                    Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+                }
             }
         }
     }

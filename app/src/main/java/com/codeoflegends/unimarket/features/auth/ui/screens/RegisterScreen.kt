@@ -5,7 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -22,11 +23,13 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
 import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
 import com.codeoflegends.unimarket.core.ui.components.ErrorDialog
+import com.codeoflegends.unimarket.core.ui.components.MainLayout
 
 @Composable
 fun RegisterScreen(
@@ -59,48 +62,65 @@ fun RegisterScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+
+    MainLayout(
+        barOptions = AppBarOptions(
+            show = true, showBackButton = true, onBackClick = {
+                manager.navController.popBackStack()
+            }
+        ),
     ) {
-
-        SimpleTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = "Email",
+        Column(
             modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(0.8f),
-        )
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
 
-        SimpleTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = "Password",
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(0.8f),
-        )
+            Text(
+                text = "Regístrate",
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-        MainButton(
-            text = "Registrar",
-            isLoading = isLoading,
-            onClick = {
-                manager.authViewModel.register(email, password)
-            },
-            modifier = Modifier
-                .padding(14.dp)
-                .fillMaxWidth(0.8f),
-        )
+            SimpleTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = "Email",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.8f),
+            )
 
-        ClickableTextLink(
-            text = "¿Ya tienes una cuenta? Inicia sesión",
-            onClick = { manager.navController.navigate(Routes.Login.route) },
-        )
+            SimpleTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = "Password",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.8f),
+            )
+
+            MainButton(
+                text = "Registrar",
+                isLoading = isLoading,
+                onClick = {
+                    manager.authViewModel.register(email, password)
+                },
+                modifier = Modifier
+                    .padding(14.dp)
+                    .fillMaxWidth(0.8f),
+            )
+
+            ClickableTextLink(
+                text = "¿Ya tienes una cuenta? Inicia sesión",
+                onClick = {
+                    manager.navController.navigate(Routes.Login.route) {
+                        popUpTo(Routes.Register.route) { inclusive = true }
+                    }
+                },
+            )
+        }
     }
-
     ErrorDialog(
         show = showErrorDialog,
         title = "Error de registro",
