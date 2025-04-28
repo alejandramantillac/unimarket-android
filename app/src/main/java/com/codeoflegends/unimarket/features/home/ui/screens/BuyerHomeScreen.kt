@@ -16,7 +16,6 @@ import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 @Composable
 fun BuyerHomeScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
-    next: String = "/"
 ) {
     val authState by manager.authViewModel.authState.collectAsState()
 

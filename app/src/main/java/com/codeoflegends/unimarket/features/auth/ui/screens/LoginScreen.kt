@@ -1,22 +1,15 @@
 package com.codeoflegends.unimarket.features.auth.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -33,16 +26,12 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
 import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.codeoflegends.unimarket.features.home.components.AuthButton
-import com.codeoflegends.unimarket.features.home.components.AuthTextField
-import com.codeoflegends.unimarket.features.home.components.ClickableTextLink
-import com.codeoflegends.unimarket.features.home.components.ErrorDialog
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
+import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
+import com.codeoflegends.unimarket.core.ui.components.ErrorDialog
+import com.codeoflegends.unimarket.core.ui.components.LoadingOverlay
 
 @Composable
 fun LoginScreen(
@@ -65,22 +54,27 @@ fun LoginScreen(
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
             }
+
             is AuthResult.Error -> {
                 errorMessage = it.exception.message ?: "Error de autenticación"
                 showErrorDialog = true
             }
+
             else -> {}
         }
     }
 
-    ErrorDialog(show = showErrorDialog, message = errorMessage) {
+    ErrorDialog(
+        show = showErrorDialog,
+        title = "Error de inicio de sesión",
+        message = errorMessage
+    ) {
         showErrorDialog = false
     }
 
-    Scaffold { innerPadding ->
+    LoadingOverlay(isLoading) {
         Box(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
@@ -94,23 +88,21 @@ fun LoginScreen(
                 Text(
                     text = "¡Bienvenido a Unimarket!",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = Color.Black
                 )
 
                 Text(
                     text = "Inicia sesión para continuar con tus compras",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray,
                     modifier = Modifier.padding(top = 4.dp, bottom = 32.dp)
                 )
 
-                AuthTextField(
+                SimpleTextField(
                     value = email,
                     onValueChange = { email = it },
                     label = "Correo"
                 )
 
-                AuthTextField(
+                SimpleTextField(
                     value = password,
                     onValueChange = { password = it },
                     label = "Contraseña",
@@ -120,10 +112,10 @@ fun LoginScreen(
                 ClickableTextLink(
                     text = "¿Olvidaste tu contraseña?",
                     onClick = { manager.navController.navigate(Routes.ForgotPassword.route) },
-                    alignEnd = true
+                    alignment = Alignment.CenterEnd
                 )
 
-                AuthButton(
+                MainButton(
                     text = "Iniciar Sesión",
                     onClick = { manager.authViewModel.login(email, password) }
                 )
@@ -132,10 +124,6 @@ fun LoginScreen(
                     text = "¿No tienes una cuenta? Regístrate",
                     onClick = { manager.navController.navigate(Routes.Register.route) }
                 )
-            }
-
-            if (isLoading) {
-                CircularProgressIndicator()
             }
         }
     }

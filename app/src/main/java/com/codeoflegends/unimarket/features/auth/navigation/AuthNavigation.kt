@@ -22,6 +22,6 @@ fun NavGraphBuilder.authNavigation(
     }
 
     composable(Routes.ForgotPassword.route) {
-        ForgotPasswordScreen(manager, Routes.Login.route)
+        ForgotPasswordScreen(manager)
     }
 }
