@@ -31,35 +31,33 @@ import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.components.MessageSnackbar
+import com.codeoflegends.unimarket.core.ui.state.ErrorHandler
+import com.codeoflegends.unimarket.features.auth.ui.components.PasswordTextField
 
 @Composable
 fun RegisterScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
-    next: String = "/"
 ) {
     val isLoading by manager.authViewModel.authState.collectAsState()
         .run { remember { derivedStateOf { value.isLoading } } }
 
-    var showMessage by remember { mutableStateOf(false) }
-    var message by remember { mutableStateOf("") }
-    var isError by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     manager.authViewModel.registerEvent.CollectAsEventEffect {
         when (it) {
             is AuthResult.Success -> {
-                message = "Registro exitoso"
-                isError = false
-                showMessage = true
+                ErrorHandler.showSuccess(
+                    message = "Registro exitoso",
+                    dismissTimeout = 3f
+                )
+                manager.navController.navigate(Routes.Login.route) {
+                    popUpTo(Routes.Register.route) { inclusive = true }
+                }
             }
-
             is AuthResult.Error -> {
-                message = it.exception.message ?: "Error al registrarse"
-                isError = true
-                showMessage = true
+                ErrorHandler.handleError(it.exception)
             }
-
             else -> {}
         }
     }
@@ -73,7 +71,8 @@ fun RegisterScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -88,18 +87,11 @@ fun RegisterScreen(
                 onValueChange = { email = it },
                 label = "Email",
                 modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(0.8f),
             )
 
-            SimpleTextField(
+            PasswordTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = "Password",
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(0.8f),
             )
 
             MainButton(
@@ -109,8 +101,6 @@ fun RegisterScreen(
                     manager.authViewModel.register(email, password)
                 },
                 modifier = Modifier
-                    .padding(14.dp)
-                    .fillMaxWidth(0.8f),
             )
 
             ClickableTextLink(
@@ -121,22 +111,6 @@ fun RegisterScreen(
                     }
                 },
             )
-            
-            if (showMessage) {
-                MessageSnackbar(
-                    message = message,
-                    isError = isError,
-                    actionLabel = if (!isError) "Ir a Login" else null,
-                    onAction = {
-                        if (!isError) {
-                            manager.navController.navigate(Routes.Login.route) {
-                                popUpTo(Routes.Register.route) { inclusive = true }
-                            }
-                        }
-                    },
-                    onDismiss = { showMessage = false }
-                )
-            }
         }
     }
 }

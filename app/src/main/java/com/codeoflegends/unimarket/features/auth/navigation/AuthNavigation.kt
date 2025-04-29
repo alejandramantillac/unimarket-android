@@ -18,7 +18,7 @@ fun NavGraphBuilder.authNavigation(
 
     composable(Routes.Register.route) {
         // TodoL: Agregar la ruta de confirmacion de contraseña
-        RegisterScreen(manager, Routes.Login.route)
+        RegisterScreen(manager)
     }
 
     composable(Routes.ForgotPassword.route) {

@@ -1,6 +1,5 @@
 package com.codeoflegends.unimarket.core.ui.components
 
-
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,13 +16,15 @@ fun SimpleTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label, color = Color.Gray) },
         visualTransformation = visualTransformation,
+        trailingIcon = trailingIcon,
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = MaterialTheme.colorScheme.secondary,
             unfocusedIndicatorColor = Color.LightGray,

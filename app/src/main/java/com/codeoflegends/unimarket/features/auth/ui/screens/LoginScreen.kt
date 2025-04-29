@@ -35,6 +35,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.res.painterResource
 import com.codeoflegends.unimarket.R
+import com.codeoflegends.unimarket.features.auth.ui.components.PasswordTextField
 
 @Composable
 fun LoginScreen(
@@ -107,11 +108,9 @@ fun LoginScreen(
                     label = "Correo"
                 )
 
-                SimpleTextField(
+                PasswordTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = "Contraseña",
-                    visualTransformation = PasswordVisualTransformation()
                 )
 
                 ClickableTextLink(
