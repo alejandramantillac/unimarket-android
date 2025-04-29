@@ -66,6 +66,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences);
     implementation(libs.converter.gson)
 
+    implementation(libs.androidx.material.icons.extended)
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

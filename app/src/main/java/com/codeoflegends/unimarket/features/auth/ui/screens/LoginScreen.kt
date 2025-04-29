@@ -29,8 +29,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
-import com.codeoflegends.unimarket.core.ui.components.ErrorDialog
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
+import com.codeoflegends.unimarket.core.ui.components.MessageSnackbar
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
+import com.codeoflegends.unimarket.R
+import com.codeoflegends.unimarket.features.auth.ui.components.PasswordTextField
 
 @Composable
 fun LoginScreen(
@@ -40,8 +45,9 @@ fun LoginScreen(
     val isLoading by manager.authViewModel.authState.collectAsState()
         .run { remember { derivedStateOf { value.isLoading } } }
 
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
+    var showMessage by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -55,20 +61,13 @@ fun LoginScreen(
             }
 
             is AuthResult.Error -> {
-                errorMessage = it.exception.message ?: "Error de autenticación"
-                showErrorDialog = true
+                message = it.exception.message ?: "Error de autenticación"
+                isError = true
+                showMessage = true
             }
 
             else -> {}
         }
-    }
-
-    ErrorDialog(
-        show = showErrorDialog,
-        title = "Error de inicio de sesión",
-        message = errorMessage
-    ) {
-        showErrorDialog = false
     }
 
     MainLayout(pageLoading=isLoading) {
@@ -84,6 +83,13 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_unimarket_playstore),
+                    contentDescription = "Logo Unimarket",
+                    modifier = Modifier
+                        .size(130.dp)
+                        .padding(bottom = 24.dp)
+                )
 
                 Text(
                     text = "¡Bienvenido a Unimarket!",
@@ -102,11 +108,9 @@ fun LoginScreen(
                     label = "Correo"
                 )
 
-                SimpleTextField(
+                PasswordTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = "Contraseña",
-                    visualTransformation = PasswordVisualTransformation()
                 )
 
                 ClickableTextLink(
@@ -124,6 +128,15 @@ fun LoginScreen(
                     text = "¿No tienes una cuenta? Regístrate",
                     onClick = { manager.navController.navigate(Routes.Register.route) }
                 )
+                
+                if (showMessage) {
+                    MessageSnackbar(
+                        message = message,
+                        isError = isError,
+                        actionLabel = null,
+                        onDismiss = { showMessage = false }
+                    )
+                }
             }
         }
     }

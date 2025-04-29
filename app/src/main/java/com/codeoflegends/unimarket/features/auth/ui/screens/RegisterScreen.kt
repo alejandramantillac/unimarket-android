@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.codeoflegends.unimarket.core.constant.Routes
@@ -28,19 +29,17 @@ import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
-import com.codeoflegends.unimarket.core.ui.components.ErrorDialog
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
+import com.codeoflegends.unimarket.core.ui.components.MessageSnackbar
+import com.codeoflegends.unimarket.core.ui.state.ErrorHandler
+import com.codeoflegends.unimarket.features.auth.ui.components.PasswordTextField
 
 @Composable
 fun RegisterScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
-    next: String = "/"
 ) {
     val isLoading by manager.authViewModel.authState.collectAsState()
         .run { remember { derivedStateOf { value.isLoading } } }
-
-    var showErrorDialog by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -48,20 +47,20 @@ fun RegisterScreen(
     manager.authViewModel.registerEvent.CollectAsEventEffect {
         when (it) {
             is AuthResult.Success -> {
-                manager.navController.navigateIfAuthorized(next, manager) {
-                    popUpTo(Routes.Login.route) { inclusive = true }
+                ErrorHandler.showSuccess(
+                    message = "Registro exitoso",
+                    dismissTimeout = 3f
+                )
+                manager.navController.navigate(Routes.Login.route) {
+                    popUpTo(Routes.Register.route) { inclusive = true }
                 }
             }
-
             is AuthResult.Error -> {
-                errorMessage = it.exception.message ?: "Error al registrarse"
-                showErrorDialog = true
+                ErrorHandler.handleError(it.exception)
             }
-
             else -> {}
         }
     }
-
 
     MainLayout(
         barOptions = AppBarOptions(
@@ -72,7 +71,8 @@ fun RegisterScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -87,17 +87,11 @@ fun RegisterScreen(
                 onValueChange = { email = it },
                 label = "Email",
                 modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(0.8f),
             )
 
-            SimpleTextField(
+            PasswordTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = "Password",
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(0.8f),
             )
 
             MainButton(
@@ -107,8 +101,6 @@ fun RegisterScreen(
                     manager.authViewModel.register(email, password)
                 },
                 modifier = Modifier
-                    .padding(14.dp)
-                    .fillMaxWidth(0.8f),
             )
 
             ClickableTextLink(
@@ -121,10 +113,4 @@ fun RegisterScreen(
             )
         }
     }
-    ErrorDialog(
-        show = showErrorDialog,
-        title = "Error de registro",
-        message = errorMessage,
-        onDismiss = { showErrorDialog = false }
-    )
 }
