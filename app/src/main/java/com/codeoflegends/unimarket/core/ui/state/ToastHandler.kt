@@ -5,7 +5,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-object ErrorHandler {
+object ToastHandler {
     fun handleError(exception: Throwable, defaultMessage: String = "Ha ocurrido un error") {
         val message = when (exception) {
             is ConnectException,
@@ -26,6 +26,10 @@ object ErrorHandler {
             else -> exception.message ?: defaultMessage
         }
 
+        MessageManager.showMessage(message = message, isError = true, dismissTimeout = 5f)
+    }
+
+    fun handleError(message: String) {
         MessageManager.showMessage(message = message, isError = true, dismissTimeout = 5f)
     }
 
