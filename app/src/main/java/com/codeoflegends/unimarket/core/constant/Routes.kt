@@ -12,6 +12,9 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
     // User Routes
     data object UserProfile : Routes("/user/{id}", "VIEW_PROFILE")
     
+    // Product Routes
+    data object ProductForm : Routes("/product_form")
+    
     companion object {
         fun fromRoute(route: String): Routes? = when(route) {
             Login.route -> Login
@@ -19,6 +22,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
             ForgotPassword.route -> ForgotPassword
             Home.route -> Home
             UserProfile.route -> UserProfile
+            ProductForm.route -> ProductForm
             else -> null
         }
     }

@@ -70,6 +70,12 @@ fun BuyerHomeScreen(
         )
 
         MainButton(
+            onClick = { manager.navController.navigate(com.codeoflegends.unimarket.core.constant.Routes.ProductForm.route) },
+            modifier = Modifier.fillMaxWidth(),
+            text = "Crear/Editar Producto"
+        )
+
+        MainButton(
             onClick = { manager.authViewModel.logout() },
             modifier = Modifier.fillMaxWidth(),
             text = "Cerrar sesión"
