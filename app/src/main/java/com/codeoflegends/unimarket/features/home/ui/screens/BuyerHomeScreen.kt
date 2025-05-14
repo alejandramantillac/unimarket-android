@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
@@ -64,13 +65,7 @@ fun BuyerHomeScreen(
         }
 
         MainButton(
-            onClick = { /* otra secccion que podamos añadir de manera futura o cambiemos */ },
-            modifier = Modifier.fillMaxWidth(),
-            text = "Explorar Productos"
-        )
-
-        MainButton(
-            onClick = { manager.navController.navigate(com.codeoflegends.unimarket.core.constant.Routes.ProductForm.route) },
+            onClick = { manager.navController.navigate(Routes.ProductForm.route) },
             modifier = Modifier.fillMaxWidth(),
             text = "Crear/Editar Producto"
         )

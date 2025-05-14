@@ -4,11 +4,10 @@ import com.codeoflegends.unimarket.features.product.data.repositories.IProductRe
 import com.codeoflegends.unimarket.features.product.model.Product
 import javax.inject.Inject
 
-class CreateProductUseCase @Inject constructor(
+class GetProductUseCase @Inject constructor(
     private val repository: IProductRepository
 ) {
-    suspend operator fun invoke(product: Product): Product {
-        repository.createProduct(product).getOrThrow()
-        return product
+    suspend operator fun invoke(id: String): Product {
+        return repository.getProduct(id).getOrThrow()
     }
 } 

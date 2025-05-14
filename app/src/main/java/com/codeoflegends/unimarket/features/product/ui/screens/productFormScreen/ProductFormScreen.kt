@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.codeoflegends.unimarket.features.product.viewmodel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 import com.codeoflegends.unimarket.core.ui.components.TabSelector
 import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.state.ToastHandler
@@ -17,15 +17,23 @@ import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen
 import com.codeoflegends.unimarket.core.validation.FormField
 import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductActionState
 
 @Composable
 fun ProductFormScreen(
+    productId: String? = null,
     viewModel: ProductViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
 
-    // Definir los campos del formulario usando tu sistema de validación
+    // Cargar el producto si estamos en modo edición
+    LaunchedEffect(productId) {
+        if (productId != null) {
+            viewModel.loadProduct(productId)
+        }
+    }
+
     val formState = remember(state) {
         FormState(
             fields = mapOf(
@@ -42,12 +50,12 @@ fun ProductFormScreen(
 
     LaunchedEffect(actionState) {
         when (actionState) {
-            is com.codeoflegends.unimarket.features.product.viewmodel.ProductActionState.Success -> {
+            is ProductActionState.Success -> {
                 ToastHandler.showSuccess("Operación exitosa!!", dismissTimeout = 3f)
             }
-            is com.codeoflegends.unimarket.features.product.viewmodel.ProductActionState.Error -> {
+            is ProductActionState.Error -> {
                 ToastHandler.handleError(
-                    message = (actionState as com.codeoflegends.unimarket.features.product.viewmodel.ProductActionState.Error).message,
+                    message = (actionState as ProductActionState.Error).message,
                 )
             }
             else -> {}
@@ -75,13 +83,25 @@ fun ProductFormScreen(
                 onClick = { viewModel.saveProduct() },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
-                enabled = isFormValid // Solo habilitado si el formulario es válido
+                enabled = isFormValid
             ) {
-                Text("Guardar Cambios")
+                Text(if (state.isEdit) "Guardar Cambios" else "Crear Producto")
             }
             Spacer(modifier = Modifier.height(8.dp))
-            TextButton(onClick = { viewModel.deleteProduct() }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Eliminar Producto", color = MaterialTheme.colorScheme.primary)
+            TextButton(
+                onClick = { 
+                    if (state.isEdit) {
+                        viewModel.deleteProduct()
+                    } else {
+                        viewModel.cancelOperation()
+                    }
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(
+                    if (state.isEdit) "Eliminar Producto" else "Cancelar",
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }

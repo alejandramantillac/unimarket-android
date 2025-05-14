@@ -13,7 +13,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
     data object UserProfile : Routes("/user/{id}", "VIEW_PROFILE")
     
     // Product Routes
-    data object ProductForm : Routes("/product_form")
+    data object ProductForm : Routes("/product/{id}")
     
     companion object {
         fun fromRoute(route: String): Routes? = when(route) {

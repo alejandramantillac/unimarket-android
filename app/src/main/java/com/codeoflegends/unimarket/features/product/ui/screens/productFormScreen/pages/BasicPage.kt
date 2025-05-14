@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.DropdownMenuBox
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
-import com.codeoflegends.unimarket.features.product.viewmodel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 
 @Composable
 fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {

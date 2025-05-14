@@ -2,9 +2,9 @@ package com.codeoflegends.unimarket.features.product.ui.screens.productFormScree
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.codeoflegends.unimarket.features.product.viewmodel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 
 @Composable
-fun ProductImages(iewModel: ProductViewModel = hiltViewModel()){
+fun ProductImages(viewModel: ProductViewModel = hiltViewModel()){
 
 }
