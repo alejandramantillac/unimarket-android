@@ -1,6 +1,6 @@
 package com.codeoflegends.unimarket.features.product.data.repositories
 
-import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Product
 
 interface IProductRepository {
     suspend fun createProduct(product: Product): Result<Unit>

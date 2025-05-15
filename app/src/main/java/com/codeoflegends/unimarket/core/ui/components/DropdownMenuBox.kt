@@ -14,13 +14,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.VisualTransformation
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.isSystemInDarkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,19 +32,7 @@ fun DropdownMenuBox(
     var expanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
     val density = LocalDensity.current
-    val isDarkTheme = isSystemInDarkTheme()
     
-    val menuContainerColor = if (isDarkTheme) {
-        MaterialTheme.colorScheme.surfaceVariant
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-    }
-    
-    // Log para depuración
-    Log.d("DropdownMenuBox", "Label: $label, Options size: ${options.size}")
-    Log.d("DropdownMenuBox", "Options: $options")
-    Log.d("DropdownMenuBox", "Selected Option: $selectedOption")
-
     Box(modifier = modifier) {
         TextField(
             value = selectedOption ?: "",
@@ -58,7 +43,6 @@ fun DropdownMenuBox(
                 .fillMaxWidth()
                 .clickable { 
                     expanded = true
-                    Log.d("DropdownMenuBox", "Dropdown clicked, expanded = $expanded")
                  }
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
@@ -101,13 +85,12 @@ fun DropdownMenuBox(
             expanded = expanded,
             onDismissRequest = { 
                 expanded = false 
-                Log.d("DropdownMenuBox", "Dropdown dismissed, expanded = $expanded")
             },
             modifier = Modifier
                 .width(with(density) { textFieldSize.width.toDp() })
                 .heightIn(max = 300.dp)
                 .background(
-                    color = menuContainerColor,
+                    color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(8.dp)
                 )
         ) {
@@ -137,7 +120,6 @@ fun DropdownMenuBox(
                         onClick = {
                             onOptionSelected(option)
                             expanded = false
-                            Log.d("DropdownMenuBox", "Option selected: $option")
                         }
                     )
                 }

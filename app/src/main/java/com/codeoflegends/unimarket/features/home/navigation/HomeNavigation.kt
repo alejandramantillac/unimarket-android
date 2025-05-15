@@ -2,7 +2,6 @@ package com.codeoflegends.unimarket.features.home.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.secureComposable
 import com.codeoflegends.unimarket.core.navigation.NavigationManager

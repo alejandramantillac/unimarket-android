@@ -72,13 +72,3 @@ fun NavHostController.navigateIfAuthorized(
 
     return false
 }
-
-/**
- * Navega a la pantalla de edición de un producto
- * 
- * @param productId El ID del producto a editar
- */
-fun NavHostController.navigateToProductEdit(productId: String) {
-    val route = Routes.ProductFormEdit.route.replace("{id}", productId)
-    this.navigate(route)
-}

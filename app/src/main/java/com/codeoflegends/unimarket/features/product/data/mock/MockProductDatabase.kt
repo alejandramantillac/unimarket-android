@@ -1,6 +1,6 @@
 package com.codeoflegends.unimarket.features.product.data.mock
 
-import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Product
 
 object MockProductDatabase {
     private val products = mutableMapOf(
@@ -10,9 +10,7 @@ object MockProductDatabase {
             category = "Ropa",
             name = "Camiseta Básica",
             description = "Camiseta 100% algodón",
-            sku = "CAM-001",
             price = 19.99,
-            quantity = 100,
             lowStockAlert = 10,
             published = true
         ),
@@ -22,9 +20,7 @@ object MockProductDatabase {
             category = "Electrónica",
             name = "Smartphone XYZ",
             description = "Último modelo con 128GB",
-            sku = "PHN-001",
             price = 599.99,
-            quantity = 50,
             lowStockAlert = 5,
             published = true
         ),
@@ -34,9 +30,7 @@ object MockProductDatabase {
             category = "Alimentos",
             name = "Arroz Premium",
             description = "Arroz de grano largo",
-            sku = "ARR-001",
             price = 4.99,
-            quantity = 200,
             lowStockAlert = 20,
             published = true
         )

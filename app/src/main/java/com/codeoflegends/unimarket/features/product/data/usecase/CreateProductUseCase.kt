@@ -1,7 +1,7 @@
 package com.codeoflegends.unimarket.features.product.data.usecase
 
 import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
-import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Product
 import javax.inject.Inject
 
 class CreateProductUseCase @Inject constructor(

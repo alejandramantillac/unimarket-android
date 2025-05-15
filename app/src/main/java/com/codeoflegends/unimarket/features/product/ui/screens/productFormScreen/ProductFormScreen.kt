@@ -19,7 +19,6 @@ import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductActionState
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
-import android.util.Log
 
 @Composable
 fun ProductFormScreen(
@@ -107,8 +106,6 @@ fun ProductFormScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Log.d("ProductFormScreen", "Renderizando botones. isEdit=${state.isEdit}")
-            
             Button(
                 onClick = { viewModel.saveProduct() },
                 modifier = Modifier.fillMaxWidth(),

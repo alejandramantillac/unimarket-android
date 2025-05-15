@@ -9,17 +9,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.codeoflegends.unimarket.core.constant.Routes
-import com.codeoflegends.unimarket.core.extension.navigateToProductEdit
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
-import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 
 @Composable
@@ -74,11 +72,11 @@ fun BuyerHomeScreen(
         }
 
         MainButton(
-            onClick = { manager.navController.navigate(Routes.ProductFormCreate.route) },
+            onClick = { manager.navController.navigate(Routes.ManageProduct.base) },
             modifier = Modifier.fillMaxWidth(),
             text = "Crear Producto"
         )
-        
+
         // Lista de productos disponibles
         if (products.isNotEmpty()) {
             Text(
@@ -86,7 +84,7 @@ fun BuyerHomeScreen(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.align(Alignment.Start)
             )
-            
+
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -96,8 +94,10 @@ fun BuyerHomeScreen(
                 items(products) { product ->
                     ProductItem(
                         product = product,
-                        onEditClick = { 
-                            manager.navController.navigateToProductEdit(product.id ?: "")
+                        onEditClick = {
+                            manager.navController.navigate(
+                                Routes.ManageProduct.createRoute(product.id!!)
+                            )
                         }
                     )
                 }
@@ -121,50 +121,5 @@ fun BuyerHomeScreen(
             modifier = Modifier.fillMaxWidth(),
             text = "Cerrar sesión"
         )
-    }
-}
-
-@Composable
-fun ProductItem(
-    product: Product,
-    onEditClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = product.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = product.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "$ ${product.price}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-            
-            IconButton(onClick = onEditClick) {
-                Text("Editar", color = MaterialTheme.colorScheme.primary)
-            }
-        }
     }
 }

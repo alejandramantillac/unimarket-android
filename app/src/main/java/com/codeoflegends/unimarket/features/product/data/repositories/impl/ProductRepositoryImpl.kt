@@ -2,7 +2,7 @@ package com.codeoflegends.unimarket.features.product.data.repositories.impl
 
 import com.codeoflegends.unimarket.features.product.data.mock.MockProductDatabase
 import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
-import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Product
 import javax.inject.Inject
 import javax.inject.Singleton
 

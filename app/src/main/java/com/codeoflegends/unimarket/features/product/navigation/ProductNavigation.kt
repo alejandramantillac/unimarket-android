@@ -11,14 +11,7 @@ import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen
 fun NavGraphBuilder.productNavigation(
     manager: NavigationManager
 ) {
-    // Ruta para crear un nuevo producto
-    composable(Routes.ProductFormCreate.route) {
-        ProductFormScreen(manager = manager)
-    }
-    
-    // Ruta para editar un producto existente con ID
-    composable(
-        route = Routes.ProductFormEdit.route,
+    composable(Routes.ManageProduct.route,
         arguments = listOf(
             navArgument("id") {
                 type = NavType.StringType

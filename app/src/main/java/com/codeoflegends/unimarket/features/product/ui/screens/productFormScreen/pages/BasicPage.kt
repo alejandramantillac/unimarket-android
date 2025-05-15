@@ -16,16 +16,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.DropdownMenuBox
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
-import android.util.Log
 
 @Composable
 fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
-    
-    // Log para depuración
-    Log.d("ProductBasic", "BusinessOptions: ${state.businessOptions}")
-    Log.d("ProductBasic", "CategoryOptions: ${state.categoryOptions}")
 
     Box(
         modifier = Modifier

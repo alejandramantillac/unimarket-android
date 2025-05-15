@@ -4,19 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryImpl
-import android.util.Log
 
 sealed class ProductActionState {
     object Idle : ProductActionState()
@@ -35,6 +32,7 @@ class ProductViewModel @Inject constructor(
 ) : ViewModel() {
     
     // Lista predefinida de opciones para asegurar que siempre haya datos
+    //TODO: Cambiar por un repositorio real que traiga los datos de la API
     private val defaultBusinessOptions = listOf(
         "Tienda de Ropa", 
         "Electrónica XYZ", 
@@ -66,21 +64,10 @@ class ProductViewModel @Inject constructor(
     val products: StateFlow<List<Product>> = _products.asStateFlow()
 
     init {
-        Log.d("ProductViewModel", "Inicializando ViewModel con opciones por defecto")
-        Log.d("ProductViewModel", "Business Options: $defaultBusinessOptions")
-        Log.d("ProductViewModel", "Category Options: $defaultCategoryOptions")
-        
-        // Verificar que estén realmente en el uiState
-        Log.d("ProductViewModel", "UI State Business Options: ${_uiState.value.businessOptions}")
-        Log.d("ProductViewModel", "UI State Category Options: ${_uiState.value.categoryOptions}")
-        
-        // Cargar datos adicionales
         loadInitialData()
     }
 
     private fun loadInitialData() {
-        Log.d("ProductViewModel", "Iniciando carga de datos iniciales")
-        
         loadProducts()
     }
 
@@ -117,9 +104,7 @@ class ProductViewModel @Inject constructor(
                     selectedCategory = product.category,
                     name = product.name,
                     description = product.description,
-                    sku = product.sku,
                     price = product.price.toString(),
-                    quantity = product.quantity.toString(),
                     lowStockAlert = product.lowStockAlert.toString(),
                     published = product.published,
                     isEdit = true,
@@ -155,16 +140,8 @@ class ProductViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(description = description)
     }
 
-    fun onSkuChanged(sku: String) {
-        _uiState.value = _uiState.value.copy(sku = sku)
-    }
-
     fun onPriceChanged(price: String) {
         _uiState.value = _uiState.value.copy(price = price)
-    }
-
-    fun onQuantityChanged(quantity: String) {
-        _uiState.value = _uiState.value.copy(quantity = quantity)
     }
 
     fun onLowStockAlertChanged(alert: String) {
@@ -183,9 +160,7 @@ class ProductViewModel @Inject constructor(
             category = state.selectedCategory ?: "",
             name = state.name,
             description = state.description,
-            sku = state.sku,
             price = state.price.toDoubleOrNull() ?: 0.0,
-            quantity = state.quantity.toIntOrNull() ?: 0,
             lowStockAlert = state.lowStockAlert.toIntOrNull() ?: 0,
             published = state.published
         )

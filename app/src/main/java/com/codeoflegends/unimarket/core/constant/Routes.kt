@@ -5,29 +5,29 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
     data object Login : Routes("/login")
     data object Register : Routes("/register")
     data object ForgotPassword : Routes("/forgot_password")
-    
+
     // Home Routes
     data object Home : Routes("/")
-    
-    // User Routes
-    data object UserProfile : Routes("/user/{id}", "VIEW_PROFILE")
-    
+
     // Product Routes
-    data object ProductFormCreate : Routes("/product/create")
-    data object ProductFormEdit : Routes("/product/edit/{id}")
-    
+    data object ManageProduct : Routes("/manage/product/{id}") {
+        val base get() = "/manage/product/"
+        fun createRoute(id: String): String {
+            return "/manage/product/$id"
+        }
+    }
+
     companion object {
-        fun fromRoute(route: String): Routes? = when(route) {
+        fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
             Register.route -> Register
             ForgotPassword.route -> ForgotPassword
             Home.route -> Home
-            UserProfile.route -> UserProfile
-            ProductFormCreate.route -> ProductFormCreate
+            ManageProduct.route -> ManageProduct
             else -> {
+                // Handle dynamic routes
                 when {
-                    route.startsWith("/product/edit/") -> ProductFormEdit
-                    route.startsWith("/user/") -> UserProfile
+                    route.startsWith("/manage/product/") -> ManageProduct
                     else -> null
                 }
             }
