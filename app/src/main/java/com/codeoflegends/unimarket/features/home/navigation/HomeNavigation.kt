@@ -23,5 +23,5 @@ fun NavGraphBuilder.homeNavigation(
         BuyerHomeScreen(manager)
     }
 
-    productNavigation()
+    productNavigation(manager)
 }

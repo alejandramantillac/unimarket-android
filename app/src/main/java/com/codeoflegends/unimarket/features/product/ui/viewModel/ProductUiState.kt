@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.product.viewmodel
+package com.codeoflegends.unimarket.features.product.ui.viewModel
 
 data class ProductUiState(
     val id: String? = null,

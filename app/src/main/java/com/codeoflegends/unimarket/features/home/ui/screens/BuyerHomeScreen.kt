@@ -1,25 +1,34 @@
 package com.codeoflegends.unimarket.features.home.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.codeoflegends.unimarket.core.constant.Routes
+import com.codeoflegends.unimarket.core.extension.navigateToProductEdit
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
+import com.codeoflegends.unimarket.features.product.model.Product
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 
 @Composable
 fun BuyerHomeScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
+    productViewModel: ProductViewModel = hiltViewModel()
 ) {
     val authState by manager.authViewModel.authState.collectAsState()
+    val products by productViewModel.products.collectAsState()
 
     Column(
         modifier = Modifier
@@ -65,15 +74,97 @@ fun BuyerHomeScreen(
         }
 
         MainButton(
-            onClick = { manager.navController.navigate(Routes.ProductForm.route) },
+            onClick = { manager.navController.navigate(Routes.ProductFormCreate.route) },
             modifier = Modifier.fillMaxWidth(),
-            text = "Crear/Editar Producto"
+            text = "Crear Producto"
         )
+        
+        // Lista de productos disponibles
+        if (products.isNotEmpty()) {
+            Text(
+                text = "Productos disponibles",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.Start)
+            )
+            
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(products) { product ->
+                    ProductItem(
+                        product = product,
+                        onEditClick = { 
+                            manager.navController.navigateToProductEdit(product.id ?: "")
+                        }
+                    )
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No hay productos disponibles",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
 
         MainButton(
             onClick = { manager.authViewModel.logout() },
             modifier = Modifier.fillMaxWidth(),
             text = "Cerrar sesión"
         )
+    }
+}
+
+@Composable
+fun ProductItem(
+    product: Product,
+    onEditClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = product.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "$ ${product.price}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            
+            IconButton(onClick = onEditClick) {
+                Text("Editar", color = MaterialTheme.colorScheme.primary)
+            }
+        }
     }
 }

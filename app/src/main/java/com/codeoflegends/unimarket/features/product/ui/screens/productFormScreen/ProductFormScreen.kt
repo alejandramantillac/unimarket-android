@@ -18,20 +18,21 @@ import com.codeoflegends.unimarket.core.validation.FormField
 import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductActionState
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import android.util.Log
 
 @Composable
 fun ProductFormScreen(
     productId: String? = null,
-    viewModel: ProductViewModel = hiltViewModel()
+    viewModel: ProductViewModel = hiltViewModel(),
+    manager: NavigationManager? = null
 ) {
     val state by viewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
 
     // Cargar el producto si estamos en modo edición
     LaunchedEffect(productId) {
-        if (productId != null) {
-            viewModel.loadProduct(productId)
-        }
+        viewModel.loadProduct(productId)
     }
 
     val formState = remember(state) {
@@ -52,6 +53,7 @@ fun ProductFormScreen(
         when (actionState) {
             is ProductActionState.Success -> {
                 ToastHandler.showSuccess("Operación exitosa!!", dismissTimeout = 3f)
+                manager?.navController?.popBackStack()
             }
             is ProductActionState.Error -> {
                 ToastHandler.handleError(
@@ -62,23 +64,51 @@ fun ProductFormScreen(
         }
     }
 
+    // Mostrar indicador de carga durante la carga inicial de datos
+    if (actionState is ProductActionState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp)
     ) {
-        // Tabs
-        TabSelector(
-            tabs = listOf(
-                Tab("Básico") { ProductBasic(viewModel) },
-                Tab("Imágenes") { ProductImages(viewModel) },
-                Tab("Detalles") { ProductDetails(viewModel) }),
-            selectedTabIndex = state.selectedTab,
-            onTabSelected = { viewModel.onTabSelected(it) },
+        Text(
+            text = if (state.isEdit) "Editar Producto" else "Crear Producto",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
+        
+        Box(
+            modifier = Modifier
+                .weight(0.7f)
+                .fillMaxWidth()
+        ) {
+            TabSelector(
+                tabs = listOf(
+                    Tab("Básico") { ProductBasic(viewModel) },
+                    Tab("Imágenes") { ProductImages(viewModel) },
+                    Tab("Detalles") { ProductDetails(viewModel) }),
+                selectedTabIndex = state.selectedTab,
+                onTabSelected = { viewModel.onTabSelected(it) },
+            )
+        }
 
-        Column {
+        Column(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Log.d("ProductFormScreen", "Renderizando botones. isEdit=${state.isEdit}")
+            
             Button(
                 onClick = { viewModel.saveProduct() },
                 modifier = Modifier.fillMaxWidth(),
@@ -87,20 +117,21 @@ fun ProductFormScreen(
             ) {
                 Text(if (state.isEdit) "Guardar Cambios" else "Crear Producto")
             }
+            
             Spacer(modifier = Modifier.height(8.dp))
-            TextButton(
+            
+            OutlinedButton(
                 onClick = { 
                     if (state.isEdit) {
                         viewModel.deleteProduct()
                     } else {
-                        viewModel.cancelOperation()
+                        manager?.navController?.popBackStack()
                     }
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    if (state.isEdit) "Eliminar Producto" else "Cancelar",
-                    color = MaterialTheme.colorScheme.primary
+                    if (state.isEdit) "Eliminar Producto" else "Cancelar"
                 )
             }
         }

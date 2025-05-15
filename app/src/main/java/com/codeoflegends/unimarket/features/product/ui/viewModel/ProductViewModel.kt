@@ -9,16 +9,20 @@ import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUs
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
-import com.codeoflegends.unimarket.features.product.viewmodel.ProductUiState
+import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryImpl
+import android.util.Log
 
 sealed class ProductActionState {
     object Idle : ProductActionState()
     object Success : ProductActionState()
     data class Error(val message: String) : ProductActionState()
+    object Loading : ProductActionState()
 }
 
 @HiltViewModel
@@ -26,18 +30,87 @@ class ProductViewModel @Inject constructor(
     private val createProductUseCase: CreateProductUseCase,
     private val updateProductUseCase: UpdateProductUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
-    private val getProductUseCase: GetProductUseCase
+    private val getProductUseCase: GetProductUseCase,
+    private val getAllProductsUseCase: GetAllProductsUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ProductUiState())
+    
+    // Lista predefinida de opciones para asegurar que siempre haya datos
+    private val defaultBusinessOptions = listOf(
+        "Tienda de Ropa", 
+        "Electrónica XYZ", 
+        "Supermercado ABC", 
+        "Librería Online"
+    )
+    
+    private val defaultCategoryOptions = listOf(
+        "Electrónica", 
+        "Ropa", 
+        "Alimentos", 
+        "Libros", 
+        "Deportes", 
+        "Hogar"
+    )
+    
+    private val _uiState = MutableStateFlow(
+        ProductUiState(
+            businessOptions = defaultBusinessOptions,
+            categoryOptions = defaultCategoryOptions
+        )
+    )
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
 
     private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Idle)
     val actionState: StateFlow<ProductActionState> = _actionState.asStateFlow()
 
-    fun loadProduct(productId: String) {
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products: StateFlow<List<Product>> = _products.asStateFlow()
+
+    init {
+        Log.d("ProductViewModel", "Inicializando ViewModel con opciones por defecto")
+        Log.d("ProductViewModel", "Business Options: $defaultBusinessOptions")
+        Log.d("ProductViewModel", "Category Options: $defaultCategoryOptions")
+        
+        // Verificar que estén realmente en el uiState
+        Log.d("ProductViewModel", "UI State Business Options: ${_uiState.value.businessOptions}")
+        Log.d("ProductViewModel", "UI State Category Options: ${_uiState.value.categoryOptions}")
+        
+        // Cargar datos adicionales
+        loadInitialData()
+    }
+
+    private fun loadInitialData() {
+        Log.d("ProductViewModel", "Iniciando carga de datos iniciales")
+        
+        loadProducts()
+    }
+
+    private fun loadProducts() {
+        viewModelScope.launch {
+            try {
+                val productList = getAllProductsUseCase()
+                _products.value = productList
+            } catch (e: Exception) {
+                _actionState.value = ProductActionState.Error("Error al cargar productos: ${e.message}")
+            }
+        }
+    }
+
+    fun loadProduct(productId: String?) {
+        if (productId.isNullOrEmpty()) {
+            // Si no hay ID, estamos en modo creación
+            _uiState.value = _uiState.value.copy(isEdit = false)
+            return
+        }
+        
+        _actionState.value = ProductActionState.Loading
+        
         viewModelScope.launch {
             try {
                 val product = getProductUseCase(productId)
+                
+                val currentBusinessOptions = _uiState.value.businessOptions
+                val currentCategoryOptions = _uiState.value.categoryOptions
+                
                 _uiState.value = _uiState.value.copy(
                     id = product.id,
                     selectedBusiness = product.business,
@@ -49,8 +122,12 @@ class ProductViewModel @Inject constructor(
                     quantity = product.quantity.toString(),
                     lowStockAlert = product.lowStockAlert.toString(),
                     published = product.published,
-                    isEdit = true
+                    isEdit = true,
+                    // Preservar las opciones
+                    businessOptions = currentBusinessOptions,
+                    categoryOptions = currentCategoryOptions
                 )
+                _actionState.value = ProductActionState.Idle
             } catch (e: Exception) {
                 _actionState.value =
                     ProductActionState.Error("Error al cargar el producto: ${e.message}")
@@ -127,15 +204,15 @@ class ProductViewModel @Inject constructor(
     }
 
     fun deleteProduct() {
-        val id = _uiState.value.id
-        if (id.isNullOrBlank()) {
-            _actionState.value = ProductActionState.Error("ID no válido")
-            return
-        }
+        val productId = _uiState.value.id ?: return
+        
+        _actionState.value = ProductActionState.Loading
+        
         viewModelScope.launch {
             try {
-                deleteProductUseCase(id)
+                deleteProductUseCase(productId)
                 _actionState.value = ProductActionState.Success
+                // Después de eliminar, debería navegar hacia atrás
             } catch (e: Exception) {
                 _actionState.value = ProductActionState.Error(e.message ?: "Error desconocido")
             }
@@ -143,8 +220,15 @@ class ProductViewModel @Inject constructor(
     }
 
     fun cancelOperation() {
-        // Aquí podrías implementar la lógica para volver atrás
-        // Por ejemplo, usando un evento de navegación
+        // Preservar opciones actuales
+        val currentBusinessOptions = _uiState.value.businessOptions
+        val currentCategoryOptions = _uiState.value.categoryOptions
+        
+        // Reiniciar el estado del formulario
+        _uiState.value = ProductUiState(
+            businessOptions = currentBusinessOptions,
+            categoryOptions = currentCategoryOptions
+        )
         _actionState.value = ProductActionState.Success
     }
 } 
