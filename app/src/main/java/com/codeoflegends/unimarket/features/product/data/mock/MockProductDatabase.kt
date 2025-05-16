@@ -1,11 +1,12 @@
 package com.codeoflegends.unimarket.features.product.data.mock
 
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import java.util.UUID
 
 object MockProductDatabase {
     private val products = mutableMapOf(
-        "1" to Product(
-            id = "1",
+        UUID.fromString("11111111-1111-1111-1111-111111111111") to Product(
+            id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
             business = "Tienda de Ropa",
             category = "Ropa",
             name = "Camiseta Básica",
@@ -14,8 +15,8 @@ object MockProductDatabase {
             lowStockAlert = 10,
             published = true
         ),
-        "2" to Product(
-            id = "2",
+        UUID.fromString("22222222-2222-2222-2222-222222222222") to Product(
+            id = UUID.fromString("22222222-2222-2222-2222-222222222222"),
             business = "Electrónica XYZ",
             category = "Electrónica",
             name = "Smartphone XYZ",
@@ -24,8 +25,8 @@ object MockProductDatabase {
             lowStockAlert = 5,
             published = true
         ),
-        "3" to Product(
-            id = "3",
+        UUID.fromString("33333333-3333-3333-3333-333333333333") to Product(
+            id = UUID.fromString("33333333-3333-3333-3333-333333333333"),
             business = "Supermercado ABC",
             category = "Alimentos",
             name = "Arroz Premium",
@@ -36,7 +37,7 @@ object MockProductDatabase {
         )
     )
 
-    fun getProduct(id: String): Product? = products[id]
+    fun getProduct(id: UUID): Product? = products[id]
     
     fun getAllProducts(): List<Product> = products.values.toList()
     
@@ -48,9 +49,9 @@ object MockProductDatabase {
         product.id?.let { products[it] = product }
     }
     
-    fun deleteProduct(id: String) {
+    fun deleteProduct(id: UUID) {
         products.remove(id)
     }
     
-    private fun generateId(): String = (products.size + 1).toString()
+    private fun generateId(): UUID = UUID.randomUUID()
 } 

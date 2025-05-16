@@ -19,6 +19,7 @@ import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
+import androidx.compose.foundation.shape.CircleShape
 
 @Composable
 fun BuyerHomeScreen(
@@ -96,7 +97,7 @@ fun BuyerHomeScreen(
                         product = product,
                         onEditClick = {
                             manager.navController.navigate(
-                                Routes.ManageProduct.createRoute(product.id!!)
+                                Routes.ManageProduct.createRoute(product.id!!.toString())
                             )
                         }
                     )
