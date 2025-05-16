@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 sealed class ProductActionState {
     object Idle : ProductActionState()
@@ -88,12 +90,15 @@ class ProductViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isEdit = false)
             return
         }
-        
+        val uuid = try { UUID.fromString(productId) } catch (e: Exception) { null }
+        if (uuid == null) {
+            _actionState.value = ProductActionState.Error("ID de producto inválido")
+            return
+        }
         _actionState.value = ProductActionState.Loading
-        
         viewModelScope.launch {
             try {
-                val product = getProductUseCase(productId)
+                val product = getProductUseCase(uuid)
                 
                 val currentBusinessOptions = _uiState.value.businessOptions
                 val currentCategoryOptions = _uiState.value.categoryOptions
@@ -108,14 +113,14 @@ class ProductViewModel @Inject constructor(
                     lowStockAlert = product.lowStockAlert.toString(),
                     published = product.published,
                     isEdit = true,
+                    variants = product.variants,
                     // Preservar las opciones
                     businessOptions = currentBusinessOptions,
                     categoryOptions = currentCategoryOptions
                 )
                 _actionState.value = ProductActionState.Idle
             } catch (e: Exception) {
-                _actionState.value =
-                    ProductActionState.Error("Error al cargar el producto: ${e.message}")
+                _actionState.value = ProductActionState.Error("Error al cargar el producto: "+e.message)
             }
         }
     }
@@ -162,7 +167,8 @@ class ProductViewModel @Inject constructor(
             description = state.description,
             price = state.price.toDoubleOrNull() ?: 0.0,
             lowStockAlert = state.lowStockAlert.toIntOrNull() ?: 0,
-            published = state.published
+            published = state.published,
+            variants = state.variants
         )
         viewModelScope.launch {
             try {
@@ -205,5 +211,37 @@ class ProductViewModel @Inject constructor(
             categoryOptions = currentCategoryOptions
         )
         _actionState.value = ProductActionState.Success
+    }
+
+    // --- Variants Logic ---
+    fun addVariant(variant: ProductVariant) {
+        val updated = _uiState.value.variants + variant
+        _uiState.value = _uiState.value.copy(variants = updated)
+    }
+
+    fun updateVariant(updatedVariant: ProductVariant) {
+        val updated = _uiState.value.variants.map {
+            if (it.id == updatedVariant.id) updatedVariant else it
+        }
+        _uiState.value = _uiState.value.copy(variants = updated)
+    }
+
+    fun removeVariant(variantId: UUID?) {
+        val updated = _uiState.value.variants.filterNot { it.id == variantId }
+        _uiState.value = _uiState.value.copy(variants = updated)
+    }
+
+    fun updateVariantImage(variantId: UUID?, images: List<String>) {
+        val updated = _uiState.value.variants.map {
+            if (it.id == variantId) it.copy(variantImages = images) else it
+        }
+        _uiState.value = _uiState.value.copy(variants = updated)
+    }
+
+    fun updateVariantStock(variantId: UUID?, stock: Int) {
+        val updated = _uiState.value.variants.map {
+            if (it.id == variantId) it.copy(stock = stock) else it
+        }
+        _uiState.value = _uiState.value.copy(variants = updated)
     }
 } 

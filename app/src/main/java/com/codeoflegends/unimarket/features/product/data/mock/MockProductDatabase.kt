@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.product.data.mock
 
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import java.util.UUID
 
 object MockProductDatabase {
@@ -13,7 +14,23 @@ object MockProductDatabase {
             description = "Camiseta 100% algodón",
             price = 19.99,
             lowStockAlert = 10,
-            published = true
+            published = true,
+            variants = listOf(
+                ProductVariant(
+                    id = UUID.fromString("aaaa1111-1111-1111-1111-111111111111"),
+                    productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                    name = "Roja",
+                    stock = 5,
+                    variantImages = listOf()
+                ),
+                ProductVariant(
+                    id = UUID.fromString("aaaa2222-2222-2222-2222-222222222222"),
+                    productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                    name = "Azul",
+                    stock = 3,
+                    variantImages = listOf()
+                )
+            )
         ),
         UUID.fromString("22222222-2222-2222-2222-222222222222") to Product(
             id = UUID.fromString("22222222-2222-2222-2222-222222222222"),
@@ -23,7 +40,16 @@ object MockProductDatabase {
             description = "Último modelo con 128GB",
             price = 599.99,
             lowStockAlert = 5,
-            published = true
+            published = true,
+            variants = listOf(
+                ProductVariant(
+                    id = UUID.fromString("bbbb1111-1111-1111-1111-111111111111"),
+                    productId = UUID.fromString("22222222-2222-2222-2222-222222222222"),
+                    name = "128GB Negro",
+                    stock = 2,
+                    variantImages = listOf()
+                )
+            )
         ),
         UUID.fromString("33333333-3333-3333-3333-333333333333") to Product(
             id = UUID.fromString("33333333-3333-3333-3333-333333333333"),
@@ -33,7 +59,8 @@ object MockProductDatabase {
             description = "Arroz de grano largo",
             price = 4.99,
             lowStockAlert = 20,
-            published = true
+            published = true,
+            variants = emptyList()
         )
     )
 

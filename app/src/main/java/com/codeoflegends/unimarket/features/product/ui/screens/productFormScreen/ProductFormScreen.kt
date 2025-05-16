@@ -13,7 +13,7 @@ import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductBasic
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductDetails
-import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductImages
+import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductVariants
 import com.codeoflegends.unimarket.core.validation.FormField
 import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
@@ -47,6 +47,8 @@ fun ProductFormScreen(
         )
     }
     val isFormValid = remember(state) { formState.validateAll() }
+
+    val canSaveProduct = isFormValid && state.variants.isNotEmpty()
 
     LaunchedEffect(actionState) {
         when (actionState) {
@@ -93,7 +95,7 @@ fun ProductFormScreen(
             TabSelector(
                 tabs = listOf(
                     Tab("Básico") { ProductBasic(viewModel) },
-                    Tab("Imágenes") { ProductImages(viewModel) },
+                    Tab("Variantes") { ProductVariants(viewModel) },
                     Tab("Detalles") { ProductDetails(viewModel) }),
                 selectedTabIndex = state.selectedTab,
                 onTabSelected = { viewModel.onTabSelected(it) },
@@ -110,7 +112,7 @@ fun ProductFormScreen(
                 onClick = { viewModel.saveProduct() },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
-                enabled = isFormValid
+                enabled = canSaveProduct
             ) {
                 Text(if (state.isEdit) "Guardar Cambios" else "Crear Producto")
             }
