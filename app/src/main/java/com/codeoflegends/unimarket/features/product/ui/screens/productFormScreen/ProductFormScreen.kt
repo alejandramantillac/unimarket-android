@@ -12,8 +12,8 @@ import com.codeoflegends.unimarket.core.ui.components.TabSelector
 import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductBasic
-import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductDetails
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductVariants
+import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductSpecifications
 import com.codeoflegends.unimarket.core.validation.FormField
 import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
@@ -48,7 +48,9 @@ fun ProductFormScreen(
     }
     val isFormValid = remember(state) { formState.validateAll() }
 
-    val canSaveProduct = isFormValid && state.variants.isNotEmpty()
+    val canSaveProduct = isFormValid && 
+                        state.variants.isNotEmpty() && 
+                        state.specifications.isNotEmpty()
 
     LaunchedEffect(actionState) {
         when (actionState) {
@@ -96,7 +98,7 @@ fun ProductFormScreen(
                 tabs = listOf(
                     Tab("Básico") { ProductBasic(viewModel) },
                     Tab("Variantes") { ProductVariants(viewModel) },
-                    Tab("Detalles") { ProductDetails(viewModel) }),
+                    Tab("Detalles") { ProductSpecifications(viewModel) }),
                 selectedTabIndex = state.selectedTab,
                 onTabSelected = { viewModel.onTabSelected(it) },
             )

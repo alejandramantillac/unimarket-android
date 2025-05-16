@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.product.data.mock
 
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import java.util.UUID
 
 object MockProductDatabase {
@@ -30,6 +31,20 @@ object MockProductDatabase {
                     stock = 3,
                     variantImages = listOf()
                 )
+            ),
+            specifications = listOf(
+                ProductSpecification(
+                    id = UUID.fromString("cccc1111-1111-1111-1111-111111111111"),
+                    key = "Batería",
+                    value = "Hasta 20 horas",
+                    product = UUID.fromString("11111111-1111-1111-1111-111111111111")
+                ),
+                ProductSpecification(
+                    id = UUID.fromString("cccc2222-2222-2222-2222-222222222222"),
+                    key = "Peso",
+                    value = "250g",
+                    product = UUID.fromString("11111111-1111-1111-1111-111111111111")
+                )
             )
         ),
         UUID.fromString("22222222-2222-2222-2222-222222222222") to Product(
@@ -49,6 +64,14 @@ object MockProductDatabase {
                     stock = 2,
                     variantImages = listOf()
                 )
+            ),
+            specifications = listOf(
+                ProductSpecification(
+                    id = UUID.fromString("dddd1111-1111-1111-1111-111111111111"),
+                    key = "Pantalla",
+                    value = "6.5 pulgadas",
+                    product = UUID.fromString("22222222-2222-2222-2222-222222222222")
+                )
             )
         ),
         UUID.fromString("33333333-3333-3333-3333-333333333333") to Product(
@@ -60,7 +83,8 @@ object MockProductDatabase {
             price = 4.99,
             lowStockAlert = 20,
             published = true,
-            variants = emptyList()
+            variants = emptyList(),
+            specifications = emptyList()
         )
     )
 

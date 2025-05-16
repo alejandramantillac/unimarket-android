@@ -88,56 +88,71 @@ fun ProductVariants(viewModel: ProductViewModel) {
         }
 
         // Lista de variantes existentes
-        LazyColumn(
+        Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(state.variants) { variant ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(2.dp)
+            if (state.variants.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Text(
+                        text = "Agrega al menos una variante",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                state.variants.forEach { variant ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(2.dp)
                     ) {
-                        // Imagen principal de la variante (si existe)
-                        if (variant.variantImages.isNotEmpty()) {
-                            Image(
-                                painter = rememberAsyncImagePainter(variant.variantImages.first().toUri()),
-                                contentDescription = "Imagen variante",
-                                modifier = Modifier.size(64.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .size(64.dp)
-                                    .background(Color.LightGray, RoundedCornerShape(8.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("Sin imagen", style = MaterialTheme.typography.bodySmall)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Imagen principal de la variante (si existe)
+                            if (variant.variantImages.isNotEmpty()) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(variant.variantImages.first().toUri()),
+                                    contentDescription = "Imagen variante",
+                                    modifier = Modifier.size(64.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("Sin imagen", style = MaterialTheme.typography.bodySmall)
+                                }
                             }
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(variant.name, style = MaterialTheme.typography.titleMedium)
-                            Text("Stock: ${variant.stock}", style = MaterialTheme.typography.bodySmall)
-                        }
-                        IconButton(onClick = {
-                            editingVariant = variant
-                            name = variant.name
-                            stock = variant.stock.toString()
-                            imageUris = variant.variantImages
-                            showDialog = true
-                        }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Editar")
-                        }
-                        IconButton(onClick = { viewModel.removeVariant(variant.id) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(variant.name, style = MaterialTheme.typography.titleMedium)
+                                Text("Stock: ${variant.stock}", style = MaterialTheme.typography.bodySmall)
+                            }
+                            IconButton(onClick = {
+                                editingVariant = variant
+                                name = variant.name
+                                stock = variant.stock.toString()
+                                imageUris = variant.variantImages
+                                showDialog = true
+                            }) {
+                                Icon(Icons.Default.Edit, contentDescription = "Editar")
+                            }
+                            IconButton(onClick = { viewModel.removeVariant(variant.id) }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                            }
                         }
                     }
                 }

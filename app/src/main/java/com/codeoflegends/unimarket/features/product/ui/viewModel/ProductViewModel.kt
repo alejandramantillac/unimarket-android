@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
@@ -114,7 +115,7 @@ class ProductViewModel @Inject constructor(
                     published = product.published,
                     isEdit = true,
                     variants = product.variants,
-                    // Preservar las opciones
+                    specifications = product.specifications,
                     businessOptions = currentBusinessOptions,
                     categoryOptions = currentCategoryOptions
                 )
@@ -129,35 +130,64 @@ class ProductViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedTab = index)
     }
 
-    fun onBusinessSelected(business: String) {
-        _uiState.value = _uiState.value.copy(selectedBusiness = business)
-    }
+    private fun validateForm() {
+        val state = _uiState.value
+        val isBasicValid = state.name.isNotBlank() &&
+                state.description.isNotBlank() &&
+                state.selectedBusiness != null &&
+                state.selectedCategory != null &&
+                state.price.toDoubleOrNull() ?: 0.0 > 0 &&
+                state.lowStockAlert.isNotBlank() &&
+                state.images.isNotEmpty()
 
-    fun onCategorySelected(category: String) {
-        _uiState.value = _uiState.value.copy(selectedCategory = category)
+        val isVariantsValid = state.variants.isNotEmpty()
+        val isSpecificationsValid = state.specifications.isNotEmpty()
+
+        _uiState.value = state.copy(
+            isFormValid = isBasicValid && isVariantsValid && isSpecificationsValid
+        )
     }
 
     fun onNameChanged(name: String) {
         _uiState.value = _uiState.value.copy(name = name)
+        validateForm()
     }
 
     fun onDescriptionChanged(description: String) {
         _uiState.value = _uiState.value.copy(description = description)
+        validateForm()
+    }
+
+    fun onBusinessSelected(business: String) {
+        _uiState.value = _uiState.value.copy(selectedBusiness = business)
+        validateForm()
+    }
+
+    fun onCategorySelected(category: String) {
+        _uiState.value = _uiState.value.copy(selectedCategory = category)
+        validateForm()
     }
 
     fun onPriceChanged(price: String) {
         _uiState.value = _uiState.value.copy(price = price)
+        validateForm()
     }
 
     fun onLowStockAlertChanged(alert: String) {
         _uiState.value = _uiState.value.copy(lowStockAlert = alert)
+        validateForm()
     }
 
     fun onPublishedChanged(published: Boolean) {
         _uiState.value = _uiState.value.copy(published = published)
+        validateForm()
     }
 
     fun saveProduct() {
+        if (!_uiState.value.isFormValid) {
+            _actionState.value = ProductActionState.Error("Por favor completa todos los campos requeridos")
+            return
+        }
         val state = _uiState.value
         val product = Product(
             id = state.id,
@@ -168,7 +198,8 @@ class ProductViewModel @Inject constructor(
             price = state.price.toDoubleOrNull() ?: 0.0,
             lowStockAlert = state.lowStockAlert.toIntOrNull() ?: 0,
             published = state.published,
-            variants = state.variants
+            variants = state.variants,
+            specifications = state.specifications
         )
         viewModelScope.launch {
             try {
@@ -217,6 +248,7 @@ class ProductViewModel @Inject constructor(
     fun addVariant(variant: ProductVariant) {
         val updated = _uiState.value.variants + variant
         _uiState.value = _uiState.value.copy(variants = updated)
+        validateForm()
     }
 
     fun updateVariant(updatedVariant: ProductVariant) {
@@ -224,11 +256,13 @@ class ProductViewModel @Inject constructor(
             if (it.id == updatedVariant.id) updatedVariant else it
         }
         _uiState.value = _uiState.value.copy(variants = updated)
+        validateForm()
     }
 
     fun removeVariant(variantId: UUID?) {
         val updated = _uiState.value.variants.filterNot { it.id == variantId }
         _uiState.value = _uiState.value.copy(variants = updated)
+        validateForm()
     }
 
     fun updateVariantImage(variantId: UUID?, images: List<String>) {
@@ -243,5 +277,35 @@ class ProductViewModel @Inject constructor(
             if (it.id == variantId) it.copy(stock = stock) else it
         }
         _uiState.value = _uiState.value.copy(variants = updated)
+    }
+
+    // --- Specifications Logic ---
+    fun addSpecification(spec: ProductSpecification) {
+        val updated = _uiState.value.specifications + spec
+        _uiState.value = _uiState.value.copy(
+            specifications = updated,
+            hasSpecifications = updated.isNotEmpty()
+        )
+        validateForm()
+    }
+
+    fun updateSpecification(updatedSpec: ProductSpecification) {
+        val updated = _uiState.value.specifications.map {
+            if (it.id == updatedSpec.id) updatedSpec else it
+        }
+        _uiState.value = _uiState.value.copy(
+            specifications = updated,
+            hasSpecifications = updated.isNotEmpty()
+        )
+        validateForm()
+    }
+
+    fun removeSpecification(specId: UUID?) {
+        val updated = _uiState.value.specifications.filterNot { it.id == specId }
+        _uiState.value = _uiState.value.copy(
+            specifications = updated,
+            hasSpecifications = updated.isNotEmpty()
+        )
+        validateForm()
     }
 } 

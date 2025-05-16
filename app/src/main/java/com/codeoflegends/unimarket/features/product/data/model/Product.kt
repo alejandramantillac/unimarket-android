@@ -10,6 +10,13 @@ data class ProductVariant(
     val variantImages: List<String> = emptyList()
 )
 
+data class ProductSpecification(
+    val id: UUID? = null,
+    val key: String,
+    val value: String,
+    val product: UUID? = null
+)
+
 data class Product(
     val id: UUID? = null,
     val business: String,
@@ -19,5 +26,6 @@ data class Product(
     val price: Double,
     val lowStockAlert: Int,
     val published: Boolean,
-    val variants: List<ProductVariant> = emptyList()
+    val variants: List<ProductVariant> = emptyList(),
+    val specifications: List<ProductSpecification> = emptyList()
 ) 
