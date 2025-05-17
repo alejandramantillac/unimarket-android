@@ -3,10 +3,11 @@ package com.codeoflegends.unimarket.core.di
 import com.codeoflegends.unimarket.config.AuthInterceptor
 import com.codeoflegends.unimarket.config.RetrofitConfig
 import com.codeoflegends.unimarket.config.TokenAuthenticator
-import com.codeoflegends.unimarket.core.annotation.AuthOkHttpClient
 import com.codeoflegends.unimarket.core.annotation.AuthRetrofit
 import com.codeoflegends.unimarket.core.annotation.MainOkHttpClient
 import com.codeoflegends.unimarket.core.annotation.MainRetrofit
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,12 +24,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideGsonConverter(): GsonConverterFactory {
-        return GsonConverterFactory.create()
+        return GsonConverterFactory.create(GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create())
     }
 
     @Provides
     @Singleton
-    @AuthOkHttpClient
     fun provideAuthOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .build()
@@ -38,7 +40,7 @@ object NetworkModule {
     @Singleton
     @AuthRetrofit
     fun provideAuthRetrofit(
-        @AuthOkHttpClient okHttpClient: OkHttpClient,
+        okHttpClient: OkHttpClient,
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
