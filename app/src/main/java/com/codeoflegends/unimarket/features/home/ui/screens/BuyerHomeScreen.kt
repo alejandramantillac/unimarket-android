@@ -99,6 +99,11 @@ fun BuyerHomeScreen(
                             manager.navController.navigate(
                                 Routes.ManageProduct.createRoute(product.id!!.toString())
                             )
+                        },
+                        onViewClick = {
+                            manager.navController.navigate(
+                                Routes.ProductView.createRoute(product.id!!.toString())
+                            )
                         }
                     )
                 }

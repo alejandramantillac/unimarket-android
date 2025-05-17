@@ -17,11 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.Icon
 
 @Composable
 fun ProductItem(
     product: Product,
-    onEditClick: () -> Unit
+    onEditClick: () -> Unit,
+    onViewClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -55,9 +59,13 @@ fun ProductItem(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-
-            IconButton(onClick = onEditClick) {
-                Text("Editar", color = MaterialTheme.colorScheme.primary)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onViewClick) {
+                    Icon(Icons.Default.Visibility, contentDescription = "Visualizar", tint = MaterialTheme.colorScheme.primary)
+                }
+                IconButton(onClick = onEditClick) {
+                    Text("Editar", color = MaterialTheme.colorScheme.primary)
+                }
             }
         }
     }

@@ -17,6 +17,13 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    data object ProductView : Routes("/product/{id}") {
+        val base get() = "/product/"
+        fun createRoute(id: String): String {
+            return "/product/$id"
+        }
+    }
+
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
@@ -24,10 +31,12 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
             ForgotPassword.route -> ForgotPassword
             Home.route -> Home
             ManageProduct.route -> ManageProduct
+            ProductView.route -> ProductView
             else -> {
                 // Handle dynamic routes
                 when {
                     route.startsWith("/manage/product/") -> ManageProduct
+                    route.startsWith("/product/") -> ProductView
                     else -> null
                 }
             }

@@ -3,7 +3,9 @@ package com.codeoflegends.unimarket.features.product.data.mock
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
+import com.codeoflegends.unimarket.features.product.data.model.Review
 import java.util.UUID
+import java.time.LocalDateTime
 
 object MockProductDatabase {
     private val products = mutableMapOf(
@@ -22,14 +24,14 @@ object MockProductDatabase {
                     productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
                     name = "Roja",
                     stock = 5,
-                    variantImages = listOf()
+                    variantImages = listOf("https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&q=80")
                 ),
                 ProductVariant(
                     id = UUID.fromString("aaaa2222-2222-2222-2222-222222222222"),
                     productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
                     name = "Azul",
                     stock = 3,
-                    variantImages = listOf()
+                    variantImages = listOf("https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&q=80")
                 )
             ),
             specifications = listOf(
@@ -44,6 +46,16 @@ object MockProductDatabase {
                     key = "Peso",
                     value = "250g",
                     product = UUID.fromString("11111111-1111-1111-1111-111111111111")
+                )
+            ),
+            reviews = listOf(
+                Review(
+                    id = UUID.fromString("aaaa3333-3333-3333-3333-333333333333"),
+                    productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                    userProfileId = UUID.fromString("bbbb3333-3333-3333-3333-333333333333"),
+                    rating = 4,
+                    comment = "Muy buena calidad",
+                    creationDate = LocalDateTime.now()
                 )
             )
         ),
@@ -62,7 +74,7 @@ object MockProductDatabase {
                     productId = UUID.fromString("22222222-2222-2222-2222-222222222222"),
                     name = "128GB Negro",
                     stock = 2,
-                    variantImages = listOf()
+                    variantImages = listOf("https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80")
                 )
             ),
             specifications = listOf(
@@ -71,6 +83,16 @@ object MockProductDatabase {
                     key = "Pantalla",
                     value = "6.5 pulgadas",
                     product = UUID.fromString("22222222-2222-2222-2222-222222222222")
+                )
+            ),
+            reviews = listOf(
+                Review(
+                    id = UUID.fromString("bbbb3333-3333-3333-3333-333333333333"),
+                    productId = UUID.fromString("22222222-2222-2222-2222-222222222222"),
+                    userProfileId = UUID.fromString("cccc3333-3333-3333-3333-333333333333"),
+                    rating = 5,
+                    comment = "Excelente smartphone",
+                    creationDate = LocalDateTime.now()
                 )
             )
         ),
@@ -84,7 +106,8 @@ object MockProductDatabase {
             lowStockAlert = 20,
             published = true,
             variants = emptyList(),
-            specifications = emptyList()
+            specifications = emptyList(),
+            reviews = emptyList()
         )
     )
 

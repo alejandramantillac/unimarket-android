@@ -34,24 +34,6 @@ class ProductViewModel @Inject constructor(
     private val getAllProductsUseCase: GetAllProductsUseCase
 ) : ViewModel() {
     
-    // Lista predefinida de opciones para asegurar que siempre haya datos
-    //TODO: Cambiar por un repositorio real que traiga los datos de la API
-    private val defaultBusinessOptions = listOf(
-        "Tienda de Ropa", 
-        "Electrónica XYZ", 
-        "Supermercado ABC", 
-        "Librería Online"
-    )
-    
-    private val defaultCategoryOptions = listOf(
-        "Electrónica", 
-        "Ropa", 
-        "Alimentos", 
-        "Libros", 
-        "Deportes", 
-        "Hogar"
-    )
-    
     private val _uiState = MutableStateFlow(
         ProductUiState(
             businessOptions = defaultBusinessOptions,
@@ -87,8 +69,7 @@ class ProductViewModel @Inject constructor(
 
     fun loadProduct(productId: String?) {
         if (productId.isNullOrEmpty()) {
-            // Si no hay ID, estamos en modo creación
-            _uiState.value = _uiState.value.copy(isEdit = false)
+            _uiState.value = _uiState.value.copy(isEdit = false, product = null)
             return
         }
         val uuid = try { UUID.fromString(productId) } catch (e: Exception) { null }
@@ -100,28 +81,27 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val product = getProductUseCase(uuid)
-                
-                val currentBusinessOptions = _uiState.value.businessOptions
-                val currentCategoryOptions = _uiState.value.categoryOptions
-                
-                _uiState.value = _uiState.value.copy(
-                    id = product.id,
-                    selectedBusiness = product.business,
-                    selectedCategory = product.category,
-                    name = product.name,
-                    description = product.description,
-                    price = product.price.toString(),
-                    lowStockAlert = product.lowStockAlert.toString(),
-                    published = product.published,
-                    isEdit = true,
-                    variants = product.variants,
-                    specifications = product.specifications,
-                    businessOptions = currentBusinessOptions,
-                    categoryOptions = currentCategoryOptions
-                )
-                _actionState.value = ProductActionState.Idle
+                if (product != null) {
+                    _uiState.value = _uiState.value.copy(
+                        id = product.id,
+                        selectedBusiness = product.business,
+                        selectedCategory = product.category,
+                        name = product.name,
+                        description = product.description,
+                        price = product.price.toString(),
+                        lowStockAlert = product.lowStockAlert.toString(),
+                        published = product.published,
+                        isEdit = true,
+                        variants = product.variants,
+                        specifications = product.specifications,
+                        product = product
+                    )
+                    _actionState.value = ProductActionState.Idle
+                } else {
+                    _actionState.value = ProductActionState.Error("Producto no encontrado")
+                }
             } catch (e: Exception) {
-                _actionState.value = ProductActionState.Error("Error al cargar el producto: "+e.message)
+                _actionState.value = ProductActionState.Error("Error al cargar el producto: ${e.message}")
             }
         }
     }
@@ -130,15 +110,34 @@ class ProductViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(selectedTab = index)
     }
 
+    companion object {
+        private val defaultBusinessOptions = listOf(
+            "Tienda de Ropa", 
+            "Electrónica XYZ", 
+            "Supermercado ABC", 
+            "Librería Online"
+        )
+        
+        private val defaultCategoryOptions = listOf(
+            "Electrónica", 
+            "Ropa", 
+            "Alimentos", 
+            "Libros", 
+            "Deportes", 
+            "Hogar"
+        )
+    }
+
     private fun validateForm() {
         val state = _uiState.value
+        val hasAnyVariantImage = state.variants.any { it.variantImages.isNotEmpty() }
         val isBasicValid = state.name.isNotBlank() &&
                 state.description.isNotBlank() &&
                 state.selectedBusiness != null &&
                 state.selectedCategory != null &&
                 state.price.toDoubleOrNull() ?: 0.0 > 0 &&
                 state.lowStockAlert.isNotBlank() &&
-                state.images.isNotEmpty()
+                hasAnyVariantImage
 
         val isVariantsValid = state.variants.isNotEmpty()
         val isSpecificationsValid = state.specifications.isNotEmpty()

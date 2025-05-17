@@ -27,5 +27,6 @@ data class Product(
     val lowStockAlert: Int,
     val published: Boolean,
     val variants: List<ProductVariant> = emptyList(),
-    val specifications: List<ProductSpecification> = emptyList()
+    val specifications: List<ProductSpecification> = emptyList(),
+    val reviews: List<Review> = emptyList()
 ) 
