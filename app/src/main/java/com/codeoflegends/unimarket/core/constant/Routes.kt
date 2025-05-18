@@ -24,6 +24,20 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    data object ManageEntrepreneurship : Routes("/manage/entrepreneurship/{id}") {
+        val base get() = "/manage/entrepreneurship/"
+        fun createRoute(id: String): String {
+            return "/manage/entrepreneurship/$id"
+        }
+    }
+
+    data object EntrepreneurshipView : Routes("/entrepreneurship/{id}") {
+        val base get() = "/entrepreneurship/"
+        fun createRoute(id: String): String {
+            return "/entrepreneurship/$id"
+        }
+    }
+
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
