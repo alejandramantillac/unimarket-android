@@ -1,6 +1,6 @@
 package com.codeoflegends.unimarket.features.product.ui.viewModel.state
 
-import com.codeoflegends.unimarket.features.product.data.model.Category
+import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
@@ -21,7 +21,7 @@ data class ProductFormData(
     val published: Boolean = false,
     
     // References to business objects
-    val selectedCategory: Category? = null,
+    val selectedCategory: ProductCategory? = null,
     val selectedBusiness: Entrepreneurship? = null, // Used only in create mode
     
     // Collections that define the product
@@ -34,7 +34,7 @@ data class ProductFormData(
  */
 data class ProductFormOptions(
     val businessOptions: List<Entrepreneurship> = emptyList(),
-    val categoryOptions: List<Category> = emptyList(),
+    val categoryOptions: List<ProductCategory> = emptyList(),
 )
 
 /**

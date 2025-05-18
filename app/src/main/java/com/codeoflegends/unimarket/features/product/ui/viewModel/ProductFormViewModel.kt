@@ -3,7 +3,7 @@ package com.codeoflegends.unimarket.features.product.ui.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codeoflegends.unimarket.features.product.data.model.Category
+import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
@@ -379,7 +379,7 @@ class ProductFormViewModel @Inject constructor(
         )
         
         private val defaultCategoryOptions = listOf(
-            Category(name = "Moda", description = "Viste con estilo.")
+            ProductCategory(name = "Moda", description = "Viste con estilo.")
         )
     }
 } 

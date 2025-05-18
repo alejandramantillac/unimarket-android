@@ -2,11 +2,10 @@ package com.codeoflegends.unimarket.features.product.data.mapper
 
 import com.codeoflegends.unimarket.features.product.data.dto.create.EntrepreneurshipCreateDto
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
-import com.codeoflegends.unimarket.features.product.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
-import com.codeoflegends.unimarket.features.product.data.model.Category
+import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
@@ -19,7 +18,7 @@ object ProductMapper {
     fun listDtoToProduct(dto: ProductListDto): Product {
         return Product(
             id = dto.id,
-            category = Category(
+            category = ProductCategory(
                 name = dto.category,
                 description = "" // This field is not available in the DTO
             ),
@@ -38,7 +37,7 @@ object ProductMapper {
     fun detailDtoToProduct(dto: ProductDetailDto): Product {
         return Product(
             id = dto.id,
-            category = Category(
+            category = ProductCategory(
                 name = dto.category,
                 description = "" // This field is not available in the DTO
             ),
