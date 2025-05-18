@@ -16,5 +16,7 @@ data class Entrepreneurship(
     val status: String,
     val category: Int,
     val socialNetworks: Int,
-    val userFounder: UUID
+    val userFounder: UUID,
+    val imageUrl: String? = null
+
 )
