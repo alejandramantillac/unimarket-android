@@ -21,6 +21,8 @@ import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 @Composable
 fun ProductSpecifications(viewModel: ProductViewModel) {
     val state by viewModel.uiState.collectAsState()
+    val formData = state.formData
+    
     var showDialog by remember { mutableStateOf(false) }
     var editingSpec by remember { mutableStateOf<ProductSpecification?>(null) }
     var key by remember { mutableStateOf("") }
@@ -65,7 +67,7 @@ fun ProductSpecifications(viewModel: ProductViewModel) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (state.specifications.isEmpty()) {
+            if (formData.specifications.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -79,7 +81,7 @@ fun ProductSpecifications(viewModel: ProductViewModel) {
                     )
                 }
             } else {
-                state.specifications.forEach { spec ->
+                formData.specifications.forEach { spec ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -130,7 +132,6 @@ fun ProductSpecifications(viewModel: ProductViewModel) {
                             id = editingSpec?.id ?: UUID.randomUUID(),
                             key = key,
                             value = value,
-                            product = state.id
                         )
                         if (editingSpec == null) {
                             viewModel.addSpecification(spec)

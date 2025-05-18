@@ -53,7 +53,7 @@ fun ProductViewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.product?.name ?: "Producto") },
+                title = { Text(state.selectedProduct?.name ?: "Producto") },
                 navigationIcon = {
                     IconButton(onClick = { manager?.navController?.popBackStack() }) {
                         Icon(
@@ -65,7 +65,7 @@ fun ProductViewScreen(
                 actions = {
                     IconButton(
                         onClick = { 
-                            state.product?.id?.let { id ->
+                            state.selectedProduct?.id?.let { id ->
                                 manager?.navController?.navigate(
                                     Routes.ManageProduct.createRoute(id.toString())
                                 )
@@ -92,7 +92,7 @@ fun ProductViewScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                state.product == null -> {
+                state.selectedProduct == null -> {
                     Text(
                         text = "No se encontró el producto",
                         modifier = Modifier.align(Alignment.Center)
@@ -101,7 +101,7 @@ fun ProductViewScreen(
                 else -> {
                     Column(modifier = Modifier.fillMaxSize()) {
                         // Mostrar ProductHeader solo si hay producto
-                        state.product?.let { product ->
+                        state.selectedProduct?.let { product ->
                             ProductHeader(
                                 product = product,
                                 variantImages = product.variants.flatMap { it.variantImages },
@@ -117,7 +117,7 @@ fun ProductViewScreen(
                                 Tab("Inventario") { ProductInventoryPage(viewModel) },
                                 Tab("Ventas") { ProductSalesPage(viewModel) }
                             ),
-                            selectedTabIndex = state.selectedTab,
+                            selectedTabIndex = state.uiState.selectedTab,
                             onTabSelected = { viewModel.onTabSelected(it) }
                         )
                     }

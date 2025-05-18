@@ -20,6 +20,10 @@ import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewMode
 @Composable
 fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsState()
+    val formData = state.formData
+    val formOptions = state.formOptions
+    val isEdit = state.uiState.isEdit
+    
     val scrollState = rememberScrollState()
 
     Box(
@@ -34,47 +38,46 @@ fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {
                 .padding(bottom = 80.dp), // Espacio extra al final para evitar que el último elemento se oculte
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            DropdownMenuBox(
-                label = "Emprendimiento",
-                options = state.businessOptions.map {
-                    it.name
-                },
-                selectedOption = state.selectedBusiness?.id.toString(),
-                onOptionSelected = { viewModel.onBusinessSelected(it) },
-                modifier = Modifier.fillMaxWidth()
-            )
+            // Only show business selection in create mode, not in edit mode
+            if (!isEdit) {
+                DropdownMenuBox(
+                    label = "Emprendimiento",
+                    options = formOptions.businessOptions.map { it.name },
+                    selectedOption = formData.selectedBusiness?.name,
+                    onOptionSelected = { viewModel.onBusinessSelected(it) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             
             DropdownMenuBox(
                 label = "Categoría",
-                options = state.categoryOptions.map {
-                    it.name
-                },
-                selectedOption = state.selectedCategory?.name,
+                options = formOptions.categoryOptions.map { it.name },
+                selectedOption = formData.selectedCategory?.name,
                 onOptionSelected = { viewModel.onCategorySelected(it) },
                 modifier = Modifier.fillMaxWidth()
             )
             
             SimpleTextField(
-                value = state.name,
+                value = formData.name,
                 onValueChange = { viewModel.onNameChanged(it) },
                 label = "Nombre del Producto"
             )
             
             SimpleTextField(
-                value = state.description,
+                value = formData.description,
                 onValueChange = { viewModel.onDescriptionChanged(it) },
                 label = "Descripción"
             )
             
             SimpleTextField(
-                value = state.price,
+                value = formData.price,
                 onValueChange = { viewModel.onPriceChanged(it) },
                 label = "Precio",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
             )
             
             SimpleTextField(
-                value = state.lowStockAlert,
+                value = formData.lowStockAlert,
                 onValueChange = { viewModel.onLowStockAlertChanged(it) },
                 label = "Alerta de Stock Bajo",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -106,7 +109,7 @@ fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {
                     )
                     
                     Switch(
-                        checked = state.published,
+                        checked = formData.published,
                         onCheckedChange = { viewModel.onPublishedChanged(it) }
                     )
                 }

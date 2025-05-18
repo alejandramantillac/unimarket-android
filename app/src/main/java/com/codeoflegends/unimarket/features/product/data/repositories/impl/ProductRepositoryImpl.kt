@@ -1,15 +1,14 @@
 package com.codeoflegends.unimarket.features.product.data.repositories.impl
 
-import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
 import com.codeoflegends.unimarket.features.product.data.mock.MockProductDatabase
-import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
+import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import javax.inject.Inject
 import javax.inject.Singleton
 import java.util.UUID
 
 @Singleton
-class ProductRepositoryImpl @Inject constructor() : IProductRepository {
+class ProductRepositoryImpl @Inject constructor() : ProductRepository {
 
     override suspend fun createProduct(product: Product): Result<Unit> = try {
         MockProductDatabase.addProduct(product)
@@ -40,7 +39,7 @@ class ProductRepositoryImpl @Inject constructor() : IProductRepository {
         Result.failure(e)
     }
     
-    override suspend fun getAllProducts(): Result<List<SimpleProduct>> = try {
+    override suspend fun getAllProducts(): Result<List<Product>> = try {
         val products = MockProductDatabase.getAllProducts()
         Result.success(products)
     } catch (e: Exception) {

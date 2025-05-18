@@ -28,6 +28,10 @@ fun ProductFormScreen(
     manager: NavigationManager? = null
 ) {
     val state by viewModel.uiState.collectAsState()
+    val formData = state.formData
+    val isEdit = state.uiState.isEdit
+    val formValid = state.uiState.isFormValid
+    val selectedTab = state.uiState.selectedTab
     val actionState by viewModel.actionState.collectAsState()
 
     // Cargar el producto si estamos en modo edición
@@ -35,23 +39,28 @@ fun ProductFormScreen(
         viewModel.loadProduct(productId)
     }
 
-    val formState = remember(state) {
+    // Build validation form state
+    val formState = remember(formData, isEdit) {
         FormState(
-            fields = mapOf(
-                "business" to FormField(state.selectedBusiness, listOf(NotNullValidator("Selecciona un emprendimiento"))),
-                "category" to FormField(state.selectedCategory, listOf(NotNullValidator("Selecciona una categoría"))),
-                "name" to FormField(state.name, listOf(NotEmptyValidator("El nombre es obligatorio"))),
-                "description" to FormField(state.description, listOf(NotEmptyValidator("La descripción es obligatoria"))),
-                "price" to FormField(state.price, listOf(NotEmptyValidator("El precio es obligatorio"))),
-                "lowStockAlert" to FormField(state.lowStockAlert, listOf(NotEmptyValidator("La alerta de stock es obligatoria")))
-            )
+            fields = buildMap {
+                // Only validate selectedBusiness in create mode
+                if (!isEdit) {
+                    put("business", FormField(formData.selectedBusiness, listOf(NotNullValidator("Selecciona un emprendimiento"))))
+                }
+                
+                put("category", FormField(formData.selectedCategory, listOf(NotNullValidator("Selecciona una categoría"))))
+                put("name", FormField(formData.name, listOf(NotEmptyValidator("El nombre es obligatorio"))))
+                put("description", FormField(formData.description, listOf(NotEmptyValidator("La descripción es obligatoria"))))
+                put("price", FormField(formData.price, listOf(NotEmptyValidator("El precio es obligatorio"))))
+                put("lowStockAlert", FormField(formData.lowStockAlert, listOf(NotEmptyValidator("La alerta de stock es obligatoria"))))
+            }
         )
     }
-    val isFormValid = remember(state) { formState.validateAll() }
+    val isFormFieldsValid = remember(formData) { formState.validateAll() }
 
-    val canSaveProduct = isFormValid && 
-                        state.variants.isNotEmpty() && 
-                        state.specifications.isNotEmpty()
+    val canSaveProduct = formValid && 
+                        formData.variants.isNotEmpty() && 
+                        formData.specifications.isNotEmpty()
 
     LaunchedEffect(actionState) {
         when (actionState) {
@@ -85,7 +94,7 @@ fun ProductFormScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = if (state.isEdit) "Editar Producto" else "Crear Producto",
+            text = if (isEdit) "Editar Producto" else "Crear Producto",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
@@ -100,7 +109,7 @@ fun ProductFormScreen(
                     Tab("Básico") { ProductBasic(viewModel) },
                     Tab("Variantes") { ProductVariants(viewModel) },
                     Tab("Detalles") { ProductSpecifications(viewModel) }),
-                selectedTabIndex = state.selectedTab,
+                selectedTabIndex = selectedTab,
                 onTabSelected = { viewModel.onTabSelected(it) },
             )
         }
@@ -117,14 +126,14 @@ fun ProductFormScreen(
                 shape = MaterialTheme.shapes.medium,
                 enabled = canSaveProduct
             ) {
-                Text(if (state.isEdit) "Guardar Cambios" else "Crear Producto")
+                Text(if (isEdit) "Guardar Cambios" else "Crear Producto")
             }
             
             Spacer(modifier = Modifier.height(8.dp))
             
             OutlinedButton(
                 onClick = { 
-                    if (state.isEdit) {
+                    if (isEdit) {
                         viewModel.deleteProduct()
                     } else {
                         manager?.navController?.popBackStack()
@@ -133,7 +142,7 @@ fun ProductFormScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    if (state.isEdit) "Eliminar Producto" else "Cancelar"
+                    if (isEdit) "Eliminar Producto" else "Cancelar"
                 )
             }
         }

@@ -20,12 +20,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductUiState
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 
 @Composable
 fun ProductDetailPage(viewModel: ProductViewModel) {
     val state by viewModel.uiState.collectAsState()
-    val product = state.product
+    val product = state.selectedProduct
 
     LazyColumn(
         modifier = Modifier
@@ -78,7 +77,8 @@ fun ProductDetailPage(viewModel: ProductViewModel) {
 @Composable
 fun ProductDetailHeader(state: ProductUiState) {
     // Unir todas las imágenes de las variantes
-    val allImages = state.variants.flatMap { it.variantImages }
+    val formData = state.formData
+    val allImages = formData.variants.flatMap { it.variantImages }
     val mainImage = allImages.firstOrNull()
     Column(modifier = Modifier.fillMaxWidth()) {
         // Imagen principal
@@ -127,12 +127,12 @@ fun ProductDetailHeader(state: ProductUiState) {
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = state.name,
+            text = formData.name,
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onBackground
         )
         Text(
-            text = "$${state.price}",
+            text = "$${formData.price}",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -141,6 +141,7 @@ fun ProductDetailHeader(state: ProductUiState) {
 
 @Composable
 fun ProductDetailDescription(state: ProductUiState) {
+    val formData = state.formData
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Descripción",
@@ -149,7 +150,7 @@ fun ProductDetailDescription(state: ProductUiState) {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = state.description,
+            text = formData.description,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -158,6 +159,7 @@ fun ProductDetailDescription(state: ProductUiState) {
 
 @Composable
 fun ProductDetailSpecifications(state: ProductUiState) {
+    val formData = state.formData
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Especificaciones",
@@ -165,14 +167,14 @@ fun ProductDetailSpecifications(state: ProductUiState) {
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(4.dp))
-        if (state.specifications.isEmpty()) {
+        if (formData.specifications.isEmpty()) {
             Text(
                 text = "Sin especificaciones",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
-            state.specifications.forEach { spec ->
+            formData.specifications.forEach { spec ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

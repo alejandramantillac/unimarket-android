@@ -27,7 +27,7 @@ import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewMode
 @Composable
 fun ProductInventoryPage(viewModel: ProductViewModel) {
     val state by viewModel.uiState.collectAsState()
-    val product = state.product
+    val product = state.selectedProduct
     val totalStock = product?.variants?.sumOf { it.stock } ?: 0
     val totalVariants = product?.variants?.size ?: 0
     val lowStockAlert = product?.stockAlert ?: 0

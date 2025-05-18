@@ -7,23 +7,55 @@ import com.codeoflegends.unimarket.features.product.data.model.ProductSpecificat
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
 
-data class ProductUiState(
+/**
+ * ProductFormData: Contains all editable fields for a product
+ * These are specifically the values that the user can input in the form
+ */
+data class ProductFormData(
+    // Basic product info
     val id: UUID? = null,
-    val selectedBusiness: Entrepreneurship? = null,
-    val selectedCategory: Category? = null,
     val name: String = "",
     val description: String = "",
     val price: String = "",
     val lowStockAlert: String = "",
     val published: Boolean = false,
-    val isEdit: Boolean = false,
+    
+    // References to business objects
+    val selectedCategory: Category? = null,
+    val selectedBusiness: Entrepreneurship? = null, // Used only in create mode
+    
+    // Collections that define the product
     val variants: List<ProductVariant> = emptyList(),
     val specifications: List<ProductSpecification> = emptyList(),
+)
+
+/**
+ * Options available to the user from business data
+ */
+data class ProductFormOptions(
     val businessOptions: List<Entrepreneurship> = emptyList(),
     val categoryOptions: List<Category> = emptyList(),
+)
+
+/**
+ * UI state related to the form display and interaction state
+ */
+data class ProductFormUiState(
+    val isEdit: Boolean = false,
     val selectedTab: Int = 0,
     val hasSpecifications: Boolean = false,
     val error: String? = null,
     val isFormValid: Boolean = false,
-    val product: Product? = null
+)
+
+/**
+ * Combined state class for the product view model
+ */
+data class ProductUiState(
+    val formData: ProductFormData = ProductFormData(),
+    val formOptions: ProductFormOptions = ProductFormOptions(),
+    val uiState: ProductFormUiState = ProductFormUiState(),
+    
+    // Reference to original product when editing
+    val selectedProduct: Product? = null
 ) 

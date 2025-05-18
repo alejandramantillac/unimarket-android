@@ -1,8 +1,7 @@
 package com.codeoflegends.unimarket.features.product.di
 
-import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
+import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryDirectus
-import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,32 +22,32 @@ abstract class ProductModule {
     @Singleton
     abstract fun bindProductRepository(
         productRepositoryImpl: ProductRepositoryDirectus
-    ): IProductRepository
+    ): ProductRepository
     
     companion object {
         @Provides
         @Singleton
-        fun provideCreateProductUseCase(repository: IProductRepository): CreateProductUseCase =
+        fun provideCreateProductUseCase(repository: ProductRepository): CreateProductUseCase =
             CreateProductUseCase(repository)
 
         @Provides
         @Singleton
-        fun provideUpdateProductUseCase(repository: IProductRepository): UpdateProductUseCase =
+        fun provideUpdateProductUseCase(repository: ProductRepository): UpdateProductUseCase =
             UpdateProductUseCase(repository)
 
         @Provides
         @Singleton
-        fun provideDeleteProductUseCase(repository: IProductRepository): DeleteProductUseCase =
+        fun provideDeleteProductUseCase(repository: ProductRepository): DeleteProductUseCase =
             DeleteProductUseCase(repository)
 
         @Provides
         @Singleton
-        fun provideGetProductUseCase(repository: IProductRepository): GetProductUseCase =
+        fun provideGetProductUseCase(repository: ProductRepository): GetProductUseCase =
             GetProductUseCase(repository)
             
         @Provides
         @Singleton
-        fun provideGetAllProductsUseCase(repository: IProductRepository): GetAllProductsUseCase =
+        fun provideGetAllProductsUseCase(repository: ProductRepository): GetAllProductsUseCase =
             GetAllProductsUseCase(repository)
     }
 } 

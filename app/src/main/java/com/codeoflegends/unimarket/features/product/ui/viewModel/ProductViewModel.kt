@@ -1,8 +1,8 @@
 package com.codeoflegends.unimarket.features.product.ui.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
 import com.codeoflegends.unimarket.features.product.data.model.Category
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,11 +36,17 @@ class ProductViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val getAllProductsUseCase: GetAllProductsUseCase
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(
         ProductUiState(
-            businessOptions = defaultBusinessOptions,
-            categoryOptions = defaultCategoryOptions
+            formOptions = ProductFormOptions(
+                businessOptions = defaultBusinessOptions,
+                categoryOptions = defaultCategoryOptions
+            ),
+            formData = ProductFormData(
+                // Set default business in create mode
+                selectedBusiness = defaultBusinessOptions.firstOrNull()
+            )
         )
     )
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
@@ -48,8 +54,8 @@ class ProductViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Idle)
     val actionState: StateFlow<ProductActionState> = _actionState.asStateFlow()
 
-    private val _products = MutableStateFlow<List<SimpleProduct>>(emptyList())
-    val products: StateFlow<List<SimpleProduct>> = _products.asStateFlow()
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products: StateFlow<List<Product>> = _products.asStateFlow()
 
     init {
         loadInitialData()
@@ -65,143 +71,222 @@ class ProductViewModel @Inject constructor(
                 val productList = getAllProductsUseCase()
                 _products.value = productList
             } catch (e: Exception) {
-                _actionState.value = ProductActionState.Error("Error al cargar productos: ${e.message}")
+                _actionState.value =
+                    ProductActionState.Error("Error al cargar productos: ${e.message}")
             }
         }
     }
 
     fun loadProduct(productId: String?) {
         if (productId.isNullOrEmpty()) {
-            _uiState.value = _uiState.value.copy(isEdit = false, product = null)
+            // Creating a new product
+            _uiState.value = _uiState.value.copy(
+                uiState = _uiState.value.uiState.copy(isEdit = false),
+                selectedProduct = null
+            )
             return
         }
-        val uuid = try { UUID.fromString(productId) } catch (e: Exception) { null }
+
+        val uuid = try {
+            UUID.fromString(productId)
+        } catch (e: Exception) {
+            null
+        }
         if (uuid == null) {
             _actionState.value = ProductActionState.Error("ID de producto inválido")
             return
         }
+
         _actionState.value = ProductActionState.Loading
+
         viewModelScope.launch {
             try {
                 val product = getProductUseCase(uuid)
-                if (product != null) {
-                    _uiState.value = _uiState.value.copy(
+                _uiState.value = _uiState.value.copy(
+                    formData = ProductFormData(
                         id = product.id,
-                        selectedBusiness = product.entrepreneurship,
                         selectedCategory = product.category,
                         name = product.name,
                         description = product.description,
                         price = product.price.toString(),
                         lowStockAlert = product.stockAlert.toString(),
                         published = product.published,
-                        isEdit = true,
                         variants = product.variants,
                         specifications = product.specifications,
-                        product = product
-                    )
-                    _actionState.value = ProductActionState.Idle
-                } else {
-                    _actionState.value = ProductActionState.Error("Producto no encontrado")
-                }
+                        // Don't set selectedBusiness for edit mode
+                        selectedBusiness = null
+                    ),
+                    uiState = _uiState.value.uiState.copy(
+                        isEdit = true,
+                        hasSpecifications = product.specifications.isNotEmpty()
+                    ),
+                    selectedProduct = product
+                )
+                _actionState.value = ProductActionState.Idle
             } catch (e: Exception) {
-                _actionState.value = ProductActionState.Error("Error al cargar el producto: ${e.message}")
+                Log.e("ProductViewModel", "Error loading product: ${e.message}")
+                _actionState.value =
+                    ProductActionState.Error("Error al cargar el producto: ${e.message}")
             }
         }
     }
 
     fun onTabSelected(index: Int) {
-        _uiState.value = _uiState.value.copy(selectedTab = index)
+        _uiState.value = _uiState.value.copy(
+            uiState = _uiState.value.uiState.copy(selectedTab = index)
+        )
     }
 
     companion object {
         private val defaultBusinessOptions = listOf(
-            Entrepreneurship(id = UUID.fromString("00000000-0000-0000-0000-000000000007"), name = "Emarket"),
+            Entrepreneurship(
+                id = UUID.fromString("00000000-0000-0000-0000-000000000007"),
+                name = "Emarket"
+            ),
         )
-        
+
         private val defaultCategoryOptions = listOf(
             Category(name = "Moda", description = "Viste con estilo."),
         )
     }
 
     private fun validateForm() {
-        val state = _uiState.value
-        val hasAnyVariantImage = state.variants.any { it.variantImages.isNotEmpty() }
-        val isBasicValid = state.name.isNotBlank() &&
-                state.description.isNotBlank() &&
-                state.selectedBusiness != null &&
-                state.selectedCategory != null &&
-                (state.price.toDoubleOrNull() ?: 0.0) > 0 &&
-                state.lowStockAlert.isNotBlank() &&
+        val formData = _uiState.value.formData
+        val isEdit = _uiState.value.uiState.isEdit
+
+        val hasAnyVariantImage = formData.variants.any { it.variantImages.isNotEmpty() }
+
+        // Basic validation that applies to both create and edit modes
+        val isBasicValid = formData.name.isNotBlank() &&
+                formData.description.isNotBlank() &&
+                formData.selectedCategory != null &&
+                (formData.price.toDoubleOrNull() ?: 0.0) > 0 &&
+                formData.lowStockAlert.isNotBlank() &&
                 hasAnyVariantImage
 
-        val isVariantsValid = state.variants.isNotEmpty()
-        val isSpecificationsValid = state.specifications.isNotEmpty()
+        // Additional validation for create mode: must select a business
+        val isBusinessValid = isEdit || formData.selectedBusiness != null
 
-        _uiState.value = state.copy(
-            isFormValid = isBasicValid && isVariantsValid && isSpecificationsValid
+        val isVariantsValid = formData.variants.isNotEmpty()
+        val isSpecificationsValid = formData.specifications.isNotEmpty()
+
+        _uiState.value = _uiState.value.copy(
+            uiState = _uiState.value.uiState.copy(
+                isFormValid = isBasicValid && isBusinessValid && isVariantsValid && isSpecificationsValid
+            )
         )
     }
 
     fun onNameChanged(name: String) {
-        _uiState.value = _uiState.value.copy(name = name)
-        validateForm()
-    }
-
-    fun onDescriptionChanged(description: String) {
-        _uiState.value = _uiState.value.copy(description = description)
-        validateForm()
-    }
-
-    fun onBusinessSelected(business: String) {
-        _uiState.value = _uiState.value.copy(selectedBusiness =
-            defaultBusinessOptions.find { it.name == business }
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(name = name)
         )
         validateForm()
     }
 
-    fun onCategorySelected(category: String) {
-        _uiState.value = _uiState.value.copy(selectedCategory =
-            defaultCategoryOptions.find { it.name == category }
+    fun onDescriptionChanged(description: String) {
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(description = description)
+        )
+        validateForm()
+    }
+
+    fun onCategorySelected(categoryName: String) {
+        val selectedCategory =
+            _uiState.value.formOptions.categoryOptions.find { it.name == categoryName }
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(selectedCategory = selectedCategory)
+        )
+        validateForm()
+    }
+
+    fun onBusinessSelected(businessName: String) {
+        val selectedBusiness =
+            _uiState.value.formOptions.businessOptions.find { it.name == businessName }
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(selectedBusiness = selectedBusiness)
         )
         validateForm()
     }
 
     fun onPriceChanged(price: String) {
-        _uiState.value = _uiState.value.copy(price = price)
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(price = price)
+        )
         validateForm()
     }
 
     fun onLowStockAlertChanged(alert: String) {
-        _uiState.value = _uiState.value.copy(lowStockAlert = alert)
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(lowStockAlert = alert)
+        )
         validateForm()
     }
 
     fun onPublishedChanged(published: Boolean) {
-        _uiState.value = _uiState.value.copy(published = published)
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(published = published)
+        )
         validateForm()
     }
 
     fun saveProduct() {
-        if (!_uiState.value.isFormValid) {
-            _actionState.value = ProductActionState.Error("Por favor completa todos los campos requeridos")
+        if (!_uiState.value.uiState.isFormValid) {
+            _actionState.value =
+                ProductActionState.Error("Por favor completa todos los campos requeridos")
             return
         }
+
         val state = _uiState.value
-        val product = Product(
-            id = state.id,
-            entrepreneurship = state.selectedBusiness!!,
-            category = state.selectedCategory!!,
-            name = state.name,
-            description = state.description,
-            price = state.price.toDoubleOrNull() ?: 0.0,
-            stockAlert = state.lowStockAlert.toIntOrNull() ?: 0,
-            published = state.published,
-            variants = state.variants,
-            specifications = state.specifications
-        )
+        val formData = state.formData
+        val isEdit = state.uiState.isEdit
+
+        // Build the product object for saving
+        val product = if (isEdit) {
+            // If editing, use the original product's entrepreneurship
+            val originalProduct = state.selectedProduct
+            if (originalProduct == null) {
+                _actionState.value = ProductActionState.Error("Producto original no encontrado")
+                return
+            }
+
+            Product(
+                id = formData.id,
+                entrepreneurship = originalProduct.entrepreneurship, // Keep the original entrepreneurship
+                category = formData.selectedCategory!!,
+                name = formData.name,
+                description = formData.description,
+                price = formData.price.toDoubleOrNull() ?: 0.0,
+                stockAlert = formData.lowStockAlert.toIntOrNull() ?: 0,
+                published = formData.published,
+                variants = formData.variants,
+                specifications = formData.specifications
+            )
+        } else {
+            // If creating, use the selected business
+            if (formData.selectedBusiness == null) {
+                _actionState.value =
+                    ProductActionState.Error("Por favor selecciona un emprendimiento")
+                return
+            }
+
+            Product(
+                id = formData.id,
+                entrepreneurship = formData.selectedBusiness,
+                category = formData.selectedCategory!!,
+                name = formData.name,
+                description = formData.description,
+                price = formData.price.toDoubleOrNull() ?: 0.0,
+                stockAlert = formData.lowStockAlert.toIntOrNull() ?: 0,
+                published = formData.published,
+                variants = formData.variants,
+                specifications = formData.specifications
+            )
+        }
+
         viewModelScope.launch {
             try {
-                if (state.isEdit) {
+                if (isEdit) {
                     updateProductUseCase(product)
                 } else {
                     createProductUseCase(product)
@@ -214,10 +299,10 @@ class ProductViewModel @Inject constructor(
     }
 
     fun deleteProduct() {
-        val productId = _uiState.value.id ?: return
-        
+        val productId = _uiState.value.formData.id ?: return
+
         _actionState.value = ProductActionState.Loading
-        
+
         viewModelScope.launch {
             try {
                 deleteProductUseCase(productId)
@@ -230,79 +315,90 @@ class ProductViewModel @Inject constructor(
     }
 
     fun cancelOperation() {
-        // Preservar opciones actuales
-        val currentBusinessOptions = _uiState.value.businessOptions
-        val currentCategoryOptions = _uiState.value.categoryOptions
-        
-        // Reiniciar el estado del formulario
+        // Preserve current options
+        val currentOptions = _uiState.value.formOptions
+
+        // Reset the form state but keep options
         _uiState.value = ProductUiState(
-            businessOptions = currentBusinessOptions,
-            categoryOptions = currentCategoryOptions
+            formOptions = currentOptions,
+            formData = ProductFormData(
+                selectedBusiness = defaultBusinessOptions.firstOrNull()
+            )
         )
         _actionState.value = ProductActionState.Success
     }
 
     // --- Variants Logic ---
     fun addVariant(variant: ProductVariant) {
-        val updated = _uiState.value.variants + variant
-        _uiState.value = _uiState.value.copy(variants = updated)
+        val updated = _uiState.value.formData.variants + variant
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(variants = updated)
+        )
         validateForm()
     }
 
     fun updateVariant(updatedVariant: ProductVariant) {
-        val updated = _uiState.value.variants.map {
+        val updated = _uiState.value.formData.variants.map {
             if (it.id == updatedVariant.id) updatedVariant else it
         }
-        _uiState.value = _uiState.value.copy(variants = updated)
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(variants = updated)
+        )
         validateForm()
     }
 
     fun removeVariant(variantId: UUID?) {
-        val updated = _uiState.value.variants.filterNot { it.id == variantId }
-        _uiState.value = _uiState.value.copy(variants = updated)
+        val updated = _uiState.value.formData.variants.filterNot { it.id == variantId }
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(variants = updated)
+        )
         validateForm()
     }
 
     fun updateVariantImage(variantId: UUID?, images: List<String>) {
-        val updated = _uiState.value.variants.map {
+        val updated = _uiState.value.formData.variants.map {
             if (it.id == variantId) it.copy(variantImages = images) else it
         }
-        _uiState.value = _uiState.value.copy(variants = updated)
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(variants = updated)
+        )
     }
 
     fun updateVariantStock(variantId: UUID?, stock: Int) {
-        val updated = _uiState.value.variants.map {
+        val updated = _uiState.value.formData.variants.map {
             if (it.id == variantId) it.copy(stock = stock) else it
         }
-        _uiState.value = _uiState.value.copy(variants = updated)
+        _uiState.value = _uiState.value.copy(
+            formData = _uiState.value.formData.copy(variants = updated)
+        )
     }
 
     // --- Specifications Logic ---
     fun addSpecification(spec: ProductSpecification) {
-        val updated = _uiState.value.specifications + spec
+        val updated = _uiState.value.formData.specifications + spec
         _uiState.value = _uiState.value.copy(
-            specifications = updated,
-            hasSpecifications = updated.isNotEmpty()
+            formData = _uiState.value.formData.copy(specifications = updated),
+            uiState = _uiState.value.uiState.copy(hasSpecifications = true)
         )
         validateForm()
     }
 
     fun updateSpecification(updatedSpec: ProductSpecification) {
-        val updated = _uiState.value.specifications.map {
+        val updated = _uiState.value.formData.specifications.map {
             if (it.id == updatedSpec.id) updatedSpec else it
         }
         _uiState.value = _uiState.value.copy(
-            specifications = updated,
-            hasSpecifications = updated.isNotEmpty()
+            formData = _uiState.value.formData.copy(specifications = updated),
+            uiState = _uiState.value.uiState.copy(hasSpecifications = updated.isNotEmpty())
         )
         validateForm()
     }
 
     fun removeSpecification(specId: UUID?) {
-        val updated = _uiState.value.specifications.filterNot { it.id == specId }
+        val updated = _uiState.value.formData.specifications.filterNot { it.id == specId }
         _uiState.value = _uiState.value.copy(
-            specifications = updated,
-            hasSpecifications = updated.isNotEmpty()
+            formData = _uiState.value.formData.copy(specifications = updated),
+            uiState = _uiState.value.uiState.copy(hasSpecifications = updated.isNotEmpty())
         )
         validateForm()
     }

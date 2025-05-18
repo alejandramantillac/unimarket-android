@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Icon
-import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
+import com.codeoflegends.unimarket.features.product.data.model.Product
 
 @Composable
 fun ProductItem(
-    product: SimpleProduct,
+    product: Product,
     onEditClick: () -> Unit,
     onViewClick: () -> Unit
 ) {

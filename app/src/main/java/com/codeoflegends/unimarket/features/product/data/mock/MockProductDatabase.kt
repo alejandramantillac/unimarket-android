@@ -1,6 +1,5 @@
 package com.codeoflegends.unimarket.features.product.data.mock
 
-import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
 import com.codeoflegends.unimarket.features.product.data.model.Category
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
@@ -30,14 +29,12 @@ object MockProductDatabase {
             variants = listOf(
                 ProductVariant(
                     id = UUID.fromString("aaaa1111-1111-1111-1111-111111111111"),
-                    productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
                     name = "Roja",
                     stock = 5,
                     variantImages = listOf("https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&q=80")
                 ),
                 ProductVariant(
                     id = UUID.fromString("aaaa2222-2222-2222-2222-222222222222"),
-                    productId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
                     name = "Azul",
                     stock = 3,
                     variantImages = listOf("https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&q=80")
@@ -48,13 +45,11 @@ object MockProductDatabase {
                     id = UUID.fromString("cccc1111-1111-1111-1111-111111111111"),
                     key = "Batería",
                     value = "Hasta 20 horas",
-                    product = UUID.fromString("11111111-1111-1111-1111-111111111111")
                 ),
                 ProductSpecification(
                     id = UUID.fromString("cccc2222-2222-2222-2222-222222222222"),
                     key = "Peso",
                     value = "250g",
-                    product = UUID.fromString("11111111-1111-1111-1111-111111111111")
                 )
             ),
             reviews = listOf(
@@ -86,7 +81,6 @@ object MockProductDatabase {
             variants = listOf(
                 ProductVariant(
                     id = UUID.fromString("bbbb1111-1111-1111-1111-111111111111"),
-                    productId = UUID.fromString("22222222-2222-2222-2222-222222222222"),
                     name = "128GB Negro",
                     stock = 2,
                     variantImages = listOf("https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80")
@@ -97,7 +91,6 @@ object MockProductDatabase {
                     id = UUID.fromString("dddd1111-1111-1111-1111-111111111111"),
                     key = "Pantalla",
                     value = "6.5 pulgadas",
-                    product = UUID.fromString("22222222-2222-2222-2222-222222222222")
                 )
             ),
             reviews = listOf(
@@ -134,8 +127,7 @@ object MockProductDatabase {
 
     fun getProduct(id: UUID): Product? = products[id]
 
-    fun getAllProducts(): List<SimpleProduct> =
-        products.values.toList().map { SimpleProduct.fromProduct(it) }
+    fun getAllProducts(): List<Product> = products.values.toList()
 
     fun addProduct(product: Product) {
         products[product.id ?: generateId()] = product

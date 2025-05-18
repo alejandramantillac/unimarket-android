@@ -35,6 +35,8 @@ import androidx.compose.ui.draw.clip
 @Composable
 fun ProductVariants(viewModel: ProductViewModel) {
     val state by viewModel.uiState.collectAsState()
+    val formData = state.formData
+    
     var showDialog by remember { mutableStateOf(false) }
     var editingVariant by remember { mutableStateOf<ProductVariant?>(null) }
 
@@ -92,7 +94,7 @@ fun ProductVariants(viewModel: ProductViewModel) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (state.variants.isEmpty()) {
+            if (formData.variants.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,7 +108,7 @@ fun ProductVariants(viewModel: ProductViewModel) {
                     )
                 }
             } else {
-                state.variants.forEach { variant ->
+                formData.variants.forEach { variant ->
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
@@ -172,7 +174,6 @@ fun ProductVariants(viewModel: ProductViewModel) {
                     onClick = {
                         val variant = ProductVariant(
                             id = editingVariant?.id ?: UUID.randomUUID(),
-                            productId = state.id,
                             name = name,
                             stock = stock.toIntOrNull() ?: 0,
                             variantImages = imageUris
