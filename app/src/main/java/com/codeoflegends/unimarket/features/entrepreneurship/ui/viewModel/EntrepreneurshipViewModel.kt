@@ -5,6 +5,7 @@ import android.net.Uri
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.CreateEntrepreneushipUseCase
@@ -12,6 +13,7 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.Update
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.DeleteEntrepreneushipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneushipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneuship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SubscriptionPlan
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,8 +41,17 @@ class EntrepreneurshipViewModel @Inject constructor(
         "Decoración",
     )
 
+
     private val currentYear = LocalDate.now().year
     val yearOptions: List<String> = (1950..currentYear).map { it.toString() }.reversed()
+
+    private val defaultStatusOptions = listOf("Activo", "Inactivo")
+
+    private val defaultSubscriptionPlans = listOf(
+        SubscriptionPlan(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Básico", 0.0, "Plan gratuito", "Soporte limitado"),
+        SubscriptionPlan(UUID.fromString("00000000-0000-0000-0000-000000000002"), "Pro", 9.99, "Plan profesional", "Estadísticas y soporte"),
+        SubscriptionPlan(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Premium", 19.99, "Plan completo", "Todo incluido")
+    )
 
 
     private val _uiState = MutableStateFlow(
@@ -48,7 +59,15 @@ class EntrepreneurshipViewModel @Inject constructor(
             categoryOptions = defaultCategoriesOptions,
             yearOptions = yearOptions,
             entrepreneurshipCategory = "0",
-            selectedCategory = defaultCategoriesOptions[0]
+            selectedCategory = defaultCategoriesOptions[0],
+            entrepreneurshipSocialNetworks = listOf(
+                SocialNetwork(id = 1, platform = "Instagram", url = ""),
+                SocialNetwork(id = 2, platform = "TikTok", url = "")
+            ) ,
+            entrepreneurshipStatus = defaultStatusOptions[0],
+            entrepreneurshipSubscription = defaultSubscriptionPlans[0].id.toString(),
+            statusOptions = defaultStatusOptions,
+            subscriptionOptions= defaultSubscriptionPlans
         )
     )
 
@@ -78,17 +97,42 @@ class EntrepreneurshipViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(entrepreneurshipSlogan = slogan)
     }
 
-    fun onSubscriptionChanged(subscription: String) {
-        _uiState.value = _uiState.value.copy(entrepreneurshipSubscription = subscription)
+    fun onSubscriptionChanged(subscriptionId: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipSubscription = subscriptionId)
     }
+
 
     fun onStatusChanged(status: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipStatus = status)
     }
 
-    fun onSocialNetworksChanged(socialNetworks: String) {
-        _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = socialNetworks)
+    fun onSocialNetworkChanged(index: Int, url: String) {
+        val updatedList = _uiState.value.entrepreneurshipSocialNetworks.toMutableList()
+        val updatedItem = updatedList[index].copy(url = url)
+        updatedList[index] = updatedItem
+        _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
     }
+
+    fun onSocialNetworkPlatformChanged(index: Int, platform: String) {
+        val updatedList = _uiState.value.entrepreneurshipSocialNetworks.toMutableList()
+        val updatedItem = updatedList[index].copy(platform = platform)
+        updatedList[index] = updatedItem
+        _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
+    }
+
+    fun addSocialNetwork() {
+        val newId = (_uiState.value.entrepreneurshipSocialNetworks.maxOfOrNull { it.id } ?: 0) + 1
+        val updatedList = _uiState.value.entrepreneurshipSocialNetworks + SocialNetwork(id = newId, platform = "", url = "")
+        _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
+    }
+
+    fun removeSocialNetwork(index: Int) {
+        val updatedList = _uiState.value.entrepreneurshipSocialNetworks.toMutableList().apply {
+            removeAt(index)
+        }
+        _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
+    }
+
 
     fun onUserFounderChanged(userFounder: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipUserFounder = userFounder)
@@ -148,7 +192,7 @@ class EntrepreneurshipViewModel @Inject constructor(
                 subscription = UUID.fromString(state.entrepreneurshipSubscription),
                 status = state.entrepreneurshipStatus,
                 category = state.entrepreneurshipCategory.toIntOrNull() ?: 0,
-                socialNetworks = state.entrepreneurshipSocialNetworks.toIntOrNull() ?: 0,
+                socialNetworks = state.entrepreneurshipSocialNetworks,
                 userFounder = UUID.fromString(state.entrepreneurshipUserFounder),
                 imageUrl = state.entrepreneurshipImageUri?.toString()
             )

@@ -15,7 +15,7 @@ data class Entrepreneurship(
     val subscription: UUID,
     val status: String,
     val category: Int,
-    val socialNetworks: Int,
+    val socialNetworks: List<SocialNetwork>,
     val userFounder: UUID,
     val imageUrl: String? = null
 

@@ -21,7 +21,10 @@ object MockEntrepreneurshipDatabase {
             subscription = UUID.randomUUID(),
             status = "active",
             category = 1,
-            socialNetworks = 1,
+            socialNetworks = listOf(
+                SocialNetwork(2, "Facebook", "https://facebook.com/fresas"),
+                SocialNetwork(1, "Instagram", "https://instagram.com/fresas")
+            ),
             userFounder = UUID.randomUUID()
     ),
         "2" to Entrepreneurship(
@@ -36,7 +39,10 @@ object MockEntrepreneurshipDatabase {
             subscription = UUID.randomUUID(),
             status = "active",
             category = 2,
-            socialNetworks = 2,
+            socialNetworks = listOf(
+                SocialNetwork(2, "Facebook", "https://facebook.com/fresas"),
+                SocialNetwork(1, "Instagram", "https://instagram.com/fresas")
+            ),
             userFounder = UUID.randomUUID()
         ),
 
@@ -52,7 +58,10 @@ object MockEntrepreneurshipDatabase {
             subscription = UUID.randomUUID(),
             status = "active",
             category = 3,
-            socialNetworks = 3,
+            socialNetworks = listOf(
+                SocialNetwork(2, "Facebook", "https://facebook.com/fresas"),
+                SocialNetwork(1, "Instagram", "https://instagram.com/fresas")
+            ),
             userFounder = UUID.randomUUID())
     )
 

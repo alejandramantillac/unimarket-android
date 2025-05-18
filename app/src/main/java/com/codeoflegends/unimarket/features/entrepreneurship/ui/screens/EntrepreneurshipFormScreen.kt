@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,10 +29,10 @@ import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.core.validation.FormField
 import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.DataContacRegisterTab
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipBasicTab
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.DataContactRegisterTab
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
 
 @Composable
 fun EntrepreneurshipFormScreen(
@@ -102,6 +101,22 @@ fun EntrepreneurshipFormScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        Column(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+            Button(
+                onClick = { viewModel.saveEntrepreneurship() },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                enabled = isFormValid
+            ) {
+                Text(  "Crear Emprendimiento" )
+            }
+        }
 
     }
 }

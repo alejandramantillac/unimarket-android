@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens
+package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,17 +7,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.core.ui.components.DropdownMenuBox
-import com.codeoflegends.unimarket.core.ui.components.DropdownSelector
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.DropdownMenuCategorySelector
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.ImagePicker
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.UploadImageSection
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 
@@ -97,16 +92,7 @@ fun EntrepreneurshipBasicTab(state: EntrepreneurshipUiState, viewModel: Entrepre
         SimpleTextField(
             value = state.entrepreneurshipUserFounder,
             onValueChange = { viewModel.onUserFounderChanged(it) },
-            label = "Usuario Fundador (ID)",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SimpleTextField(
-            value = state.entrepreneurshipStatus,
-            onValueChange = { viewModel.onStatusChanged(it) },
-            label = "Estado",
+            label = "Usuario Fundador ",
             modifier = Modifier.fillMaxWidth()
         )
 

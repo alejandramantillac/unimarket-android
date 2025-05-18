@@ -17,6 +17,11 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+
+    data object EntrepreneurshipForm : Routes("/entrepreneurship/form")
+
+
+
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
