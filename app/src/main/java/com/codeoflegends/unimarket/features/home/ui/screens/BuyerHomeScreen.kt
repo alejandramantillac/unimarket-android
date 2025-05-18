@@ -20,6 +20,7 @@ import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 import androidx.compose.foundation.shape.CircleShape
+import com.codeoflegends.unimarket.features.product.data.model.Product
 
 @Composable
 fun BuyerHomeScreen(

@@ -1,5 +1,7 @@
 package com.codeoflegends.unimarket.features.product.data.repositories.impl
 
+import android.util.Log
+import com.codeoflegends.unimarket.features.product.data.datasource.ProductService
 import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
 import com.codeoflegends.unimarket.features.product.data.mock.MockProductDatabase
 import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
@@ -9,7 +11,9 @@ import javax.inject.Singleton
 import java.util.UUID
 
 @Singleton
-class ProductRepositoryImpl @Inject constructor() : IProductRepository {
+class ProductRepositoryDirectus @Inject constructor(
+    private val productService: ProductService
+) : IProductRepository {
 
     override suspend fun createProduct(product: Product): Result<Unit> = try {
         MockProductDatabase.addProduct(product)
@@ -39,11 +43,16 @@ class ProductRepositoryImpl @Inject constructor() : IProductRepository {
     } catch (e: Exception) {
         Result.failure(e)
     }
-    
+
     override suspend fun getAllProducts(): Result<List<SimpleProduct>> = try {
-        val products = MockProductDatabase.getAllProducts()
+        val products = productService.getAllProducts(SimpleProduct.query().build()).data
         Result.success(products)
     } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error fetching products: ${e.message}")
         Result.failure(e)
     }
-} 
+}
+
+private fun SimpleProduct.toProduct() {
+
+}

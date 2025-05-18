@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.product.di
 
 import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
+import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryDirectus
 import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -21,7 +22,7 @@ abstract class ProductModule {
     @Binds
     @Singleton
     abstract fun bindProductRepository(
-        productRepositoryImpl: ProductRepositoryImpl
+        productRepositoryImpl: ProductRepositoryDirectus
     ): IProductRepository
     
     companion object {

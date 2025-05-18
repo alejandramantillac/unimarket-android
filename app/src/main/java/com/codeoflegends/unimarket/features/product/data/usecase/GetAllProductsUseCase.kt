@@ -1,15 +1,13 @@
 package com.codeoflegends.unimarket.features.product.data.usecase
 
+import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
 import com.codeoflegends.unimarket.features.product.data.repositories.IProductRepository
-import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryImpl
-import com.codeoflegends.unimarket.features.product.data.model.Product
 import javax.inject.Inject
 
 class GetAllProductsUseCase @Inject constructor(
     private val repository: IProductRepository
 ) {
-    suspend operator fun invoke(): List<Product> {
-        val repoImpl = repository as ProductRepositoryImpl
-        return repoImpl.getAllProducts().getOrThrow()
+    suspend operator fun invoke(): List<SimpleProduct> {
+        return repository.getAllProducts().getOrThrow()
     }
 } 

@@ -30,7 +30,7 @@ fun ProductInventoryPage(viewModel: ProductViewModel) {
     val product = state.product
     val totalStock = product?.variants?.sumOf { it.stock } ?: 0
     val totalVariants = product?.variants?.size ?: 0
-    val lowStockAlert = product?.lowStockAlert ?: 0
+    val lowStockAlert = product?.stockAlert ?: 0
 
     Column(
         modifier = Modifier

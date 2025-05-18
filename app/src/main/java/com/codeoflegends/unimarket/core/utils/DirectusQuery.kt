@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.core.utils
 
 class DirectusQuery {
+    private val fields = mutableListOf<String>("*")
     private val joins = mutableListOf<Join>()
     private val filters = mutableListOf<Filter>()
     private var limit: Int? = null
@@ -12,6 +13,11 @@ class DirectusQuery {
     private var groupByField: String? = null
     private var language: String? = null
     private var meta: List<String> = emptyList()
+
+    fun fields(vararg fields: String) = apply {
+        this.fields.clear()
+        this.fields.addAll(fields)
+    }
 
     fun join(collection: String, vararg fields: String) = apply {
         joins.add(Join(collection, fields.toList()))
@@ -57,8 +63,16 @@ class DirectusQuery {
     fun build(): Map<String, String> {
         val params = mutableMapOf<String, String>()
 
+        if (fields.isNotEmpty()) {
+            params["fields"] = fields.joinToString(",")
+        }
+
         if (joins.isNotEmpty()) {
-            params["fields"] = joins.joinToString(",") { it.toQueryString() }
+            if(params.containsKey("fields")) {
+                params["fields"] += "," + joins.joinToString(",") { it.toQueryString() }
+            } else {
+                params["fields"] = joins.joinToString(",") { it.toQueryString() }
+            }
         }
 
         if (filters.isNotEmpty()) {

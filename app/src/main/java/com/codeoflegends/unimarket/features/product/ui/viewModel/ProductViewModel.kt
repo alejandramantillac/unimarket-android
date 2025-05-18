@@ -2,6 +2,9 @@ package com.codeoflegends.unimarket.features.product.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
+import com.codeoflegends.unimarket.features.product.data.model.Category
+import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import com.codeoflegends.unimarket.features.product.data.model.Product
@@ -45,8 +48,8 @@ class ProductViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Idle)
     val actionState: StateFlow<ProductActionState> = _actionState.asStateFlow()
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products: StateFlow<List<Product>> = _products.asStateFlow()
+    private val _products = MutableStateFlow<List<SimpleProduct>>(emptyList())
+    val products: StateFlow<List<SimpleProduct>> = _products.asStateFlow()
 
     init {
         loadInitialData()
@@ -84,12 +87,12 @@ class ProductViewModel @Inject constructor(
                 if (product != null) {
                     _uiState.value = _uiState.value.copy(
                         id = product.id,
-                        selectedBusiness = product.business,
+                        selectedBusiness = product.entrepreneurship,
                         selectedCategory = product.category,
                         name = product.name,
                         description = product.description,
                         price = product.price.toString(),
-                        lowStockAlert = product.lowStockAlert.toString(),
+                        lowStockAlert = product.stockAlert.toString(),
                         published = product.published,
                         isEdit = true,
                         variants = product.variants,
@@ -112,19 +115,11 @@ class ProductViewModel @Inject constructor(
 
     companion object {
         private val defaultBusinessOptions = listOf(
-            "Tienda de Ropa", 
-            "Electrónica XYZ", 
-            "Supermercado ABC", 
-            "Librería Online"
+            Entrepreneurship(id = UUID.fromString("00000000-0000-0000-0000-000000000007"), name = "Emarket"),
         )
         
         private val defaultCategoryOptions = listOf(
-            "Electrónica", 
-            "Ropa", 
-            "Alimentos", 
-            "Libros", 
-            "Deportes", 
-            "Hogar"
+            Category(name = "Moda", description = "Viste con estilo."),
         )
     }
 
@@ -135,7 +130,7 @@ class ProductViewModel @Inject constructor(
                 state.description.isNotBlank() &&
                 state.selectedBusiness != null &&
                 state.selectedCategory != null &&
-                state.price.toDoubleOrNull() ?: 0.0 > 0 &&
+                (state.price.toDoubleOrNull() ?: 0.0) > 0 &&
                 state.lowStockAlert.isNotBlank() &&
                 hasAnyVariantImage
 
@@ -158,12 +153,16 @@ class ProductViewModel @Inject constructor(
     }
 
     fun onBusinessSelected(business: String) {
-        _uiState.value = _uiState.value.copy(selectedBusiness = business)
+        _uiState.value = _uiState.value.copy(selectedBusiness =
+            defaultBusinessOptions.find { it.name == business }
+        )
         validateForm()
     }
 
     fun onCategorySelected(category: String) {
-        _uiState.value = _uiState.value.copy(selectedCategory = category)
+        _uiState.value = _uiState.value.copy(selectedCategory =
+            defaultCategoryOptions.find { it.name == category }
+        )
         validateForm()
     }
 
@@ -190,12 +189,12 @@ class ProductViewModel @Inject constructor(
         val state = _uiState.value
         val product = Product(
             id = state.id,
-            business = state.selectedBusiness ?: "",
-            category = state.selectedCategory ?: "",
+            entrepreneurship = state.selectedBusiness!!,
+            category = state.selectedCategory!!,
             name = state.name,
             description = state.description,
             price = state.price.toDoubleOrNull() ?: 0.0,
-            lowStockAlert = state.lowStockAlert.toIntOrNull() ?: 0,
+            stockAlert = state.lowStockAlert.toIntOrNull() ?: 0,
             published = state.published,
             variants = state.variants,
             specifications = state.specifications

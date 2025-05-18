@@ -19,14 +19,19 @@ data class ProductSpecification(
 
 data class Product(
     val id: UUID? = null,
-    val business: String,
-    val category: String,
+    val entrepreneurship: Entrepreneurship,
+    val category: Category,
     val name: String,
     val description: String,
     val price: Double,
-    val lowStockAlert: Int,
+    val stockAlert: Int,
     val published: Boolean,
     val variants: List<ProductVariant> = emptyList(),
     val specifications: List<ProductSpecification> = emptyList(),
     val reviews: List<Review> = emptyList()
-) 
+)
+
+data class Category(
+    val name: String,
+    val description: String,
+)

@@ -19,6 +19,7 @@ import com.codeoflegends.unimarket.core.validation.FormState
 import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductActionState
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.validation.validators.NotNullValidator
 
 @Composable
 fun ProductFormScreen(
@@ -37,8 +38,8 @@ fun ProductFormScreen(
     val formState = remember(state) {
         FormState(
             fields = mapOf(
-                "business" to FormField(state.selectedBusiness ?: "", listOf(NotEmptyValidator("Selecciona un emprendimiento"))),
-                "category" to FormField(state.selectedCategory ?: "", listOf(NotEmptyValidator("Selecciona una categoría"))),
+                "business" to FormField(state.selectedBusiness, listOf(NotNullValidator("Selecciona un emprendimiento"))),
+                "category" to FormField(state.selectedCategory, listOf(NotNullValidator("Selecciona una categoría"))),
                 "name" to FormField(state.name, listOf(NotEmptyValidator("El nombre es obligatorio"))),
                 "description" to FormField(state.description, listOf(NotEmptyValidator("La descripción es obligatoria"))),
                 "price" to FormField(state.price, listOf(NotEmptyValidator("El precio es obligatorio"))),

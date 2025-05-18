@@ -36,16 +36,20 @@ fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {
         ) {
             DropdownMenuBox(
                 label = "Emprendimiento",
-                options = state.businessOptions,
-                selectedOption = state.selectedBusiness,
+                options = state.businessOptions.map {
+                    it.name
+                },
+                selectedOption = state.selectedBusiness?.id.toString(),
                 onOptionSelected = { viewModel.onBusinessSelected(it) },
                 modifier = Modifier.fillMaxWidth()
             )
             
             DropdownMenuBox(
                 label = "Categoría",
-                options = state.categoryOptions,
-                selectedOption = state.selectedCategory,
+                options = state.categoryOptions.map {
+                    it.name
+                },
+                selectedOption = state.selectedCategory?.name,
                 onOptionSelected = { viewModel.onCategorySelected(it) },
                 modifier = Modifier.fillMaxWidth()
             )

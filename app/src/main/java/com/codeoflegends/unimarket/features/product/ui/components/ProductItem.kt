@@ -16,14 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.codeoflegends.unimarket.features.product.data.model.Product
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Icon
+import com.codeoflegends.unimarket.features.product.data.dto.SimpleProduct
 
 @Composable
 fun ProductItem(
-    product: Product,
+    product: SimpleProduct,
     onEditClick: () -> Unit,
     onViewClick: () -> Unit
 ) {
