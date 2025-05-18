@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.product.data.datasource
 
+import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.dto.DirectusDto
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
@@ -33,5 +34,11 @@ interface ProductService {
     suspend fun updateProduct(
         @Path("productId") productId: String,
         @Body product: UpdateProductDto
+    )
+
+    @PATCH("/items/Product/{productId}")
+    suspend fun deleteProduct(
+        @Path("productId") productId: String,
+        @Body product: DeleteDto
     )
 }

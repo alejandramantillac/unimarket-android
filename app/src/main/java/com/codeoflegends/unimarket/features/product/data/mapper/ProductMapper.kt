@@ -78,7 +78,6 @@ object ProductMapper {
 
     fun toUpdateProductDto(product: Product): UpdateProductDto {
         return UpdateProductDto(
-            id = product.id!!,
             category = product.category.name,
             name = product.name,
             description = product.description,

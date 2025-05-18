@@ -7,7 +7,6 @@ import java.util.UUID
  * Used only at the data layer for API communication
  */
 data class UpdateProductDto(
-    val id: UUID,
     val category: String?,
     val name: String?,
     val description: String?,

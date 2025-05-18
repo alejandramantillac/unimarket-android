@@ -25,6 +25,7 @@ data class ProductDetailDto(
                 .join("entrepreneurship")
                 .join("specifications")
                 .join("variants")
+                .join("variants.variant_images")
         }
     }
 } 
