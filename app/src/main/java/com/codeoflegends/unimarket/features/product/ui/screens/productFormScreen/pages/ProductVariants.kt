@@ -31,6 +31,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 
 @Composable
 fun ProductVariants(viewModel: ProductFormViewModel) {
@@ -81,13 +83,20 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                     showDialog = true
                 },
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar Variante", tint = Color.White)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Agregar Variante",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Lista de variantes existentes
         Column(
@@ -170,7 +179,8 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                 resetFields()
             },
             confirmButton = {
-                Button(
+                MainButton(
+                    text = if (editingVariant == null) "Agregar" else "Guardar",
                     onClick = {
                         val variant = ProductVariant(
                             id = editingVariant?.id,
@@ -187,17 +197,16 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                         resetFields()
                     },
                     enabled = name.isNotBlank() && stock.isNotBlank()
-                ) {
-                    Text(if (editingVariant == null) "Agregar" else "Guardar")
-                }
+                )
             },
             dismissButton = {
-                OutlinedButton(onClick = {
-                    showDialog = false
-                    resetFields()
-                }) {
-                    Text("Cancelar")
-                }
+                SecondaryButton(
+                    text = "Cancelar",
+                    onClick = {
+                        showDialog = false
+                        resetFields()
+                    }
+                )
             },
             title = {
                 Text(if (editingVariant == null) "Nueva Variante" else "Editar Variante")
