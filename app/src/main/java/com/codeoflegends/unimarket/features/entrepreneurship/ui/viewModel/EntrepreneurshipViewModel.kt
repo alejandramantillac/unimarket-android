@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 sealed class EntrepreneurshipActionState {
@@ -37,13 +39,75 @@ class EntrepreneurshipViewModel @Inject constructor(
         "Decoración",
     )
 
+    private val currentYear = LocalDate.now().year
+    val yearOptions: List<String> = (1950..currentYear).map { it.toString() }.reversed()
+
+
     private val _uiState = MutableStateFlow(
         EntrepreneurshipUiState(
             categoryOptions = defaultCategoriesOptions,
-            entrepreneurshipCategory = "0", // índice en string
+            yearOptions = yearOptions,
+            entrepreneurshipCategory = "0",
             selectedCategory = defaultCategoriesOptions[0]
         )
     )
+
+    fun onNameChanged(name: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipName = name)
+    }
+
+    fun onImageSelected(uri: Uri?) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipImageUri = uri)
+    }
+
+
+    fun onDescriptionChanged(description: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipDescription = description)
+    }
+
+
+    fun onEmailChanged(email: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipEmail = email)
+    }
+
+    fun onPhoneChanged(phone: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipPhone = phone)
+    }
+
+    fun onSloganChanged(slogan: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipSlogan = slogan)
+    }
+
+    fun onSubscriptionChanged(subscription: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipSubscription = subscription)
+    }
+
+    fun onStatusChanged(status: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipStatus = status)
+    }
+
+    fun onSocialNetworksChanged(socialNetworks: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = socialNetworks)
+    }
+
+    fun onUserFounderChanged(userFounder: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipUserFounder = userFounder)
+    }
+
+    fun onCustomizationChanged(customization: String) {
+        _uiState.value = _uiState.value.copy(entrepreneurshipCustomization = customization)
+    }
+
+    fun onYearSelected(year: String) {
+        _uiState.value = _uiState.value.copy(
+            selectedYear = year
+        )
+    }
+
+
+    fun onTabSelected(tab: Int) {
+        _uiState.value = _uiState.value.copy(selectedTab = tab)
+    }
     val uiState: StateFlow<EntrepreneurshipUiState> = _uiState.asStateFlow()
 
     private val _actionState = MutableStateFlow<EntrepreneurshipActionState>(EntrepreneurshipActionState.Idle)
@@ -71,9 +135,13 @@ class EntrepreneurshipViewModel @Inject constructor(
                 name = state.entrepreneurshipName,
                 slogan = state.entrepreneurshipSlogan,
                 description = state.entrepreneurshipDescription,
-                creationDate = state.entrepreneurshipDate.toInstant()
-                    .atZone(java.time.ZoneId.systemDefault())
-                    .toLocalDateTime(),
+                creationDate = LocalDateTime.of(
+                    state.entrepreneurshipYear.toIntOrNull() ?: 2000,
+                    1,
+                    1,
+                    0,
+                    0
+                ),
                 customization = state.entrepreneurshipCustomization?.let { UUID.fromString(it) },
                 email = state.entrepreneurshipEmail,
                 phone = state.entrepreneurshipPhone,

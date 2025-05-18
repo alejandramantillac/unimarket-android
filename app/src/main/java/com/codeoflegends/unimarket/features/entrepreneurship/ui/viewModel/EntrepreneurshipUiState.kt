@@ -6,11 +6,12 @@ import java.util.Date
 data class EntrepreneurshipUiState(
     val id: String? = null,
     val selectedTab: Int = 0,
-    val selectedCategory: String? = null,
+    val selectedCategory: String = "",
     val entrepreneurshipName: String = "",
     val entrepreneurshipSlogan: String = "",
     val entrepreneurshipDescription: String = "",
-    val entrepreneurshipDate: Date = Date(),
+    val entrepreneurshipYear: String = "",
+    val selectedYear: String = "",
     val entrepreneurshipCustomization: String? = null,
     val entrepreneurshipEmail: String = "",
     val entrepreneurshipPhone: String = "",
@@ -20,7 +21,9 @@ data class EntrepreneurshipUiState(
     val entrepreneurshipSocialNetworks: String = "",
     val entrepreneurshipUserFounder: String = "",
     val categoryOptions: List<String> = emptyList(),
-    val entrepreneurshipImageUri: Uri? = null,
+    val yearOptions: List<String> = emptyList(),
+    val entrepreneurshipImageUri: Uri? = null
 )
+
 
 
