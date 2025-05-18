@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.DropdownMenuBox
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductFormViewModel
 
 @Composable
-fun ProductBasic(viewModel: ProductViewModel = hiltViewModel()) {
+fun ProductBasic(viewModel: ProductFormViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsState()
     val formData = state.formData
     val formOptions = state.formOptions

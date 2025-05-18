@@ -1,9 +1,12 @@
 package com.codeoflegends.unimarket.features.product.data.datasource
 
 import com.codeoflegends.unimarket.core.dto.DirectusDto
-import com.codeoflegends.unimarket.features.product.data.dto.ProductDetailDto
-import com.codeoflegends.unimarket.features.product.data.dto.ProductListDto
+import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
@@ -18,4 +21,9 @@ interface ProductService {
         @Path("productId") productId: String,
         @QueryMap query: Map<String, String>
     ): DirectusDto<ProductDetailDto>
+
+    @POST("/items/Product")
+    suspend fun createProduct(
+        @Body product: NewProductDto
+    )
 }

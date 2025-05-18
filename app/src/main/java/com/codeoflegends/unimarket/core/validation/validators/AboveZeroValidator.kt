@@ -2,8 +2,9 @@ package com.codeoflegends.unimarket.core.validation.validators
 
 import com.codeoflegends.unimarket.core.validation.Validator
 
-class NotEmptyValidator(
+class AboveZeroValidator(
     override val errorMessage: String = "Este campo no puede estar vacío"
-) : Validator<String?> {
-    override fun validate(value: String?) = value?.isNotBlank() == true
+) : Validator<String> {
+    override fun validate(value: String) =
+        value.toDoubleOrNull()?.let { it > 0 } == true
 }

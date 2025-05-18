@@ -9,7 +9,6 @@ import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.ProductFormScreen
 import com.codeoflegends.unimarket.features.product.ui.screens.productViewScreen.ProductViewScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 
 fun NavGraphBuilder.productNavigation(
     manager: NavigationManager

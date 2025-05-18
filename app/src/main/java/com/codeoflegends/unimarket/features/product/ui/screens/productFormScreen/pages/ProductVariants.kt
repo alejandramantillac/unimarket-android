@@ -25,7 +25,7 @@ import androidx.core.net.toUri
 import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductFormViewModel
 import java.util.UUID
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -33,7 +33,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 
 @Composable
-fun ProductVariants(viewModel: ProductViewModel) {
+fun ProductVariants(viewModel: ProductFormViewModel) {
     val state by viewModel.uiState.collectAsState()
     val formData = state.formData
     
@@ -173,7 +173,7 @@ fun ProductVariants(viewModel: ProductViewModel) {
                 Button(
                     onClick = {
                         val variant = ProductVariant(
-                            id = editingVariant?.id ?: UUID.randomUUID(),
+                            id = editingVariant?.id,
                             name = name,
                             stock = stock.toIntOrNull() ?: 0,
                             variantImages = imageUris

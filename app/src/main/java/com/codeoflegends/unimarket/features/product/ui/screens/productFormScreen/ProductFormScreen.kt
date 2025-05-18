@@ -7,60 +7,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductFormViewModel
 import com.codeoflegends.unimarket.core.ui.components.TabSelector
 import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductBasic
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductVariants
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductSpecifications
-import com.codeoflegends.unimarket.core.validation.FormField
-import com.codeoflegends.unimarket.core.validation.FormState
-import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductActionState
+import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
-import com.codeoflegends.unimarket.core.validation.validators.NotNullValidator
+import com.codeoflegends.unimarket.features.product.ui.viewModel.validation.ProductValidation
 
+/**
+ * Screen for creating or editing a product
+ */
 @Composable
 fun ProductFormScreen(
     productId: String? = null,
-    viewModel: ProductViewModel = hiltViewModel(),
+    viewModel: ProductFormViewModel = hiltViewModel(),
     manager: NavigationManager? = null
 ) {
     val state by viewModel.uiState.collectAsState()
     val formData = state.formData
     val isEdit = state.uiState.isEdit
-    val formValid = state.uiState.isFormValid
     val selectedTab = state.uiState.selectedTab
     val actionState by viewModel.actionState.collectAsState()
 
-    // Cargar el producto si estamos en modo edición
+    // Load the product if we're in edit mode
     LaunchedEffect(productId) {
         viewModel.loadProduct(productId)
     }
 
-    // Build validation form state
-    val formState = remember(formData, isEdit) {
-        FormState(
-            fields = buildMap {
-                // Only validate selectedBusiness in create mode
-                if (!isEdit) {
-                    put("business", FormField(formData.selectedBusiness, listOf(NotNullValidator("Selecciona un emprendimiento"))))
-                }
-                
-                put("category", FormField(formData.selectedCategory, listOf(NotNullValidator("Selecciona una categoría"))))
-                put("name", FormField(formData.name, listOf(NotEmptyValidator("El nombre es obligatorio"))))
-                put("description", FormField(formData.description, listOf(NotEmptyValidator("La descripción es obligatoria"))))
-                put("price", FormField(formData.price, listOf(NotEmptyValidator("El precio es obligatorio"))))
-                put("lowStockAlert", FormField(formData.lowStockAlert, listOf(NotEmptyValidator("La alerta de stock es obligatoria"))))
-            }
-        )
+    // Get the form validity from the validation system
+    val canSaveProduct = remember(formData, isEdit) { 
+        ProductValidation.validateForm(formData, isEdit)
     }
-    val isFormFieldsValid = remember(formData) { formState.validateAll() }
-
-    val canSaveProduct = formValid && 
-                        formData.variants.isNotEmpty() && 
-                        formData.specifications.isNotEmpty()
 
     LaunchedEffect(actionState) {
         when (actionState) {
@@ -77,7 +58,7 @@ fun ProductFormScreen(
         }
     }
 
-    // Mostrar indicador de carga durante la carga inicial de datos
+    // Show loading indicator during initial data loading
     if (actionState is ProductActionState.Loading) {
         Box(
             modifier = Modifier.fillMaxSize(),

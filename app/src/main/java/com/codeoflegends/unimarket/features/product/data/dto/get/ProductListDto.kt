@@ -1,13 +1,13 @@
-package com.codeoflegends.unimarket.features.product.data.dto
+package com.codeoflegends.unimarket.features.product.data.dto.get
 
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import java.util.UUID
 
 /**
- * Data Transfer Object for API responses when fetching a single product's details
+ * Data Transfer Object for API responses when fetching product lists
  * Used only at the data layer for API communication
  */
-data class ProductDetailDto(
+data class ProductListDto(
     val id: UUID,
     val category: String,
     val name: String,
@@ -15,16 +15,12 @@ data class ProductDetailDto(
     val price: Double,
     val stockAlert: Int,
     val published: Boolean,
-    val entrepreneurship: EntrepreneurshipDto,
-    val variants: List<VariantDto> = emptyList(),
-    val specifications: List<SpecificationDto> = emptyList(),
+    val entrepreneurship: EntrepreneurshipDto
 ) {
     companion object {
         fun query(): DirectusQuery {
             return DirectusQuery()
                 .join("entrepreneurship")
-                .join("specifications")
-                .join("variants")
         }
     }
-} 
+}

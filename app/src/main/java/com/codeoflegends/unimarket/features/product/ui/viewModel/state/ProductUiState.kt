@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.product.ui.viewModel
+package com.codeoflegends.unimarket.features.product.ui.viewModel.state
 
 import com.codeoflegends.unimarket.features.product.data.model.Category
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
@@ -56,6 +56,6 @@ data class ProductUiState(
     val formOptions: ProductFormOptions = ProductFormOptions(),
     val uiState: ProductFormUiState = ProductFormUiState(),
     
-    // Reference to original product when editing
+    // Reference to original product when editing or viewing
     val selectedProduct: Product? = null
 ) 

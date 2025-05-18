@@ -1,7 +1,9 @@
 package com.codeoflegends.unimarket.features.product.data.mapper
 
-import com.codeoflegends.unimarket.features.product.data.dto.VariantDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.VariantDto
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.dto.create.NewVariantDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.VariantImageDto
 
 object VariantMapper {
     fun mapToDto(variant: ProductVariant) =
@@ -18,5 +20,12 @@ object VariantMapper {
             name = variantDto.name,
             stock = variantDto.stock,
             variantImages = variantDto.variantImages
+        )
+
+    fun toNewVariantDto(variant: ProductVariant) =
+        NewVariantDto(
+            name = variant.name,
+            stock = variant.stock,
+            variantImages = variant.variantImages.map { VariantImageDto(it) }
         )
 }

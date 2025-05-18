@@ -1,8 +1,10 @@
 package com.codeoflegends.unimarket.features.product.data.mapper
 
-import com.codeoflegends.unimarket.features.product.data.dto.EntrepreneurshipDto
-import com.codeoflegends.unimarket.features.product.data.dto.ProductDetailDto
-import com.codeoflegends.unimarket.features.product.data.dto.ProductListDto
+import com.codeoflegends.unimarket.features.product.data.dto.create.EntrepreneurshipCreateDto
+import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.EntrepreneurshipDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.model.Category
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
@@ -31,7 +33,7 @@ object ProductMapper {
     
     fun productToDetailDto(product: Product): ProductDetailDto {
         return ProductDetailDto(
-            id = product.id!!,
+            id = product.id,
             category = product.category.name,
             name = product.name,
             description = product.description,
@@ -84,6 +86,22 @@ object ProductMapper {
             ),
             variants = dto.variants.map { VariantMapper.mapFromDto(it) },
             specifications = dto.specifications.map { SpecificationMapper.mapFromDto(it) },
+        )
+    }
+
+    fun toNewProductDto(product: Product): NewProductDto {
+        return NewProductDto(
+            category = product.category.name,
+            name = product.name,
+            description = product.description,
+            price = product.price,
+            stockAlert = product.stockAlert,
+            published = product.published,
+            entrepreneurship = EntrepreneurshipCreateDto(
+                id = product.entrepreneurship.id.toString(),
+            ),
+            variants = product.variants.map { VariantMapper.toNewVariantDto(it) },
+            specifications = product.specifications.map { SpecificationMapper.toNewSpecificationDto(it) }
         )
     }
     

@@ -13,14 +13,19 @@ import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.features.product.ui.screens.productViewScreen.pages.ProductDetailPage
 import com.codeoflegends.unimarket.features.product.ui.screens.productViewScreen.pages.ProductInventoryPage
 import com.codeoflegends.unimarket.features.product.ui.screens.productViewScreen.pages.ProductSalesPage
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductActionState
+import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.ProductHeader
+import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 
+/**
+ * Screen for viewing product details
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductViewScreen(
@@ -30,6 +35,8 @@ fun ProductViewScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
+    
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     LaunchedEffect(productId) {
         if (productId != null) {
@@ -40,14 +47,43 @@ fun ProductViewScreen(
     LaunchedEffect(actionState) {
         when (actionState) {
             is ProductActionState.Error -> {
-                // Mostrar error
+                ToastHandler.handleError(
+                    message = (actionState as ProductActionState.Error).message
+                )
             }
             is ProductActionState.Success -> {
-                // Navegar de vuelta
+                ToastHandler.showSuccess("Operación exitosa")
                 manager?.navController?.popBackStack()
             }
             else -> {}
         }
+    }
+    
+    // Delete confirmation dialog
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text("Confirmar eliminación") },
+            text = { Text("¿Estás seguro de que deseas eliminar este producto?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        state.selectedProduct?.id?.let { id ->
+                            viewModel.deleteProduct(id)
+                        }
+                        showDeleteConfirmation = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showDeleteConfirmation = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 
     Scaffold(
@@ -75,6 +111,12 @@ fun ProductViewScreen(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Editar"
+                        )
+                    }
+                    IconButton(onClick = { showDeleteConfirmation = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete, 
+                            contentDescription = "Eliminar"
                         )
                     }
                 }
@@ -105,7 +147,7 @@ fun ProductViewScreen(
                             ProductHeader(
                                 product = product,
                                 variantImages = product.variants.flatMap { it.variantImages },
-                                reviewCount = product.reviews.size,
+                                reviewCount = product.reviews?.size ?: 0,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(bottom = 8.dp)

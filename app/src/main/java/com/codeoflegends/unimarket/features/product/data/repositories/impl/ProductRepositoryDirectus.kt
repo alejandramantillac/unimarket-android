@@ -2,8 +2,8 @@ package com.codeoflegends.unimarket.features.product.data.repositories.impl
 
 import android.util.Log
 import com.codeoflegends.unimarket.features.product.data.datasource.ProductService
-import com.codeoflegends.unimarket.features.product.data.dto.ProductDetailDto
-import com.codeoflegends.unimarket.features.product.data.dto.ProductListDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.mapper.ProductMapper
 import com.codeoflegends.unimarket.features.product.data.mock.MockProductDatabase
 import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
@@ -18,9 +18,11 @@ class ProductRepositoryDirectus @Inject constructor(
 ) : ProductRepository {
 
     override suspend fun createProduct(product: Product): Result<Unit> = try {
-        MockProductDatabase.addProduct(product)
+        val productDto = ProductMapper.toNewProductDto(product)
+        productService.createProduct(productDto)
         Result.success(Unit)
     } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error creating product: ${e.message}")
         Result.failure(e)
     }
 

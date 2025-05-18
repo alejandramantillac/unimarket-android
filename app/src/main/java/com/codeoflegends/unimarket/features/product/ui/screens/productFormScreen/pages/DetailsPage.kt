@@ -14,12 +14,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductFormViewModel
 import java.util.UUID
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 
 @Composable
-fun ProductSpecifications(viewModel: ProductViewModel) {
+fun ProductSpecifications(viewModel: ProductFormViewModel) {
     val state by viewModel.uiState.collectAsState()
     val formData = state.formData
     
@@ -129,7 +129,7 @@ fun ProductSpecifications(viewModel: ProductViewModel) {
                 Button(
                     onClick = {
                         val spec = ProductSpecification(
-                            id = editingSpec?.id ?: UUID.randomUUID(),
+                            id = editingSpec?.id,
                             key = key,
                             value = value,
                         )

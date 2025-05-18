@@ -18,7 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductUiState
+import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductUiState
 import androidx.compose.foundation.lazy.LazyColumn
 
 @Composable
