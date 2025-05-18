@@ -6,7 +6,12 @@ data class ProductVariant(
     val id: UUID? = null,
     val name: String,
     val stock: Int,
-    val variantImages: List<String> = emptyList()
+    val variantImages: List<VariantImage> = emptyList()
+)
+
+data class VariantImage(
+    val id: UUID? = null,
+    val imageUrl: String,
 )
 
 data class ProductSpecification(

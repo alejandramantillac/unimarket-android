@@ -6,6 +6,7 @@ import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import com.codeoflegends.unimarket.features.product.data.model.Review
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import java.util.UUID
 import java.time.LocalDateTime
 
@@ -31,13 +32,23 @@ object MockProductDatabase {
                     id = UUID.fromString("aaaa1111-1111-1111-1111-111111111111"),
                     name = "Roja",
                     stock = 5,
-                    variantImages = listOf("https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&q=80")
+                    variantImages = listOf(
+                        VariantImage(
+                            UUID.randomUUID(),
+                            "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&q=80"
+                        )
+                    )
                 ),
                 ProductVariant(
                     id = UUID.fromString("aaaa2222-2222-2222-2222-222222222222"),
                     name = "Azul",
                     stock = 3,
-                    variantImages = listOf("https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&q=80")
+                    variantImages = listOf(
+                        VariantImage(
+                            UUID.randomUUID(),
+                            "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&q=80"
+                        )
+                    )
                 )
             ),
             specifications = listOf(
@@ -83,7 +94,12 @@ object MockProductDatabase {
                     id = UUID.fromString("bbbb1111-1111-1111-1111-111111111111"),
                     name = "128GB Negro",
                     stock = 2,
-                    variantImages = listOf("https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80")
+                    variantImages = listOf(
+                        VariantImage(
+                            UUID.randomUUID(),
+                            "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80"
+                        )
+                    )
                 )
             ),
             specifications = listOf(

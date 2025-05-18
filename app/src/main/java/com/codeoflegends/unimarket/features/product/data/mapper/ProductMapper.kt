@@ -5,6 +5,7 @@ import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDt
 import com.codeoflegends.unimarket.features.product.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
+import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
 import com.codeoflegends.unimarket.features.product.data.model.Category
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
@@ -14,40 +15,6 @@ import java.util.UUID
  * Mapper class responsible for converting between data layer DTOs and domain models
  */
 object ProductMapper {
-    
-    fun productToListDto(product: Product): ProductListDto {
-        return ProductListDto(
-            id = product.id!!,
-            category = product.category.name,
-            name = product.name,
-            description = product.description,
-            price = product.price,
-            stockAlert = product.stockAlert,
-            published = product.published,
-            entrepreneurship = EntrepreneurshipDto(
-                id = product.entrepreneurship.id.toString(),
-                name = product.entrepreneurship.name
-            )
-        )
-    }
-    
-    fun productToDetailDto(product: Product): ProductDetailDto {
-        return ProductDetailDto(
-            id = product.id,
-            category = product.category.name,
-            name = product.name,
-            description = product.description,
-            price = product.price,
-            stockAlert = product.stockAlert,
-            published = product.published,
-            entrepreneurship = EntrepreneurshipDto(
-                id = product.entrepreneurship.id.toString(),
-                name = product.entrepreneurship.name
-            ),
-            variants = product.variants.map { VariantMapper.mapToDto(it) },
-            specifications = product.specifications.map { SpecificationMapper.mapToDto(it) }
-        )
-    }
     
     fun listDtoToProduct(dto: ProductListDto): Product {
         return Product(
@@ -107,5 +74,19 @@ object ProductMapper {
     
     fun listDtoToProductList(dtos: List<ProductListDto>): List<Product> {
         return dtos.map { listDtoToProduct(it) }
+    }
+
+    fun toUpdateProductDto(product: Product): UpdateProductDto {
+        return UpdateProductDto(
+            id = product.id!!,
+            category = product.category.name,
+            name = product.name,
+            description = product.description,
+            price = product.price,
+            stockAlert = product.stockAlert,
+            published = product.published,
+            variants = product.variants.map { VariantMapper.toUpdateVariantDto(it) },
+            specifications = product.specifications.map { SpecificationMapper.toUpdateSpecificationDto(it) }
+        )
     }
 } 

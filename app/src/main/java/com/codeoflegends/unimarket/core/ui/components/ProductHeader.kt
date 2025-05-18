@@ -15,18 +15,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 
 @Composable
 fun ProductHeader(
     product: Product?,
-    variantImages: List<String> = emptyList(),
+    variantImages: List<VariantImage> = emptyList(),
     reviewCount: Int = 0,
     modifier: Modifier = Modifier
 ) {
     if (product == null) return
     val images = remember(product, variantImages) {
         val main = product.variants.flatMap { it.variantImages }.firstOrNull()?.let { listOf(it) } ?: emptyList()
-        (main + variantImages).distinct().filter { it.isNotBlank() }
+        (main + variantImages).distinct().filter { it.imageUrl.isNotEmpty() }
     }
     var selectedImage by remember { mutableStateOf(images.firstOrNull()) }
     val rating = product.reviews.takeIf { it.isNotEmpty() }?.map { it.rating }?.average()?.toFloat() ?: 0f
@@ -46,7 +47,7 @@ fun ProductHeader(
             contentAlignment = Alignment.Center
         ) {
             ProductImage(
-                imageUrl = selectedImage,
+                imageUrl = selectedImage!!.imageUrl,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -72,7 +73,7 @@ fun ProductHeader(
                         contentAlignment = Alignment.Center
                     ) {
                         ProductImage(
-                            imageUrl = img,
+                            imageUrl = img.imageUrl,
                             modifier = Modifier.fillMaxSize()
                         )
                     }

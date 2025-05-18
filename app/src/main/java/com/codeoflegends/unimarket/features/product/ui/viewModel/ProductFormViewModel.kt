@@ -8,6 +8,7 @@ import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
@@ -317,7 +318,7 @@ class ProductFormViewModel @Inject constructor(
         validateForm()
     }
 
-    fun updateVariantImage(variantId: UUID?, images: List<String>) {
+    fun updateVariantImage(variantId: UUID?, images: List<VariantImage>) {
         val updated = _uiState.value.formData.variants.map {
             if (it.id == variantId) it.copy(variantImages = images) else it
         }

@@ -27,7 +27,7 @@ class ProductRepositoryDirectus @Inject constructor(
     }
 
     override suspend fun updateProduct(product: Product): Result<Unit> = try {
-        MockProductDatabase.updateProduct(product)
+        val productDto = ProductMapper.toUpdateProductDto(product)
         Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(e)
