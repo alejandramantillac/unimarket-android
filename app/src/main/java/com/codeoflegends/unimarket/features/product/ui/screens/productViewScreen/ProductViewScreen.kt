@@ -22,6 +22,8 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.ProductHeader
 import com.codeoflegends.unimarket.core.ui.state.ToastHandler
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 
 /**
  * Screen for viewing product details
@@ -66,23 +68,25 @@ fun ProductViewScreen(
             title = { Text("Confirmar eliminación") },
             text = { Text("¿Estás seguro de que deseas eliminar este producto?") },
             confirmButton = {
-                Button(
-                    onClick = {
-                        state.selectedProduct?.id?.let { id ->
-                            viewModel.deleteProduct(id)
-                        }
-                        showDeleteConfirmation = false
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) {
-                    Text("Eliminar")
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    MainButton(
+                        text = "Eliminar",
+                        onClick = {
+                            state.selectedProduct?.id?.let { id ->
+                                viewModel.deleteProduct(id)
+                            }
+                            showDeleteConfirmation = false
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    SecondaryButton(
+                        text = "Cancelar",
+                        onClick = { showDeleteConfirmation = false },
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             },
-            dismissButton = {
-                OutlinedButton(onClick = { showDeleteConfirmation = false }) {
-                    Text("Cancelar")
-                }
-            }
+            dismissButton = {},
         )
     }
 

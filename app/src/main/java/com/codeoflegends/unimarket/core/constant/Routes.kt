@@ -24,6 +24,9 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    // Role Selection Route
+    data object RoleSelection : Routes("/role_selection")
+
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
@@ -32,6 +35,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
             Home.route -> Home
             ManageProduct.route -> ManageProduct
             ProductView.route -> ProductView
+            RoleSelection.route -> RoleSelection
             else -> {
                 // Handle dynamic routes
                 when {

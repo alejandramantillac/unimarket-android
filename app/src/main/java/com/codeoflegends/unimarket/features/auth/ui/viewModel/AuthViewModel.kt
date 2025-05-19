@@ -33,6 +33,10 @@ class AuthViewModel @Inject constructor(
     private val _registerEvent = MutableSharedFlow<AuthResult<Unit>>()
     val registerEvent = _registerEvent.asSharedFlow()
 
+    // Estado temporal para el rol de navegación
+    private val _selectedRole = MutableStateFlow<String?>(null)
+    val selectedRole: StateFlow<String?> = _selectedRole
+
     init {
         viewModelScope.launch {
             // Verificar el estado de autenticación al inicio
@@ -90,5 +94,9 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             authRepository.logout()
         }
+    }
+
+    fun selectRole(role: String) {
+        _selectedRole.value = role
     }
 }
