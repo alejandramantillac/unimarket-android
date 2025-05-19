@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,18 +14,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.codeoflegends.unimarket.core.constant.Routes
-import com.codeoflegends.unimarket.features.auth.ui.viewModel.AuthViewModel
 import com.codeoflegends.unimarket.R
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.foundation.isSystemInDarkTheme
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
+import com.codeoflegends.unimarket.features.auth.ui.components.RequirePermission
 
 @Composable
 fun RoleSelectionScreen(
-    navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    manager: NavigationManager,
 ) {
     val isDark = isSystemInDarkTheme()
     Column(
@@ -74,22 +71,37 @@ fun RoleSelectionScreen(
                 .fillMaxWidth()
                 .height(150.dp)
                 .clickable {
-                    authViewModel.selectRole("cliente")
-                    navController.navigate(Routes.Home.route) { popUpTo(Routes.RoleSelection.route) { inclusive = true } }
+                    manager.authViewModel.selectRole("Shopper")
+                    manager.navController.navigate(Routes.Home.route)
                 }
         )
         Spacer(modifier = Modifier.height(32.dp))
         // Opción Emprendedor
-        Image(
-            painter = painterResource(id = R.drawable.ic_entrepreneur),
-            contentDescription = "Emprendedor",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clickable {
-                    authViewModel.selectRole("emprendedor")
-                    navController.navigate(Routes.ManageProduct.base) { popUpTo(Routes.RoleSelection.route) { inclusive = true } }
-                }
-        )
+        RequirePermission(
+            "Entrepreneur",
+            manager,
+            fallback = { VerifyButton() }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_entrepreneur),
+                contentDescription = "Emprendedor",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clickable {
+                        manager.authViewModel.selectRole("Entrepreneur")
+                        manager.navController.navigate(Routes.ManageProduct.base)
+                    }
+            )
+        }
     }
-} 
+}
+
+@Composable
+fun VerifyButton() {
+    ClickableTextLink("¿Deseas comenzar a emprender?",
+        onClick = {
+            //TODO: Navegar a las pantallas de navegación
+        },
+    )
+}

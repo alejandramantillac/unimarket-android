@@ -1,8 +1,10 @@
 package com.codeoflegends.unimarket.features.auth.di
 
 import com.codeoflegends.unimarket.features.auth.data.repositories.impl.AuthRepositoryImpl
+import com.codeoflegends.unimarket.features.auth.data.repositories.impl.RoleRepositoryImpl
 import com.codeoflegends.unimarket.features.auth.data.repositories.impl.TokenRepositoryImpl
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
+import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.RoleRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.TokenRepository
 import dagger.Binds
 import dagger.Module
@@ -25,4 +27,10 @@ abstract class AuthRepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRoleRepository(
+        roleRepositoryImpl: RoleRepositoryImpl
+    ): RoleRepository
 }

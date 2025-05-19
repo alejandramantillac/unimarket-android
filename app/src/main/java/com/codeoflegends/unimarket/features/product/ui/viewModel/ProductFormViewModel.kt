@@ -11,6 +11,7 @@ import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
+import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductCategoriesUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
@@ -35,12 +36,13 @@ class ProductFormViewModel @Inject constructor(
     private val updateProductUseCase: UpdateProductUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
     private val getProductUseCase: GetProductUseCase,
+    private val getAllProductCategoriesUseCase: GetAllProductCategoriesUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         ProductUiState(
             formOptions = ProductFormOptions(
-                businessOptions = defaultBusinessOptions,
+                businessOptions = emptyList(),
                 categoryOptions = defaultCategoryOptions
             ),
             formData = ProductFormData(
@@ -53,6 +55,35 @@ class ProductFormViewModel @Inject constructor(
 
     private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Idle)
     val actionState: StateFlow<ProductActionState> = _actionState.asStateFlow()
+
+    init {
+        loadInitialData()
+    }
+
+    private fun loadInitialData() {
+        loadProductCategories()
+    }
+
+    /**
+     * Loads all product categories for the form
+     */
+    private fun loadProductCategories() {
+        viewModelScope.launch {
+            try {
+                val categories = getAllProductCategoriesUseCase()
+                _uiState.value = _uiState.value.copy(
+                    formOptions = _uiState.value.formOptions.copy(
+                        categoryOptions = categories
+                    )
+                )
+                _actionState.value = ProductActionState.Idle
+            } catch (e: Exception) {
+                Log.e(TAG, "Error loading product categories: ${e.message}")
+                _actionState.value =
+                    ProductActionState.Error("Error al cargar categorías de productos: ${e.message}")
+            }
+        }
+    }
 
     fun loadProduct(productId: String?) {
         if (productId.isNullOrEmpty()) {

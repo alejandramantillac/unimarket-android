@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class JwtDecoder @Inject constructor() {
     private val gson = Gson()
 
-    suspend fun decodePayload(token: String): JwtPayload {
+    fun decodePayload(token: String): JwtPayload {
         val parts = token.split(".")
         if (parts.size != 3) throw IllegalArgumentException("Invalid JWT format")
 

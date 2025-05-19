@@ -1,7 +1,9 @@
 package com.codeoflegends.unimarket.features.product.di
 
+import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductCategoryRepositoryDirectus
 import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryDirectus
+import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductCategoryRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,7 +25,13 @@ abstract class ProductModule {
     abstract fun bindProductRepository(
         productRepositoryImpl: ProductRepositoryDirectus
     ): ProductRepository
-    
+
+    @Binds
+    @Singleton
+    abstract fun bindProductCategoryRepository(
+        productCategoryRepositoryImpl: ProductCategoryRepositoryDirectus
+    ): ProductCategoryRepository
+
     companion object {
         @Provides
         @Singleton

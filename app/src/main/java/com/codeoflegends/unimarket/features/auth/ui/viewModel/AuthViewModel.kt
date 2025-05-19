@@ -8,6 +8,7 @@ import com.codeoflegends.unimarket.features.auth.data.service.JwtDecoder
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthState
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
+import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.RoleRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.TokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val jwtDecoder: JwtDecoder,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val roleRepository: RoleRepository
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -41,6 +43,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             // Verificar el estado de autenticación al inicio
             val isLoggedIn = authRepository.isUserLoggedIn()
+            roleRepository.getRolName("")
             updateAuthState(isLoggedIn)
 
             // Observar cambios en el estado de autenticación y permisos
@@ -61,7 +64,7 @@ class AuthViewModel @Inject constructor(
 
         _authState.value = AuthState(
             state = if (isAuthenticated) AuthStateType.AUTHENTICATED else AuthStateType.ANONYMOUS,
-            authorities = tokenPayload.userRole,
+            authorities = roleRepository.getRolName(tokenPayload.userRole),
             userId = tokenPayload.userId
         )
     }
