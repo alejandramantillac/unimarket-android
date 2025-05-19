@@ -10,7 +10,6 @@ data class Entrepreneurship(
     val slogan: String,
     val description: String,
     val creationDate: String ,
-    val customization: EntrepreneurshipCustomization,
     val email: String,
     val phone: String,
     val subscription: UUID? = null,
@@ -34,15 +33,4 @@ data class EntrepreneurshipCustomization(
     val color2: String,
 )
 
-data class EntrepreneurshipSubscription(
-    val id: UUID? = null,
-    val subscriptionPlan: UUID? = null,
-    val cutoffDate: LocalDateTime? = null,
-    val lastPayment: LocalDateTime? = null,
-    val entrepreneurship: UUID
-)
-
-data class EntrepreneurshipType(
-    val id: Int,
-    val name: String
 )

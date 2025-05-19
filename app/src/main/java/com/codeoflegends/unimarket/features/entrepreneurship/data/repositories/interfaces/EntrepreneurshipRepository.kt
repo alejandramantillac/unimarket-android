@@ -8,5 +8,5 @@ interface EntrepreneurshipRepository {
     suspend fun updateEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit>
     suspend fun deleteEntrepreneurship(entrepreneurshipId: UUID): Result<Unit>
     suspend fun getEntrepreneurship(entrepreneurshipId: UUID): Result<Entrepreneurship>
-    suspend fun getAllEntrepreneurships(): Result<List<Entrepreneurship>>
+    suspend fun getAllEntrepreneurship(): Result<List<Entrepreneurship>>
 }

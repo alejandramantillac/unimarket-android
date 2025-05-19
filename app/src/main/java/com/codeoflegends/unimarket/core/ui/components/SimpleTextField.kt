@@ -43,6 +43,7 @@ fun SimpleTextField(
             unfocusedPlaceholderColor = Color.Gray,
             focusedPlaceholderColor = Color.Gray,
         ),
+        singleLine = true,
         modifier = modifier.fillMaxWidth(),
         keyboardOptions = keyboardOptions
     )
