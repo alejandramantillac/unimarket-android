@@ -8,7 +8,6 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepre
 
 object EntrepreneurshipMapper {
     fun entrepreneurshipDtoToEntrepreneurship(dto: EntrepreneurshipDto): Entrepreneurship {
-        Log.d("DEBUG", "EntrepreneurshipDto: ${dto.tag}")
         return Entrepreneurship(
             id = dto.id,
             name = dto.name,
@@ -34,11 +33,14 @@ object EntrepreneurshipMapper {
             collaborations = dto.collaborations,
             orders = dto.orders,
             socialNetworks = dto.social_networks,
-            tags = dto.tag.map { tagDto ->
-                Tag(
-                    id = tagDto.id,
-                    name = tagDto.name
-                )
+            tags = dto.tags.mapNotNull { tagDto ->
+                Log.d("EntrepreneurshipMapper", "Processing tag: id=${tagDto.id}, name=${tagDto.name}")
+                tagDto.name?.let { name ->
+                    Tag(
+                        id = tagDto.id,
+                        name = name
+                    )
+                }
             },
         )
     }
