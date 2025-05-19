@@ -23,15 +23,12 @@ fun CommentSection(
     onAddComment: () -> Unit = {}
 ) {
     Column(
-        modifier = modifier.fillMaxWidth().background(Color.Cyan),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Header
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .background(Color.Red),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -57,19 +54,19 @@ fun CommentSection(
                 // TODO: 1. Si el usuario ya ha dejado un comentario, no se mostrara el boton y mostrara el comentario
                 // TODO: 2. Si el usuario es un integrante del emprendimiento, no se mostrara el boton
                 // TODO: 3. Si el usuario no ha comprado nada del emprendimiento, el boton se mostrara inhabilitado
+                /*
                 MainButton(
                     text = "Escribir reseña",
                     onClick = onAddComment
                 )
+                 */
             }
         }
 
         // Lista de comentarios
         if (comments.isEmpty()) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -84,7 +81,6 @@ fun CommentSection(
                 modifier = Modifier
                     .height(300.dp)
                     .fillMaxWidth(),
-                contentPadding = PaddingValues(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(comments) { comment ->

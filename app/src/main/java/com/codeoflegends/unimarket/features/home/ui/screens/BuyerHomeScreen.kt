@@ -78,7 +78,7 @@ fun BuyerHomeScreen(
         )
 
         MainButton(
-            onClick = { manager.navController.navigate(Routes.ManageEntrepreneurship.createRoute("11111111-1111-1111-1111-111111111111")) },
+            onClick = { manager.navController.navigate(Routes.ManageEntrepreneurship.createRoute("00000000-0000-0000-0000-000000000007")) },
             modifier = Modifier.fillMaxWidth(),
             text = "Ver Emprendimiento"
         )

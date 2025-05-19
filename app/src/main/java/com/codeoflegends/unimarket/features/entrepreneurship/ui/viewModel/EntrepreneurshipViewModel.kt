@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+import android.util.Log
 
 sealed class EntrepreneurshipActionState {
     object Idle : EntrepreneurshipActionState()
@@ -42,36 +43,50 @@ class EntrepreneurshipViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(entrepreneurship = null)
             return
         }
-        val uuid = try { UUID.fromString(entrepreneurshipId) } catch (e: Exception) { null }
+
+        val uuid = try {
+            UUID.fromString(entrepreneurshipId)
+        } catch (e: Exception) {
+            null
+        }
+
+        Log.i("Debug", "El id del empredimiento es: $uuid")
+
         if (uuid == null) {
             _actionState.value = EntrepreneurshipActionState.Error("ID del emprendimiento inválido")
             return
         }
+
         _actionState.value = EntrepreneurshipActionState.Loading
+
         viewModelScope.launch {
             try {
                 val entrepreneurship = getEntrepreneurshipUseCase(uuid)
-                if (entrepreneurship != null) {
-                    _uiState.value = _uiState.value.copy(
-                        id = entrepreneurship.id,
-                        name = entrepreneurship.name,
-                        slogan = entrepreneurship.slogan,
-                        description = entrepreneurship.description,
-                        email = entrepreneurship.email,
-                        phone = entrepreneurship.phone,
-                        entrepreneurship = entrepreneurship
-                    )
-                    _actionState.value = EntrepreneurshipActionState.Idle
-                } else {
-                    _actionState.value = EntrepreneurshipActionState.Error("Emprendimiento no encontrado")
-                }
+                Log.i("Debug", "Información del emprendimiento: $entrepreneurship")
+                _uiState.value = _uiState.value.copy(
+                    id = entrepreneurship.id,
+                    name = entrepreneurship.name,
+                    slogan = entrepreneurship.slogan,
+                    description = entrepreneurship.description,
+                    email = entrepreneurship.email,
+                    phone = entrepreneurship.phone,
+                    profileImg =  entrepreneurship.customization.profileImg,
+                    bannerImg = entrepreneurship.customization.bannerImg,
+                    color1 = entrepreneurship.customization.color1,
+                    color2 = entrepreneurship.customization.color2,
+                    tags = entrepreneurship.tags,
+                    entrepreneurship = entrepreneurship
+                )
+                Log.i("Debug", "Información del emprendimiento: $entrepreneurship")
+                _actionState.value = EntrepreneurshipActionState.Idle
             } catch (e: Exception) {
                 _actionState.value = EntrepreneurshipActionState.Error("Error al cargar el emprendimiento: ${e.message}")
+                Log.i("Debug", "Error al cargar el emprendimiento: ${e.message}")
             }
         }
     }
 
-    fun onTabSelected(index: Int) {
-        _uiState.value = _uiState.value.copy(selectedTab = index)
+    fun onNavigationItemSelected(route: String) {
+        _uiState.value = _uiState.value.copy(currentRoute = route)
     }
 } 

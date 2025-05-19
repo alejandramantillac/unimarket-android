@@ -2,13 +2,13 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.
 
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mock.MockEntrepreneurshipDatabase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.EntrepreneurshipRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import java.util.UUID
 
 @Singleton
-class EntrepreneurshipRepositoryImpl @Inject constructor() : IEntrepreneurshipRepository {
+class EntrepreneurshipRepositoryImpl @Inject constructor() : EntrepreneurshipRepository {
 
     override suspend fun createEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit> = try {
         MockEntrepreneurshipDatabase.addEntrepreneurship(entrepreneurship)

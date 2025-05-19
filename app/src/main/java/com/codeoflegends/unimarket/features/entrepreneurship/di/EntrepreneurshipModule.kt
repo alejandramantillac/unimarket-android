@@ -1,7 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.di
 
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.EntrepreneurshipRepositoryImpl
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.EntrepreneurshipRepositoryDirectus
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.EntrepreneurshipRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,33 +21,33 @@ abstract class EntrepreneurshipModule {
     @Binds
     @Singleton
     abstract fun bindEntrepreneurshipRepository(
-        entrepreneurshipRepositoryImpl: EntrepreneurshipRepositoryImpl
-    ): IEntrepreneurshipRepository
+        entrepreneurshipRepositoryImpl: EntrepreneurshipRepositoryDirectus
+    ): EntrepreneurshipRepository
     
     companion object {
         @Provides
         @Singleton
-        fun provideCreateEntrepreneurshipUseCase(repository: IEntrepreneurshipRepository): CreateEntrepreneurshipUseCase =
+        fun provideCreateEntrepreneurshipUseCase(repository: EntrepreneurshipRepository): CreateEntrepreneurshipUseCase =
             CreateEntrepreneurshipUseCase(repository)
 
         @Provides
         @Singleton
-        fun provideUpdateEntrepreneurshipUseCase(repository: IEntrepreneurshipRepository): UpdateEntrepreneurshipUseCase =
+        fun provideUpdateEntrepreneurshipUseCase(repository: EntrepreneurshipRepository): UpdateEntrepreneurshipUseCase =
             UpdateEntrepreneurshipUseCase(repository)
 
         @Provides
         @Singleton
-        fun provideDeleteEntrepreneurshipUseCase(repository: IEntrepreneurshipRepository): DeleteEntrepreneurshipUseCase =
+        fun provideDeleteEntrepreneurshipUseCase(repository: EntrepreneurshipRepository): DeleteEntrepreneurshipUseCase =
             DeleteEntrepreneurshipUseCase(repository)
 
         @Provides
         @Singleton
-        fun provideGetEntrepreneurshipUseCase(repository: IEntrepreneurshipRepository): GetEntrepreneurshipUseCase =
+        fun provideGetEntrepreneurshipUseCase(repository: EntrepreneurshipRepository): GetEntrepreneurshipUseCase =
             GetEntrepreneurshipUseCase(repository)
             
         @Provides
         @Singleton
-        fun provideGetAllEntrepreneurshipsUseCase(repository: IEntrepreneurshipRepository): GetAllEntrepreneurshipsUseCase =
+        fun provideGetAllEntrepreneurshipsUseCase(repository: EntrepreneurshipRepository): GetAllEntrepreneurshipsUseCase =
             GetAllEntrepreneurshipsUseCase(repository)
     }
 } 

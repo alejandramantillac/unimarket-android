@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.codeoflegends.unimarket.core.ui.components.TagType
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
@@ -18,6 +19,10 @@ fun TagSection(
     modifier: Modifier = Modifier,
     onTagClick: ((TagType) -> Unit)? = null
 ) {
+    var showAllTags by remember { mutableStateOf(false) }
+    val visibleTags = if (showAllTags) tags else tags.take(3)
+    val hasMoreTags = tags.size > 3
+
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         mainAxisSpacing = 4.dp,
@@ -25,10 +30,17 @@ fun TagSection(
         mainAxisAlignment = MainAxisAlignment.Start,
         mainAxisSize = SizeMode.Expand
     ) {
-        tags.forEach { tag ->
+        visibleTags.forEach { tag ->
             Tag(
                 tagType = tag,
                 onClick = onTagClick?.let { { it(tag) } }
+            )
+        }
+        
+        if (hasMoreTags && !showAllTags) {
+            Tag(
+                tagType = TagType.MORE,
+                onClick = { showAllTags = true }
             )
         }
     }

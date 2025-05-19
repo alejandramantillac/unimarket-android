@@ -54,6 +54,11 @@ enum class TagType(
         Icons.Default.Home,
         0xFF795548
     ),
+    MORE(
+        "",
+        Icons.Default.MoreHoriz,
+        0xFF9E9E9E
+    ),
     OTHER(
         "Default",
         Icons.Default.Category,
@@ -96,14 +101,15 @@ fun Tag(
                 modifier = Modifier.size(16.dp),
                 tint = contentColor
             )
-            Text(
-
-                text = tagType.displayName.capitalize(),
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (!tagType.displayName.isEmpty()) {
+                Text(
+                    text = tagType.displayName.capitalize(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = contentColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import java.util.UUID
 
-interface IEntrepreneurshipRepository {
+interface EntrepreneurshipRepository {
     suspend fun createEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit>
     suspend fun updateEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit>
     suspend fun deleteEntrepreneurship(entrepreneurshipId: UUID): Result<Unit>

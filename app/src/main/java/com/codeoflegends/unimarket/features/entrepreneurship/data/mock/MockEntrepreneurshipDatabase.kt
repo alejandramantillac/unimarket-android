@@ -18,24 +18,38 @@ object MockEntrepreneurshipDatabase {
             name = "Fashion Store",
             slogan = "Tu estilo, nuestra pasión",
             description = "Tienda de ropa moderna y accesible",
-            creationDate = LocalDateTime.now().minusMonths(6),
+            creationDate = "2025-04-19T12:00:00",
             email = "contact@fashionstore.com",
             phone = "+1234567890",
             status = "ACTIVE",
             category = 1,
-            userFounder = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+            userFounder = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            customization = EntrepreneurshipCustomization(
+                id = UUID.fromString("11111111-0000-1111-1111-111111111112"),
+                profileImg = "https://example.com/profile.jpg",
+                bannerImg = "https://example.com/banner.jpg",
+                color1 = "#FF5733",
+                color2 = "#33FF57"
+            )
         ),
         UUID.fromString("22222222-2222-2222-2222-222222222222") to Entrepreneurship(
             id = UUID.fromString("22222222-2222-2222-2222-222222222222"),
             name = "Tech Solutions",
             slogan = "Innovación al alcance de todos",
             description = "Servicios de desarrollo y consultoría tecnológica",
-            creationDate = LocalDateTime.now().minusMonths(3),
+            creationDate = "2025-04-19T12:00:00",
             email = "info@techsolutions.com",
             phone = "+1987654321",
             status = "ACTIVE",
             category = 3,
-            userFounder = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+            userFounder = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+            customization = EntrepreneurshipCustomization(
+                id = UUID.fromString("11111111-0000-0000-1111-111111111112"),
+                profileImg = "https://example.com/profile.jpg",
+                bannerImg = "https://example.com/banner.jpg",
+                color1 = "#FF5733",
+                color2 = "#33FF57"
+            )
         )
     )
 
@@ -45,16 +59,14 @@ object MockEntrepreneurshipDatabase {
             profileImg = "https://example.com/fashion-store-profile.jpg",
             bannerImg = "https://example.com/fashion-store-banner.jpg",
             color1 = "#FF5733",
-            color2 = "#33FF57",
-            entrepreneurship = UUID.fromString("11111111-1111-1111-1111-111111111111")
+            color2 = "#33FF57"
         ),
         UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd") to EntrepreneurshipCustomization(
             id = UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd"),
             profileImg = "https://example.com/tech-solutions-profile.jpg",
             bannerImg = "https://example.com/tech-solutions-banner.jpg",
             color1 = "#3357FF",
-            color2 = "#FF33F6",
-            entrepreneurship = UUID.fromString("22222222-2222-2222-2222-222222222222")
+            color2 = "#FF33F6"
         )
     )
 
@@ -75,25 +87,6 @@ object MockEntrepreneurshipDatabase {
         )
     )
 
-    private val tags = mutableListOf(
-        EntrepreneurshipTags(
-            entrepreneurshipId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
-            tagsId = UUID.fromString("11111111-1111-1111-1111-111111111113")
-        ),
-        EntrepreneurshipTags(
-            entrepreneurshipId = UUID.fromString("11111111-1111-1111-1111-111111111111"),
-            tagsId = UUID.fromString("11111111-1111-1111-1111-111111111114")
-        ),
-        EntrepreneurshipTags(
-            entrepreneurshipId = UUID.fromString("22222222-2222-2222-2222-222222222222"),
-            tagsId = UUID.fromString("22222222-2222-2222-2222-222222222224")
-        ),
-        EntrepreneurshipTags(
-            entrepreneurshipId = UUID.fromString("22222222-2222-2222-2222-222222222222"),
-            tagsId = UUID.fromString("22222222-2222-2222-2222-222222222225")
-        )
-    )
-
     fun getEntrepreneurship(id: UUID): Entrepreneurship? = entrepreneurships[id]
 
     fun getAllEntrepreneurships(): List<Entrepreneurship> = entrepreneurships.values.toList()
@@ -111,9 +104,6 @@ object MockEntrepreneurshipDatabase {
     }
 
     fun getCustomization(id: UUID): EntrepreneurshipCustomization? = customizations[id]
-    
-    fun getCustomizationByEntrepreneurship(entrepreneurshipId: UUID): EntrepreneurshipCustomization? =
-        customizations.values.find { it.entrepreneurship == entrepreneurshipId }
     
     fun addCustomization(customization: EntrepreneurshipCustomization) {
         customizations[customization.id ?: generateId()] = customization
@@ -139,17 +129,6 @@ object MockEntrepreneurshipDatabase {
     fun getEntrepreneurshipType(id: Int): EntrepreneurshipType? = entrepreneurshipTypes[id]
     
     fun getAllEntrepreneurshipTypes(): List<EntrepreneurshipType> = entrepreneurshipTypes.values.toList()
-
-    fun getTagsByEntrepreneurship(entrepreneurshipId: UUID): List<EntrepreneurshipTags> =
-        tags.filter { it.entrepreneurshipId == entrepreneurshipId }
-    
-    fun addTag(tag: EntrepreneurshipTags) {
-        tags.add(tag)
-    }
-    
-    fun removeTag(entrepreneurshipId: UUID, tagId: UUID) {
-        tags.removeIf { it.entrepreneurshipId == entrepreneurshipId && it.tagsId == tagId }
-    }
 
     private fun generateId(): UUID = UUID.randomUUID()
 } 
