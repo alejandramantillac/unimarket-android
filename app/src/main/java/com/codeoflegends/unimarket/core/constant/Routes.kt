@@ -27,6 +27,20 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
     // Role Selection Route
     data object RoleSelection : Routes("/role_selection")
 
+    data object ManageEntrepreneurship : Routes("/manage/entrepreneurship/{id}") {
+        val base get() = "/manage/entrepreneurship/"
+        fun createRoute(id: String): String {
+            return "/manage/entrepreneurship/$id"
+        }
+    }
+
+    data object EntrepreneurshipView : Routes("/entrepreneurship/{id}") {
+        val base get() = "/entrepreneurship/"
+        fun createRoute(id: String): String {
+            return "/entrepreneurship/$id"
+        }
+    }
+
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
@@ -36,6 +50,8 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
             ManageProduct.route -> ManageProduct
             ProductView.route -> ProductView
             RoleSelection.route -> RoleSelection
+            ManageEntrepreneurship.route -> ManageEntrepreneurship
+            EntrepreneurshipView.route -> EntrepreneurshipView
             else -> {
                 // Handle dynamic routes
                 when {
