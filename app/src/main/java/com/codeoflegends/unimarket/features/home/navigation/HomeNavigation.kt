@@ -11,10 +11,6 @@ import com.codeoflegends.unimarket.features.product.navigation.productNavigation
 fun NavGraphBuilder.homeNavigation(
     manager: NavigationManager
 ) {
-    composable(Routes.Home.route) {
-        BuyerHomeScreen(manager)
-    }
-
     secureComposable (
         route = Routes.Home.route,
         manager = manager
