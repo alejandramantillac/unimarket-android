@@ -3,7 +3,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipMapper
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.EntrepreneurshipRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipService
 import java.util.UUID
 import javax.inject.Inject
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class EntrepreneurshipRepositoryDirectus @Inject constructor(
     private val entrepreneurshipService: EntrepreneurshipService
-): EntrepreneurshipRepository {
+): IEntrepreneurshipRepository {
     override suspend fun createEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit> {
         TODO("Not yet implemented")
     }

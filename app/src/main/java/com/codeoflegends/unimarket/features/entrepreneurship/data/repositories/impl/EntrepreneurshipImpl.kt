@@ -3,6 +3,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mock.MockEntrepreneurshipDatabase
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,14 +24,14 @@ class EntrepreneurshipImpl @Inject constructor() :IEntrepreneurshipRepository {
         Result.failure(e)
     }
 
-    override suspend fun deleteEntrepreneurship(entrepreneurshipId: String): Result<Unit> = try {
+    override suspend fun deleteEntrepreneurship(entrepreneurshipId: UUID): Result<Unit> = try {
         MockEntrepreneurshipDatabase.deleteEntrepreneurship(entrepreneurshipId)
         Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(e)
     }
 
-    override suspend fun getEntrepreneurship(entrepreneurshipId: String): Result<Entrepreneurship> = try {
+    override suspend fun getEntrepreneurship(entrepreneurshipId: UUID): Result<Entrepreneurship> = try {
         val entrepreneurship = MockEntrepreneurshipDatabase.getEntrepreneurship(entrepreneurshipId)
         if (entrepreneurship != null) Result.success(entrepreneurship)
         else Result.failure(Exception("Emprendimiento no encontrado"))
@@ -38,8 +39,8 @@ class EntrepreneurshipImpl @Inject constructor() :IEntrepreneurshipRepository {
         Result.failure(e)
     }
 
-    override suspend fun getAllEntrepreneurship(): Result<List<Entrepreneurship>> {
-        val entrepreneurshipList = MockEntrepreneurshipDatabase.getAllEntrepreneurship()
+    override suspend fun getAllEntrepreneurships(): Result<List<Entrepreneurship>> {
+        val entrepreneurshipList = MockEntrepreneurshipDatabase.getAllEntrepreneurships()
         return if (entrepreneurshipList.isNotEmpty()) {
             Result.success(entrepreneurshipList)
         } else {

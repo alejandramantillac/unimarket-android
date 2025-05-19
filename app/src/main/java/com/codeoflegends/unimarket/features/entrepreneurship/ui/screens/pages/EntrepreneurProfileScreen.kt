@@ -25,6 +25,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.ui.tooling.preview.Preview
+import com.codeoflegends.unimarket.core.constant.Routes
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
 import com.codeoflegends.unimarket.core.ui.theme.UnimarketTheme
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.RatingBar
 
@@ -47,7 +50,7 @@ data class EntrepreneurshipUiModel(
 )
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(manager: NavigationManager) {
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
@@ -120,18 +123,21 @@ fun ProfileScreen() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Mis emprendimientos", style = MaterialTheme.typography.titleMedium)
-            Text("+ Nuevo", color = Color(0xFF6A1B9A))
+            Text("", color = Color(0xFF6A1B9A))
+            ClickableTextLink("+ Nuevo", {
+                manager.navController.navigate(Routes.EntrepreneurshipForm.route)
+            })
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        EntrepreneurshipItem("UniBites", "Sabores que impulsan tu día", 5, 289, 4.5f, 50)
-        EntrepreneurshipItem("StyleU", "Tu estilo, tu esencia", 3, 150, 4.5f, 50)
+        EntrepreneurshipItem(manager, "UniBites", "Sabores que impulsan tu día", 5, 289, 4.5f, 50)
+        EntrepreneurshipItem(manager, "StyleU", "Tu estilo, tu esencia", 3, 150, 4.5f, 50)
     }
 }
 
 @Composable
-fun EntrepreneurshipItem(name: String, description: String, products: Int, sales: Int, rating: Float, reviews: Int) {
+fun EntrepreneurshipItem(manager: NavigationManager, name: String, description: String, products: Int, sales: Int, rating: Float, reviews: Int) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -153,15 +159,13 @@ fun EntrepreneurshipItem(name: String, description: String, products: Int, sales
                 Text("⭐ $rating ($reviews reseñas)", style = MaterialTheme.typography.bodySmall)
                 Text("Productos: $products  Ventas: $sales", style = MaterialTheme.typography.bodySmall)
             }
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+            IconButton({
+                manager.navController.navigate(
+                    Routes.ManageEntrepreneurship.createRoute("00000000-0000-0000-0000-000000000007")
+                )
+            }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+            }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ProfileScreenPreview() {
-    UnimarketTheme {
-        ProfileScreen()
     }
 }

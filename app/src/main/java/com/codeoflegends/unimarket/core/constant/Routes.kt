@@ -41,10 +41,9 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
-
     data object EntrepreneurshipForm : Routes("/entrepreneurship/form")
 
-
+    data object EntrepreneurProfile : Routes("/entrepreneur")
 
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
@@ -57,6 +56,8 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
             RoleSelection.route -> RoleSelection
             ManageEntrepreneurship.route -> ManageEntrepreneurship
             EntrepreneurshipView.route -> EntrepreneurshipView
+            EntrepreneurshipForm.route -> EntrepreneurshipForm
+            EntrepreneurProfile.route -> EntrepreneurProfile
             else -> {
                 // Handle dynamic routes
                 when {

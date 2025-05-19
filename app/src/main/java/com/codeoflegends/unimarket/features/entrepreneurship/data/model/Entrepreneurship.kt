@@ -9,7 +9,8 @@ data class Entrepreneurship(
     val name: String,
     val slogan: String,
     val description: String,
-    val creationDate: String ,
+    val creationDate: LocalDateTime,
+    val customization: EntrepreneurshipCustomization,
     val email: String,
     val phone: String,
     val subscription: UUID? = null,
@@ -21,7 +22,7 @@ data class Entrepreneurship(
     val products: List<UUID> = emptyList(),
     val collaborations: List<UUID> = emptyList(),
     val orders: List<UUID> = emptyList(),
-    val socialNetworks: List<String> = emptyList(),
+    val socialNetworks: List<SocialNetwork> = emptyList(),
     val tags: List<Tag> = emptyList()
 )
 
@@ -31,6 +32,4 @@ data class EntrepreneurshipCustomization(
     val bannerImg: String,
     val color1: String,
     val color2: String,
-)
-
 )

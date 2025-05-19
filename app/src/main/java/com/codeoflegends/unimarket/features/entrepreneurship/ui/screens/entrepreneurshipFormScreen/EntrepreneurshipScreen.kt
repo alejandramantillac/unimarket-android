@@ -23,7 +23,7 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.Entrep
 fun EntrepreneurshipScreen(
     entrepreneurshipId: String? = null,
     viewModel: EntrepreneurshipViewModel = hiltViewModel(),
-    manager: NavigationManager? = null
+    manager: NavigationManager
 ) {
     val state by viewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
@@ -75,7 +75,7 @@ fun EntrepreneurshipScreen(
                 ) {
                     when (state.currentRoute) {
                         "home" -> EntrepreneurshipDetailPage(viewModel, state)
-                        "products" -> EntrepreneurshipProductsPage(viewModel)
+                        "products" -> EntrepreneurshipProductsPage(viewModel, manager)
                         "people" -> EntrepreneurshipMembersPage(viewModel)
                         "orders" -> EntrepreneurshipOrdersPage(viewModel)
                         "metrics" -> EntrepreneurshipStatisticsPage(viewModel)

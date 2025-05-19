@@ -5,6 +5,9 @@ import com.codeoflegends.unimarket.core.data.model.Tag
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 object EntrepreneurshipMapper {
     fun entrepreneurshipDtoToEntrepreneurship(dto: EntrepreneurshipDto): Entrepreneurship {
@@ -13,14 +16,7 @@ object EntrepreneurshipMapper {
             name = dto.name,
             slogan = dto.slogan,
             description = dto.description,
-            creationDate = dto.creation_date,
-            customization = EntrepreneurshipCustomization(
-                id = dto.customization.id,
-                profileImg = dto.customization.profile_img,
-                bannerImg = dto.customization.banner_img,
-                color1 = dto.customization.color1,
-                color2 = dto.customization.color2
-            ),
+            creationDate = LocalDateTime.parse(dto.creation_date, DateTimeFormatter.ISO_DATE_TIME),
             email = dto.email,
             phone = dto.phone,
             subscription = dto.subscription,
@@ -32,16 +28,21 @@ object EntrepreneurshipMapper {
             products = dto.products,
             collaborations = dto.collaborations,
             orders = dto.orders,
-            socialNetworks = dto.social_networks,
-            tags = dto.tags.mapNotNull { tagDto ->
+            socialNetworks = dto.social_networks.map { SocialNetwork(1,it,"") },
+            tags = dto.tags.map { tagDto ->
                 Log.d("EntrepreneurshipMapper", "Processing tag: id=${tagDto.id}, name=${tagDto.name}")
-                tagDto.name?.let { name ->
-                    Tag(
-                        id = tagDto.id,
-                        name = name
-                    )
-                }
+                Tag(
+                    id = tagDto.id,
+                    name = tagDto.name
+                )
             },
+            customization = EntrepreneurshipCustomization(
+                id = dto.customization.id,
+                profileImg = dto.customization.profile_img,
+                bannerImg = dto.customization.banner_img,
+                color1 = dto.customization.color1,
+                color2 = dto.customization.color2
+            )
         )
     }
 }

@@ -3,7 +3,6 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 import android.net.Uri
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SubscriptionPlan
-import java.util.Date
 import com.codeoflegends.unimarket.core.data.model.Tag
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import java.util.UUID
@@ -21,8 +20,7 @@ data class EntrepreneurshipUiState(
     val color2: String = "",
     val tags: List<Tag> = emptyList(),
     val entrepreneurship: Entrepreneurship? = null,
-    val currentRoute: String = "home"
-    val id: String? = null,
+    val currentRoute: String = "home",
     val selectedTab: Int = 0,
     val selectedCategory: String = "",
     val entrepreneurshipName: String = "",

@@ -90,9 +90,7 @@ fun RoleSelectionScreen(
                     .height(150.dp)
                     .clickable {
                         manager.authViewModel.selectRole("Entrepreneur")
-                        manager.navController.navigate(
-                            Routes.ManageEntrepreneurship.createRoute("00000000-0000-0000-0000-000000000007")
-                        )
+                        manager.navController.navigate(Routes.EntrepreneurProfile.route)
                     }
             )
         }

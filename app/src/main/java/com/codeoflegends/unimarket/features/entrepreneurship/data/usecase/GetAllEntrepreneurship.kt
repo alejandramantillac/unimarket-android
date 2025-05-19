@@ -4,10 +4,10 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.i
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import javax.inject.Inject
 
-class DeleteEntrepreneushipUseCase @Inject constructor(
+class GetAllEntrepreneurship @Inject constructor(
     private val repository: IEntrepreneurshipRepository
 ) {
-    suspend operator fun invoke(id: String) {
-        repository.deleteEntrepreneurship(id).getOrThrow()
+    suspend operator fun invoke(): List<Entrepreneurship> {
+        return repository.getAllEntrepreneurships().getOrThrow()
     }
 }

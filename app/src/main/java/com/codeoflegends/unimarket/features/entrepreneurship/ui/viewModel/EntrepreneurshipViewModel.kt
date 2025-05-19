@@ -2,23 +2,20 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 
 
 import android.net.Uri
+import android.util.Log
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.CreateEntrepreneurshipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.DeleteEntrepreneurshipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurshipsUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.CreateEntrepreneushipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneushipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.DeleteEntrepreneushipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneushipUseCase
-import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneuship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.CreateEntrepreneurshipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SubscriptionPlan
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.DeleteEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneurshipUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,8 +23,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import javax.inject.Inject
-import android.util.Log
 
 sealed class EntrepreneurshipActionState {
     object Idle : EntrepreneurshipActionState()
@@ -39,13 +34,12 @@ sealed class EntrepreneurshipActionState {
 @HiltViewModel
 class EntrepreneurshipViewModel @Inject constructor(
     private val createEntrepreneurshipUseCase: CreateEntrepreneurshipUseCase,
-    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase,
-    private val deleteEntrepreneurshipUseCase: DeleteEntrepreneurshipUseCase,
+    private val getAllEntrepreneurshipUseCase: GetAllEntrepreneurship,
     private val getEntrepreneurshipUseCase: GetEntrepreneurshipUseCase,
-    private val getAllEntrepreneurshipViewModel: GetAllEntrepreneurshipsUseCase
+    private val deleteEntrepreneurshipUseCase: DeleteEntrepreneurshipUseCase,
+    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(EntrepreneurshipUiState())
     private val defaultCategoriesOptions = listOf(
         "Comida",
         "Electrónica",
@@ -182,6 +176,60 @@ class EntrepreneurshipViewModel @Inject constructor(
 
         if (state.entrepreneurshipName.isBlank() || state.entrepreneurshipCategory.isBlank()) {
             _actionState.value = EntrepreneurshipActionState.Error("Completa todos los campos obligatorios.")
+            return
+        }
+
+        try {
+            val entrepreneurship = Entrepreneurship(
+                id = state.id,
+                name = state.entrepreneurshipName,
+                slogan = state.entrepreneurshipSlogan,
+                description = state.entrepreneurshipDescription,
+                creationDate = LocalDateTime.of(
+                    state.entrepreneurshipYear.toIntOrNull() ?: 2000,
+                    1,
+                    1,
+                    0,
+                    0
+                ),
+                email = state.entrepreneurshipEmail,
+                phone = state.entrepreneurshipPhone,
+                subscription = UUID.fromString(state.entrepreneurshipSubscription),
+                status = state.entrepreneurshipStatus,
+                category = state.entrepreneurshipCategory.toIntOrNull() ?: 0,
+                socialNetworks = state.entrepreneurshipSocialNetworks,
+                userFounder = UUID.fromString(state.entrepreneurshipUserFounder),
+                customization = EntrepreneurshipCustomization(
+                    profileImg = state.profileImg,
+                    bannerImg = state.bannerImg,
+                    color1 = state.color1,
+                    color2 = state.color2
+                ),
+            )
+
+            viewModelScope.launch {
+                _actionState.value = EntrepreneurshipActionState.Loading
+                try {
+                    createEntrepreneurshipUseCase(entrepreneurship)
+                    _actionState.value = EntrepreneurshipActionState.Success
+                } catch (e: Exception) {
+                    _actionState.value = EntrepreneurshipActionState.Error("Error: ${e.message}")
+                }
+            }
+
+        } catch (e: Exception) {
+            _actionState.value = EntrepreneurshipActionState.Error("Error en los datos: ${e.message}")
+        }
+    }
+
+    fun clearForm() {
+        _uiState.value = EntrepreneurshipUiState(
+            categoryOptions = defaultCategoriesOptions,
+            entrepreneurshipCategory = "0",
+            selectedCategory = defaultCategoriesOptions[0]
+        )
+    }
+
     fun loadEntrepreneurship(entrepreneurshipId: String?) {
         if (entrepreneurshipId.isNullOrEmpty()) {
             _uiState.value = _uiState.value.copy(entrepreneurship = null)
@@ -226,51 +274,11 @@ class EntrepreneurshipViewModel @Inject constructor(
             } catch (e: Exception) {
                 _actionState.value = EntrepreneurshipActionState.Error("Error al cargar el emprendimiento: ${e.message}")
                 Log.i("Debug", "Error al cargar el emprendimiento: ${e.message}")
-        try {
-            val entrepreneurship = Entrepreneurship(
-                id = state.id?.let { UUID.fromString(it) } ?: UUID.randomUUID(),
-                name = state.entrepreneurshipName,
-                slogan = state.entrepreneurshipSlogan,
-                description = state.entrepreneurshipDescription,
-                creationDate = LocalDateTime.of(
-                    state.entrepreneurshipYear.toIntOrNull() ?: 2000,
-                    1,
-                    1,
-                    0,
-                    0
-                ),
-                customization = state.entrepreneurshipCustomization?.let { UUID.fromString(it) },
-                email = state.entrepreneurshipEmail,
-                phone = state.entrepreneurshipPhone,
-                subscription = UUID.fromString(state.entrepreneurshipSubscription),
-                status = state.entrepreneurshipStatus,
-                category = state.entrepreneurshipCategory.toIntOrNull() ?: 0,
-                socialNetworks = state.entrepreneurshipSocialNetworks,
-                userFounder = UUID.fromString(state.entrepreneurshipUserFounder),
-                imageUrl = state.entrepreneurshipImageUri?.toString()
-            )
-
-            viewModelScope.launch {
-                _actionState.value = EntrepreneurshipActionState.Loading
-                try {
-                    createEntrepreneushipUseCase(entrepreneurship)
-                    _actionState.value = EntrepreneurshipActionState.Success
-                } catch (e: Exception) {
-                    _actionState.value = EntrepreneurshipActionState.Error("Error: ${e.message}")
-                }
             }
-
-        } catch (e: Exception) {
-            _actionState.value = EntrepreneurshipActionState.Error("Error en los datos: ${e.message}")
         }
     }
 
-    fun clearForm() {
-        _uiState.value = EntrepreneurshipUiState(
-            categoryOptions = defaultCategoriesOptions,
-            entrepreneurshipCategory = "0",
-            selectedCategory = defaultCategoriesOptions[0]
-        )
+
     fun onNavigationItemSelected(route: String) {
         _uiState.value = _uiState.value.copy(currentRoute = route)
     }
