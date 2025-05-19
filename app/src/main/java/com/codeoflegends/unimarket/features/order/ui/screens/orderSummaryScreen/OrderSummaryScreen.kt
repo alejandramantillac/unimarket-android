@@ -18,9 +18,11 @@ import com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.
 import com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages.PaymentDetails
 import androidx.compose.ui.tooling.preview.Preview
 import com.codeoflegends.unimarket.features.order.ui.components.OrderProductItem
+import java.util.UUID
 
 @Composable
-fun OrderSummaryScreen(onTabSelected: (Int) -> Unit) {
+fun OrderSummaryScreen(onTabSelected: (Int) -> Unit, orderId: UUID?) {
+    
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     // Obtén la orden mock
@@ -122,5 +124,8 @@ fun OrderSummaryScreen(onTabSelected: (Int) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun OrderSummaryScreenPreview() {
-    OrderSummaryScreen(onTabSelected = {})
+    OrderSummaryScreen(
+        onTabSelected = {},
+        orderId = UUID.randomUUID()
+    )
 }
