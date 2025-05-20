@@ -13,23 +13,22 @@ data class EntrepreneurshipDto(
     val customization: EntrepreneurshipCustomizationDto,
     val email: String,
     val phone: String,
-    val subscription: UUID,
+    //val subscription: UUID,
     val status: String,
     val category: Int,
     val user_founder: UUID,
     val deleted_at: String?,
-    val partners: List<UUID>,
-    val products: List<UUID>,
-    val collaborations: List<UUID>,
-    val orders: List<UUID>,
-    val social_networks: List<String>,
-    val tags: List<TagDto>,
+    //val partners: List<UUID>,
+    //val products: List<UUID>,
+    //val collaborations: List<UUID>,
+    //val orders: List<UUID>,
+    val social_networks: List<Map<String, String>>,
+    val tags: List<Int>,
 ) {
     companion object {
         fun query(): DirectusQuery {
             return DirectusQuery()
                 .join("customization")
-                .join("tags")
         }
     }
 }

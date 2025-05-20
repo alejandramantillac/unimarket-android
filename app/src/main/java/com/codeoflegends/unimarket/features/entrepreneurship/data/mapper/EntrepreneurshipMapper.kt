@@ -8,6 +8,7 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepre
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 object EntrepreneurshipMapper {
     fun entrepreneurshipDtoToEntrepreneurship(dto: EntrepreneurshipDto): Entrepreneurship {
@@ -19,25 +20,19 @@ object EntrepreneurshipMapper {
             creationDate = LocalDateTime.parse(dto.creation_date, DateTimeFormatter.ISO_DATE_TIME),
             email = dto.email,
             phone = dto.phone,
-            subscription = dto.subscription,
+            //subscription = dto.subscription,
             status = dto.status,
             category = dto.category,
             userFounder = dto.user_founder,
             deletedAt = dto.deleted_at,
-            partners = dto.partners,
-            products = dto.products,
-            collaborations = dto.collaborations,
-            orders = dto.orders,
-            socialNetworks = dto.social_networks.map { SocialNetwork(1,it,"") },
-            tags = dto.tags.map { tagDto ->
-                Log.d("EntrepreneurshipMapper", "Processing tag: id=${tagDto.id}, name=${tagDto.name}")
-                Tag(
-                    id = tagDto.id,
-                    name = tagDto.name
-                )
-            },
+            //partners = dto.partners,
+            //products = dto.products,
+            //collaborations = dto.collaborations,
+            //orders = dto.orders,
+            //socialNetworks = dto.social_networks.map { SocialNetwork(1,it,"") },
+            tags = dto.tags,
             customization = EntrepreneurshipCustomization(
-                id = dto.customization.id,
+                id = UUID.fromString(dto.customization.id),
                 profileImg = dto.customization.profile_img,
                 bannerImg = dto.customization.banner_img,
                 color1 = dto.customization.color1,

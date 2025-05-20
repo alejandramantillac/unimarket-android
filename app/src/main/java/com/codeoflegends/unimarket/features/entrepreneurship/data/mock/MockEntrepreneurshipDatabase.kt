@@ -28,7 +28,7 @@ object MockEntrepreneurshipDatabase {
             orders = emptyList(),
             socialNetworks = listOf(SocialNetwork(id = 1, platform = "Instagram", url = ""),
                 SocialNetwork(id = 2, platform = "TikTok", url = "")),
-            tags = listOf(Tag(1, "moda"), Tag(2, "accesible")),
+            tags = listOf(1, 2),
             customization = EntrepreneurshipCustomization(
                 id = UUID.fromString("11111111-1111-1111-1111-111111111112"),
                 profileImg = "https://example.com/profile.jpg",
@@ -56,7 +56,7 @@ object MockEntrepreneurshipDatabase {
             orders = emptyList(),
             socialNetworks = listOf(SocialNetwork(id = 1, platform = "Instagram", url = ""),
                 SocialNetwork(id = 2, platform = "TikTok", url = "")),
-            tags = listOf(Tag(3,"tecnología"), Tag(4, "consultoría")),
+            tags = listOf(3, 4),
             customization = EntrepreneurshipCustomization(
                 id = UUID.fromString("22222222-2222-2222-2222-222222222223"),
                 profileImg = "https://example.com/profile.jpg",

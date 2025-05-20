@@ -23,7 +23,7 @@ data class Entrepreneurship(
     val collaborations: List<UUID> = emptyList(),
     val orders: List<UUID> = emptyList(),
     val socialNetworks: List<SocialNetwork> = emptyList(),
-    val tags: List<Tag> = emptyList()
+    val tags: List<Int> = emptyList()
 )
 
 data class EntrepreneurshipCustomization(

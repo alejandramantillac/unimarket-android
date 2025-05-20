@@ -18,7 +18,7 @@ data class EntrepreneurshipUiState(
     val bannerImg: String = "",
     val color1: String = "",
     val color2: String = "",
-    val tags: List<Tag> = emptyList(),
+    val tags: List<Int> = emptyList(),
     val entrepreneurship: Entrepreneurship? = null,
     val currentRoute: String = "home",
     val selectedTab: Int = 0,
