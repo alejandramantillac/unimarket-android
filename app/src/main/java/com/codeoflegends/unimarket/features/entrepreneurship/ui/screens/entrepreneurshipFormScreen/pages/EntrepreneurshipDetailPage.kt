@@ -28,39 +28,32 @@ import com.codeoflegends.unimarket.core.ui.components.TagSection
 import com.codeoflegends.unimarket.core.ui.components.TagType
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
+import kotlin.compareTo
+import kotlin.text.toFloat
 
 @Composable
 fun EntrepreneurshipDetailPage(viewModel: EntrepreneurshipViewModel, state: EntrepreneurshipUiState) {
-    val rating = 4f
-    val numReviews = 128
 
-    val comments = listOf(
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData(),
-        CommentData()
-    )
+    val entrepreneurshipTags = state.tags.mapNotNull { tag ->
+        TagType.entries.find { it.displayName.lowercase() == tag.name.lowercase() }
+    }
 
-    val selectedTags = remember {
-        listOf(
-            TagType.ELECTRONICS,
-            TagType.CLOTHING,
-            TagType.FOOD,
-            TagType.BOOKS,
-            TagType.SPORTS,
-            TagType.BEAUTY,
-            TagType.FOOD,
-            TagType.BOOKS,
-            TagType.FOOD,
-            TagType.BOOKS,
-            TagType.SPORTS,
+    val entrepreneurshipReviews = state.reviews.map {
+        CommentData(
+            userId = it.userCreated.id,
+            userName = it.userCreated.firstName + " " + it.userCreated.lastName,
+            userImageUrl = it.userCreated.profile.profilePicture,
+            rating = it.rating,
+            comment = it.comment,
+            date = it.dateCreated
         )
+    }
+
+    val totalReviews = entrepreneurshipReviews.count()
+    val averageReviewRating = if (totalReviews > 0) {
+        entrepreneurshipReviews.map { it.rating }.average().toFloat()
+    } else {
+        0f
     }
 
     LazyColumn(
@@ -75,7 +68,7 @@ fun EntrepreneurshipDetailPage(viewModel: EntrepreneurshipViewModel, state: Entr
             ) {
 
                 Image(
-                    painter = rememberAsyncImagePainter(state.bannerImg),
+                    painter = rememberAsyncImagePainter(state.customization.bannerImg),
                     contentDescription = "${state.name} Banner",
                     modifier = Modifier.fillMaxSize()
                         .clip(RoundedCornerShape(8.dp)),
@@ -103,7 +96,7 @@ fun EntrepreneurshipDetailPage(viewModel: EntrepreneurshipViewModel, state: Entr
                     ) {
 
                         Image(
-                            painter = rememberAsyncImagePainter(state.profileImg),
+                            painter = rememberAsyncImagePainter(state.customization.profileImg),
                             contentDescription = state.name,
                             modifier = Modifier
                                 .size(80.dp)
@@ -144,11 +137,11 @@ fun EntrepreneurshipDetailPage(viewModel: EntrepreneurshipViewModel, state: Entr
                 )
                 Text(
                     text = state.description,
-                    style = MaterialTheme.typography.bodyLarge,
+                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
 
-                TagSection(selectedTags)
+                TagSection(entrepreneurshipTags)
             }
         }
 
@@ -160,9 +153,9 @@ fun EntrepreneurshipDetailPage(viewModel: EntrepreneurshipViewModel, state: Entr
                     .padding(16.dp)
             ) {
                 CommentSection(
-                    comments = comments,
-                    averageRating = rating,
-                    totalReviews = 124,
+                    comments = entrepreneurshipReviews,
+                    averageRating = averageReviewRating,
+                    totalReviews = totalReviews,
                 )
             }
         }

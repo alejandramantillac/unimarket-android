@@ -3,8 +3,10 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 import android.net.Uri
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SubscriptionPlan
-import com.codeoflegends.unimarket.core.data.model.Tag
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Tag
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipReview
 import java.util.UUID
 
 data class EntrepreneurshipUiState(
@@ -14,12 +16,16 @@ data class EntrepreneurshipUiState(
     val description: String = "",
     val email: String = "",
     val phone: String = "",
-    val profileImg: String = "",
-    val bannerImg: String = "",
-    val color1: String = "",
-    val color2: String = "",
-    val tags: List<Int> = emptyList(),
+    val tags: List<Tag> = emptyList(),
+    val customization: EntrepreneurshipCustomization = EntrepreneurshipCustomization(
+        profileImg = "",
+        bannerImg = "",
+        color1 = "",
+        color2 = ""
+    ),
+    val reviews: List<EntrepreneurshipReview> = emptyList(),
     val entrepreneurship: Entrepreneurship? = null,
+    // Aqui comienzaa la chorrera de camqpos que idk pa que se agregaron
     val currentRoute: String = "home",
     val selectedTab: Int = 0,
     val selectedCategory: String = "",

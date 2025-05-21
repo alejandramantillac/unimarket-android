@@ -13,18 +13,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class CommentData(
-    val id: String = UUID.randomUUID().toString(),
-    val userId: String = id,
-    val userName: String = "Usuario Anónimo",
-    val userImageUrl: String = "https://th.bing.com/th/id/OIP.h0hPZzAziPf3v-srHQTdWQHaHa?rs=1&pid=ImgDetMain" ,
-    val rating: Float = 4.5f,
-    val comment: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    val date: Date = Date(),
-    val isVerified: Boolean = false
+    val userId: UUID,
+    val userName: String,
+    val userImageUrl: String,
+    val rating: Float,
+    val comment: String,
+    val date: LocalDateTime
 )
 
 @Composable
@@ -32,7 +31,7 @@ fun Comment(
     comment: CommentData,
     modifier: Modifier = Modifier
 ) {
-    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
     
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -75,6 +74,7 @@ fun Comment(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
+                        /*
                         if (comment.isVerified) {
                             Icon(
                                 imageVector = Icons.Default.Verified,
@@ -83,9 +83,10 @@ fun Comment(
                                 modifier = Modifier.size(16.dp)
                             )
                         }
+                         */
                     }
                     Text(
-                        text = dateFormat.format(comment.date),
+                        text = comment.date.format(dateFormatter),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )

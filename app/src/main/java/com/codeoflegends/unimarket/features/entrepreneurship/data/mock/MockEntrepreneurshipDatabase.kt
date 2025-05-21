@@ -1,7 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.mock
 
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
-import com.codeoflegends.unimarket.core.data.model.Tag
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Tag
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import java.time.LocalDateTime
@@ -28,7 +28,16 @@ object MockEntrepreneurshipDatabase {
             orders = emptyList(),
             socialNetworks = listOf(SocialNetwork(id = 1, platform = "Instagram", url = ""),
                 SocialNetwork(id = 2, platform = "TikTok", url = "")),
-            tags = listOf(1, 2),
+            tags = listOf(
+                Tag(
+                    id = UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                    name = "Moda"
+                ),
+                Tag(
+                    id = UUID.fromString("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                    name = "Tienda"
+                )
+            ),
             customization = EntrepreneurshipCustomization(
                 id = UUID.fromString("11111111-1111-1111-1111-111111111112"),
                 profileImg = "https://example.com/profile.jpg",
@@ -56,7 +65,16 @@ object MockEntrepreneurshipDatabase {
             orders = emptyList(),
             socialNetworks = listOf(SocialNetwork(id = 1, platform = "Instagram", url = ""),
                 SocialNetwork(id = 2, platform = "TikTok", url = "")),
-            tags = listOf(3, 4),
+            tags = listOf(
+                Tag(
+                    id = UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"),
+                    name = "Tecnología"
+                ),
+                Tag(
+                    id = UUID.fromString("gggggggg-gggg-gggg-gggg-gggggggggggg"),
+                    name = "Consultoría"
+                )
+            ),
             customization = EntrepreneurshipCustomization(
                 id = UUID.fromString("22222222-2222-2222-2222-222222222223"),
                 profileImg = "https://example.com/profile.jpg",

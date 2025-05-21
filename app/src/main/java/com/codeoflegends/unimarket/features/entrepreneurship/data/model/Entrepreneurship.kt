@@ -1,6 +1,6 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.model
 
-import com.codeoflegends.unimarket.core.data.model.Tag
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -23,7 +23,8 @@ data class Entrepreneurship(
     val collaborations: List<UUID> = emptyList(),
     val orders: List<UUID> = emptyList(),
     val socialNetworks: List<SocialNetwork> = emptyList(),
-    val tags: List<Int> = emptyList()
+    val tags: List<Tag> = emptyList(),
+    val reviews: List<EntrepreneurshipReview> = emptyList()
 )
 
 data class EntrepreneurshipCustomization(
