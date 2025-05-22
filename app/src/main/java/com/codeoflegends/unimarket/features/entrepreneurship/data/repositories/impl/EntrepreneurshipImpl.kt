@@ -1,12 +1,14 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl
 
+import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipMapper
+import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipWithFounder
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mock.MockEntrepreneurshipDatabase
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
-
+/*
 @Singleton
 class EntrepreneurshipImpl @Inject constructor() :IEntrepreneurshipRepository {
 
@@ -47,4 +49,19 @@ class EntrepreneurshipImpl @Inject constructor() :IEntrepreneurshipRepository {
             Result.failure(Exception("No hay emprendimientos disponibles"))
         }
     }
+
+    override suspend fun getEntrepreneurshipWithFounder(entrepreneurshipId: UUID): Result<EntrepreneurshipWithFounder> = try {
+        val entrepreneurshipDto = entrepreneurshipService.getEntrepreneurship(
+            entrepreneurshipId.toString(),
+            EntrepreneurshipDto.query().build()
+        ).data ?: return Result.failure(Exception("No se encontró el emprendimiento con id: $entrepreneurshipId"))
+
+        val entrepreneurshipWithFounder = EntrepreneurshipMapper.entrepreneurshipDtoToEntrepreneurshipWithFounder(entrepreneurshipDto)
+        Result.success(entrepreneurshipWithFounder)
+    } catch (e: Exception) {
+        Result.failure(Exception("Error al obtener el emprendimiento con fundador: ${e.message}", e))
+    }
+
 }
+
+ */

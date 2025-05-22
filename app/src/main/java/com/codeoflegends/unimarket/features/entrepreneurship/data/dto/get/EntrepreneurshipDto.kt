@@ -1,7 +1,11 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get
 
+import com.codeoflegends.unimarket.core.data.dto.UserDto
+import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import java.util.UUID
+
+
 
 data class EntrepreneurshipDto(
     val id: UUID?,
@@ -16,6 +20,7 @@ data class EntrepreneurshipDto(
     val status: String,
     val category: Int,
     val userFounder: UUID,
+    val userFounderDetails: UserDto?,
     val deletedAt: String?,
     //val partners: List<UUID>,
     //val products: List<UUID>,
@@ -24,7 +29,10 @@ data class EntrepreneurshipDto(
     val socialNetworks: List<Map<String, String>>,
     val tags: List<TagRelationDto>,
     val reviews: List<EntrepreneurshipReviewDto>? = emptyList()
-) {
+)
+
+
+{
     companion object {
         fun query(): DirectusQuery {
             return DirectusQuery()
@@ -33,6 +41,11 @@ data class EntrepreneurshipDto(
                 .join("reviews")
                 .join("reviews.user_created")
                 .join("reviews.user_created.profile")
+                .join("userFounder")
+                .join("userFounder.profile")
+
+
         }
     }
 }
+

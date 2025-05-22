@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.profile.ui.screens
 
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,17 +10,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.ImagePicker
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
+import com.codeoflegends.unimarket.core.data.dto.UserDto
+
 
 @Composable
-fun ProfileScreenPreview() {
-    var fullName by remember { mutableStateOf("Juan Pérez") }
-    var email by remember { mutableStateOf("juan.perez@email.com") }
-    var password by remember { mutableStateOf("123456") }
-    var confirmPassword by remember { mutableStateOf("123456") }
-    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+fun ProfileScreen(viewModel: EntrepreneurshipViewModel, entrepreneurshipId: String) {
+
+    LaunchedEffect(entrepreneurshipId) {
+        viewModel.loadEntrepreneurshipWithFounder(entrepreneurshipId)
+    }
+
+
+    val selectedEntrepreneurship by viewModel.selectedEntrepreneurship.collectAsState()
+
+
+    val user = selectedEntrepreneurship?.founder
+
+
+    var fullName by remember(user) {
+        mutableStateOf("${user?.firstName.orEmpty()} ${user?.lastName.orEmpty()}")
+    }
+    var email by remember(user) { mutableStateOf(user?.email.orEmpty()) }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier
@@ -28,14 +49,6 @@ fun ProfileScreenPreview() {
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ImagePicker(
-            selectedImageUri = profileImageUri,
-            onImageSelected = { profileImageUri = it },
-            modifier = Modifier
-                .size(120.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         SimpleTextField(
             value = fullName,
@@ -62,7 +75,6 @@ fun ProfileScreenPreview() {
             modifier = Modifier.fillMaxWidth()
         )
 
-
         Spacer(modifier = Modifier.height(8.dp))
 
         SimpleTextField(
@@ -76,14 +88,24 @@ fun ProfileScreenPreview() {
 
         MainButton(
             text = "Guardar Cambios",
-            onClick = { /* acción de ejemplo */ },
+            onClick = {
+
+                if (password != confirmPassword) {
+                    return@MainButton
+                }
+
+                val names = fullName.split(" ", limit = 2)
+                val firstName = names.getOrNull(0).orEmpty()
+                val lastName = names.getOrNull(1).orEmpty()
+
+                viewModel.updateUserProfile(
+                    firstName = firstName,
+                    lastName = lastName,
+                    email = email,
+                    password = if (password.isBlank()) null else password
+                )
+            },
             modifier = Modifier.fillMaxWidth()
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewProfileScreen() {
-    ProfileScreenPreview()
 }

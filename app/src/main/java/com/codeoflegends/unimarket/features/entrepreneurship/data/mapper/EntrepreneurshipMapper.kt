@@ -4,7 +4,6 @@ import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Tag
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
-import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipReview
@@ -12,7 +11,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+data class EntrepreneurshipWithFounder(
+    val entrepreneurship: Entrepreneurship,
+    val founder: User?
+)
+
 object EntrepreneurshipMapper {
+
     fun entrepreneurshipDtoToEntrepreneurship(dto: EntrepreneurshipDto): Entrepreneurship {
         return Entrepreneurship(
             id = dto.id,
@@ -38,7 +43,7 @@ object EntrepreneurshipMapper {
                     name = it.tagsId.name
                 )
             },
-             customization = EntrepreneurshipCustomization(
+            customization = EntrepreneurshipCustomization(
                 id = UUID.fromString(dto.customization.id),
                 profileImg = dto.customization.profile_img,
                 bannerImg = dto.customization.banner_img,
@@ -66,5 +71,26 @@ object EntrepreneurshipMapper {
                 )
             } ?: emptyList()
         )
+    }
+
+    fun entrepreneurshipDtoToEntrepreneurshipWithFounder(dto: EntrepreneurshipDto): EntrepreneurshipWithFounder {
+        val entrepreneurship = entrepreneurshipDtoToEntrepreneurship(dto)
+
+        val founder = dto.userFounderDetails?.let {
+            User(
+                id = UUID.fromString(it.id),
+                firstName = it.firstName,
+                lastName = it.lastName,
+                email = it.email,
+                profile = UserProfile(
+                    profilePicture = it.profile.profilePicture,
+                    userRating = it.profile.userRating,
+                    partnerRating = it.profile.partnerRating,
+                    registrationDate = LocalDateTime.parse(it.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                )
+            )
+        }
+
+        return EntrepreneurshipWithFounder(entrepreneurship, founder)
     }
 }
