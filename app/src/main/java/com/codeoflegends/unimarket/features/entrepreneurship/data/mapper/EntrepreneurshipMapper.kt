@@ -44,27 +44,7 @@ object EntrepreneurshipMapper {
                 bannerImg = dto.customization.banner_img,
                 color1 = dto.customization.color1,
                 color2 = dto.customization.color2
-            ),
-            reviews = dto.reviews?.map {
-                EntrepreneurshipReview(
-                    id = UUID.fromString(it.id),
-                    userCreated = User(
-                        id = UUID.fromString(it.userCreated.id),
-                        firstName = it.userCreated.firstName,
-                        lastName = it.userCreated.lastName,
-                        email = it.userCreated.email,
-                        profile = UserProfile(
-                            profilePicture = it.userCreated.profile.profilePicture,
-                            userRating = it.userCreated.profile.userRating,
-                            partnerRating = it.userCreated.profile.partnerRating,
-                            registrationDate = LocalDateTime.parse(it.userCreated.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
-                        )
-                    ),
-                    dateCreated = LocalDateTime.parse(it.dateCreated, DateTimeFormatter.ISO_DATE_TIME),
-                    rating = it.rating,
-                    comment = it.comment
-                )
-            } ?: emptyList()
+            )
         )
     }
 }

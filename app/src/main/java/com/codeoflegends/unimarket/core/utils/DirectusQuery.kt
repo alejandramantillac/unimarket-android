@@ -5,7 +5,7 @@ class DirectusQuery {
     private val joins = mutableListOf<Join>()
     private val filters = mutableListOf<Filter>()
     private var limit: Int? = null
-    private var offset: Int? = null
+    private var page: Int? = null
     private val sorts = mutableListOf<Sort>()
     private var searchQuery: String? = null
     private var deepQuery: String? = null
@@ -31,9 +31,9 @@ class DirectusQuery {
         sorts.add(Sort(field, direction))
     }
 
-    fun paginate(limit: Int, offset: Int? = null) = apply {
+    fun paginate(limit: Int, page: Int? = null) = apply {
         this.limit = limit
-        this.offset = offset
+        this.page = page
     }
 
     fun search(query: String) = apply {
@@ -84,7 +84,7 @@ class DirectusQuery {
         }
 
         limit?.let { params["limit"] = it.toString() }
-        offset?.let { params["offset"] = it.toString() }
+        page?.let { params["page"] = it.toString() }
 
         searchQuery?.let { params["search"] = it }
 
