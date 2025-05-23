@@ -73,7 +73,7 @@ fun DataContacRegisterTab(state: EntrepreneurshipUiState, viewModel: Entrepreneu
                                 .padding(vertical = 8.dp)
                         ) {
                             SimpleTextField(
-                                value = socialNetwork.platform,
+                                value = socialNetwork.media,
                                 onValueChange = { viewModel.onSocialNetworkPlatformChanged(index, it) },
                                 label = "Plataforma",
                                 modifier = Modifier.weight(1f),

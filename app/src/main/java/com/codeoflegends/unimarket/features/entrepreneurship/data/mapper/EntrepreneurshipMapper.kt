@@ -1,13 +1,13 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.mapper
 
-import com.codeoflegends.unimarket.core.data.model.User
-import com.codeoflegends.unimarket.core.data.model.UserProfile
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipCustomizationDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Tag
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
-import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.update.UpdateEntrepreneurshipCustomizationDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.update.UpdateEntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
-import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipReview
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID

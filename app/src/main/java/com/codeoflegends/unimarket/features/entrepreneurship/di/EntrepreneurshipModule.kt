@@ -1,7 +1,6 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.di
 
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.EntrepreneurshipImpl
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.EntrepreneurshipRepositoryDirectus
 import dagger.Binds
 import dagger.Module

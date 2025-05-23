@@ -67,8 +67,8 @@ class EntrepreneurshipViewModel @Inject constructor(
             entrepreneurshipCategory = "0",
             selectedCategory = defaultCategoriesOptions[0],
             entrepreneurshipSocialNetworks = listOf(
-                SocialNetwork(id = 1, platform = "Instagram", url = ""),
-                SocialNetwork(id = 2, platform = "TikTok", url = "")
+                SocialNetwork(media = "Instagram", url = ""),
+                SocialNetwork(media = "TikTok", url = "")
             ) ,
             entrepreneurshipStatus = defaultStatusOptions[0],
             entrepreneurshipSubscription = defaultSubscriptionPlans[0].id.toString(),
@@ -121,14 +121,13 @@ class EntrepreneurshipViewModel @Inject constructor(
 
     fun onSocialNetworkPlatformChanged(index: Int, platform: String) {
         val updatedList = _uiState.value.entrepreneurshipSocialNetworks.toMutableList()
-        val updatedItem = updatedList[index].copy(platform = platform)
+        val updatedItem = updatedList[index].copy(media = platform)
         updatedList[index] = updatedItem
         _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
     }
 
     fun addSocialNetwork() {
-        val newId = (_uiState.value.entrepreneurshipSocialNetworks.maxOfOrNull { it.id } ?: 0) + 1
-        val updatedList = _uiState.value.entrepreneurshipSocialNetworks + SocialNetwork(id = newId, platform = "", url = "")
+        val updatedList = _uiState.value.entrepreneurshipSocialNetworks + SocialNetwork(media = "", url = "")
         _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
     }
 
