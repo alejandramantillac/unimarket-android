@@ -17,12 +17,14 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepre
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipProductsPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipStatisticsPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipActionState
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicActionState
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 
 @Composable
 fun EntrepreneurshipScreen(
     entrepreneurshipId: String? = null,
-    viewModel: EntrepreneurshipViewModel = hiltViewModel(),
+    viewModel: EntrepreneurshipBasicViewModel = hiltViewModel(),
     manager: NavigationManager
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -32,18 +34,21 @@ fun EntrepreneurshipScreen(
         viewModel.loadEntrepreneurship(entrepreneurshipId)
     }
 
+    /*
+    TODO: Gestionar el estado de la acción que no sea success
     LaunchedEffect(actionState) {
         when (actionState) {
-            is EntrepreneurshipActionState.Error -> {
+            is EntrepreneurshipBasicActionState.Error -> {
                 // Mostrar error
             }
-            is EntrepreneurshipActionState.Success -> {
+            is EntrepreneurshipBasicActionState.Success -> {
                 // Navegar de vuelta
                 manager?.navController?.popBackStack()
             }
             else -> {}
         }
     }
+     */
 
     MainLayout(
         barOptions = AppBarOptions(
@@ -52,7 +57,7 @@ fun EntrepreneurshipScreen(
             onBackClick = { manager?.navController?.popBackStack() }
         )
     ) {
-        if (actionState is EntrepreneurshipActionState.Loading) {
+        if (actionState is EntrepreneurshipBasicActionState.Loading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -74,11 +79,11 @@ fun EntrepreneurshipScreen(
                         .padding(paddingValues)
                 ) {
                     when (state.currentRoute) {
-                        "home" -> EntrepreneurshipDetailPage(viewModel, state)
-                        "products" -> EntrepreneurshipProductsPage(viewModel, manager)
-                        "people" -> EntrepreneurshipMembersPage(viewModel)
-                        "orders" -> EntrepreneurshipOrdersPage(viewModel)
-                        "metrics" -> EntrepreneurshipStatisticsPage(viewModel)
+                        "home" -> EntrepreneurshipDetailPage(basicState = state)
+                        "products" -> EntrepreneurshipProductsPage(basicState = state)
+                        "people" -> EntrepreneurshipMembersPage(basicState = state)
+                        "orders" -> EntrepreneurshipOrdersPage(basicState = state)
+                        "metrics" -> EntrepreneurshipStatisticsPage(basicState = state)
                     }
                 }
             }

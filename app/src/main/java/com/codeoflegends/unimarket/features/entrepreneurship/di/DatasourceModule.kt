@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.di
 
 import com.codeoflegends.unimarket.core.annotation.MainRetrofit
+import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipReviewService
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipService
 import dagger.Module
 import dagger.Provides
@@ -17,5 +18,11 @@ object DatasourceModule {
     @Singleton
     fun provideEntrepreneurshipService(@MainRetrofit retrofit: Retrofit): EntrepreneurshipService {
         return retrofit.create(EntrepreneurshipService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEntrepreneurshipReviewService(@MainRetrofit retrofit: Retrofit): EntrepreneurshipReviewService {
+        return retrofit.create(EntrepreneurshipReviewService::class.java)
     }
 }

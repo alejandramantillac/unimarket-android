@@ -200,10 +200,10 @@ class EntrepreneurshipViewModel @Inject constructor(
                 socialNetworks = state.entrepreneurshipSocialNetworks,
                 userFounder = UUID.fromString(state.entrepreneurshipUserFounder),
                 customization = EntrepreneurshipCustomization(
-                    profileImg = state.profileImg,
-                    bannerImg = state.bannerImg,
-                    color1 = state.color1,
-                    color2 = state.color2
+                    profileImg = state.customization.profileImg,
+                    bannerImg = state.customization.bannerImg,
+                    color1 = state.customization.color1,
+                    color2 = state.customization.color2
                 ),
             )
 
@@ -262,10 +262,13 @@ class EntrepreneurshipViewModel @Inject constructor(
                     description = entrepreneurship.description,
                     email = entrepreneurship.email,
                     phone = entrepreneurship.phone,
-                    profileImg =  entrepreneurship.customization.profileImg,
-                    bannerImg = entrepreneurship.customization.bannerImg,
-                    color1 = entrepreneurship.customization.color1,
-                    color2 = entrepreneurship.customization.color2,
+                    customization = EntrepreneurshipCustomization(
+                        profileImg =  entrepreneurship.customization.profileImg,
+                        bannerImg = entrepreneurship.customization.bannerImg,
+                        color1 = entrepreneurship.customization.color1,
+                        color2 = entrepreneurship.customization.color2,
+                    ),
+                    reviews = entrepreneurship.reviews,
                     tags = entrepreneurship.tags,
                     entrepreneurship = entrepreneurship
                 )

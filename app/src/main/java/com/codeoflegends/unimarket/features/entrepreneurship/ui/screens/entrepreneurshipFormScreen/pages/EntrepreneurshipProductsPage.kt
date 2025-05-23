@@ -22,15 +22,16 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.Entrep
 import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 import androidx.compose.runtime.*
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 
 
 @Composable
 fun EntrepreneurshipProductsPage(
-    viewModel: EntrepreneurshipViewModel,
-    manager: NavigationManager,
-    productViewModel: ProductViewModel = hiltViewModel()
+    productViewModel: ProductViewModel = hiltViewModel(),
+    basicState: EntrepreneurshipBasicUiState
+    //manager: NavigationManager,
 ) {
-
+/*
     val products by productViewModel.products.collectAsState()
 
     Column(
@@ -87,4 +88,5 @@ fun EntrepreneurshipProductsPage(
             }
         }
     }
+    */
 }
