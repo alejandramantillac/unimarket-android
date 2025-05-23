@@ -51,14 +51,6 @@ fun EntrepreneurshipBasicTab(state: EntrepreneurshipUiState, viewModel: Entrepre
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        DropdownMenuBox(
-            label = "Año de Fundación",
-            options = state.yearOptions,
-            selectedOption = state.selectedYear,
-            onOptionSelected = { viewModel.onYearSelected(it) },
-            modifier = Modifier.fillMaxWidth()
-        )
-
         Spacer(modifier = Modifier.height(8.dp))
 
         SimpleTextField(

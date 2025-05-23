@@ -192,13 +192,7 @@ class EntrepreneurshipViewModel @Inject constructor(
                 name = state.entrepreneurshipName,
                 slogan = state.entrepreneurshipSlogan,
                 description = state.entrepreneurshipDescription,
-                creationDate = LocalDateTime.of(
-                    state.entrepreneurshipYear.toIntOrNull() ?: 2000,
-                    1,
-                    1,
-                    0,
-                    0
-                ),
+                creationDate = LocalDateTime.now(),
                 email = state.entrepreneurshipEmail,
                 phone = state.entrepreneurshipPhone,
                 subscription = UUID.fromString(state.entrepreneurshipSubscription),

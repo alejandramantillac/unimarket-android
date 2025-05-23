@@ -79,7 +79,9 @@ fun ProfileScreen(manager: NavigationManager) {
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { /* Editar */ }) {
+            Button(onClick = {
+                manager.navController.navigate(Routes.EditProfile.createRoute("id_del_emprendimiento"))
+            }) {
                 Text("Editar")
             }
         }

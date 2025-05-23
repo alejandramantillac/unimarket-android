@@ -21,7 +21,7 @@ import com.codeoflegends.unimarket.core.data.dto.UserDto
 
 
 @Composable
-fun ProfileScreen(viewModel: EntrepreneurshipViewModel, entrepreneurshipId: String) {
+fun EditProfileScreen(viewModel: EntrepreneurshipViewModel, entrepreneurshipId: String) {
 
     LaunchedEffect(entrepreneurshipId) {
         viewModel.loadEntrepreneurshipWithFounder(entrepreneurshipId)
