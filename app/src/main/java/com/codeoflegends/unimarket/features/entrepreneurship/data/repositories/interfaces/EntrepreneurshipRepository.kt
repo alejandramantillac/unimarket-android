@@ -1,6 +1,5 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces
 
-import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipWithFounder
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import java.util.UUID
 
@@ -10,6 +9,5 @@ interface IEntrepreneurshipRepository {
     suspend fun deleteEntrepreneurship(entrepreneurshipId: UUID): Result<Unit>
     suspend fun getEntrepreneurship(entrepreneurshipId: UUID): Result<Entrepreneurship>
     suspend fun getAllEntrepreneurships(): Result<List<Entrepreneurship>>
-    suspend fun getEntrepreneurshipWithFounder(entrepreneurshipId: UUID): Result<EntrepreneurshipWithFounder>
 
 }

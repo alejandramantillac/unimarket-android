@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.profile.ui.screens
+/*package com.codeoflegends.unimarket.features.profile.ui.screens
 
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -29,10 +29,6 @@ fun EditProfileScreen(viewModel: EntrepreneurshipViewModel, entrepreneurshipId: 
 
 
     val selectedEntrepreneurship by viewModel.selectedEntrepreneurship.collectAsState()
-
-
-    val user = selectedEntrepreneurship?.founder
-
 
     var fullName by remember(user) {
         mutableStateOf("${user?.firstName.orEmpty()} ${user?.lastName.orEmpty()}")
@@ -108,4 +104,4 @@ fun EditProfileScreen(viewModel: EntrepreneurshipViewModel, entrepreneurshipId: 
             modifier = Modifier.fillMaxWidth()
         )
     }
-}
+}*/

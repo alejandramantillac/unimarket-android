@@ -3,7 +3,6 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.
 import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipMapper
-import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipWithFounder
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipService
@@ -67,16 +66,4 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
     } catch (e: Exception) {
         Result.failure(e)
     }
-
-    override suspend fun getEntrepreneurshipWithFounder(entrepreneurshipId: UUID): Result<EntrepreneurshipWithFounder> = try {
-        val entrepreneurshipDto = entrepreneurshipService.getEntrepreneurship(
-            entrepreneurshipId.toString(),
-            EntrepreneurshipDto.query().build()
-        ).data
-        val entrepreneurshipWithFounder = EntrepreneurshipMapper.entrepreneurshipDtoToEntrepreneurshipWithFounder(entrepreneurshipDto)
-        Result.success(entrepreneurshipWithFounder)
-    } catch (e: Exception) {
-        Result.failure(e)
-    }
-
 }
