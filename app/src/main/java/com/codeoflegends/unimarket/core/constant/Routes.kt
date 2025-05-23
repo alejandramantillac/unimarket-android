@@ -41,6 +41,13 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    data object EditProfile : Routes("/edit_profile/{id}") {
+        val base get() = "/edit_profile/"
+        fun createRoute(id: String): String {
+            return "/edit_profile/$id"
+        }
+    }
+
     data object EntrepreneurshipForm : Routes("/entrepreneurship/form")
 
     data object EntrepreneurProfile : Routes("/entrepreneur")

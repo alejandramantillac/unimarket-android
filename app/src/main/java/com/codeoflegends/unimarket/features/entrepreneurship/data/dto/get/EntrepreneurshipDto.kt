@@ -23,7 +23,7 @@ data class EntrepreneurshipDto(
     //val orders: List<UUID>,
     val socialNetworks: List<Map<String, String>>,
     val tags: List<TagRelationDto>,
-    ) {
+) {
     companion object {
         fun query(): DirectusQuery {
             return DirectusQuery()

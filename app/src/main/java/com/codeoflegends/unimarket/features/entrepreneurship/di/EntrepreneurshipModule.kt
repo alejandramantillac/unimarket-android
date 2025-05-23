@@ -51,4 +51,4 @@ abstract class EntrepreneurshipModule {
         fun provideGetAllEntrepreneurshipsUseCase(repository: IEntrepreneurshipRepository): GetAllEntrepreneurship =
             GetAllEntrepreneurship(repository)
     }
-} 
+}

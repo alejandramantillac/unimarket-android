@@ -6,6 +6,7 @@ import android.util.Log
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipWithFounder
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Subscrip
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.DeleteEntrepreneurshipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipWithFounderUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneurshipUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +39,8 @@ class EntrepreneurshipViewModel @Inject constructor(
     private val getAllEntrepreneurshipUseCase: GetAllEntrepreneurship,
     private val getEntrepreneurshipUseCase: GetEntrepreneurshipUseCase,
     private val deleteEntrepreneurshipUseCase: DeleteEntrepreneurshipUseCase,
-    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase
+    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase,
+    private val getEntrepreneurshipWithFounderUseCase: GetEntrepreneurshipWithFounderUseCase
 ) : ViewModel() {
 
     private val defaultCategoriesOptions = listOf(
@@ -50,6 +53,10 @@ class EntrepreneurshipViewModel @Inject constructor(
 
     private val currentYear = LocalDate.now().year
     val yearOptions: List<String> = (1950..currentYear).map { it.toString() }.reversed()
+
+    private val _selectedEntrepreneurship = MutableStateFlow<EntrepreneurshipWithFounder?>(null)
+    val selectedEntrepreneurship: StateFlow<EntrepreneurshipWithFounder?> = _selectedEntrepreneurship
+
 
     private val defaultStatusOptions = listOf("Activo", "Inactivo")
 
@@ -184,13 +191,7 @@ class EntrepreneurshipViewModel @Inject constructor(
                 name = state.entrepreneurshipName,
                 slogan = state.entrepreneurshipSlogan,
                 description = state.entrepreneurshipDescription,
-                creationDate = LocalDateTime.of(
-                    state.entrepreneurshipYear.toIntOrNull() ?: 2000,
-                    1,
-                    1,
-                    0,
-                    0
-                ),
+                creationDate = LocalDateTime.now(),
                 email = state.entrepreneurshipEmail,
                 phone = state.entrepreneurshipPhone,
                 subscription = UUID.fromString(state.entrepreneurshipSubscription),
@@ -284,4 +285,65 @@ class EntrepreneurshipViewModel @Inject constructor(
     fun onNavigationItemSelected(route: String) {
         _uiState.value = _uiState.value.copy(currentRoute = route)
     }
+
+    fun loadEntrepreneurshipWithFounder(entrepreneurshipId: String?) {
+        if (entrepreneurshipId.isNullOrEmpty()) {
+            _selectedEntrepreneurship.value = null
+            return
+        }
+
+        val uuid = try {
+            UUID.fromString(entrepreneurshipId)
+        } catch (e: Exception) {
+            null
+        }
+
+        if (uuid == null) {
+            _actionState.value = EntrepreneurshipActionState.Error("ID del emprendimiento inválido")
+            return
+        }
+
+        _actionState.value = EntrepreneurshipActionState.Loading
+
+        viewModelScope.launch {
+            try {
+                val result = getEntrepreneurshipWithFounderUseCase(uuid)
+                _selectedEntrepreneurship.value = result
+                _actionState.value = EntrepreneurshipActionState.Idle
+            } catch (e: Exception) {
+                _actionState.value = EntrepreneurshipActionState.Error("Error al cargar emprendimiento con fundador: ${e.message}")
+            }
+        }
+    }
+
+    fun updateUserProfile(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String?,
+        profileImageUri: Uri? = null
+    ) {
+        val currentEntrepreneurship = _selectedEntrepreneurship.value
+        if (currentEntrepreneurship == null) {
+            _actionState.value = EntrepreneurshipActionState.Error("No se encontró el emprendimiento seleccionado.")
+            return
+        }
+
+        val updatedFounder = currentEntrepreneurship.founder?.copy(
+            firstName = firstName,
+            lastName = lastName,
+            email = email,
+        )
+
+        _selectedEntrepreneurship.value = currentEntrepreneurship.copy(founder = updatedFounder)
+
+        viewModelScope.launch {
+            try {
+                _actionState.value = EntrepreneurshipActionState.Success
+            } catch (e: Exception) {
+                _actionState.value = EntrepreneurshipActionState.Error("Error al actualizar el perfil: ${e.message}")
+            }
+        }
+    }
+
 }
