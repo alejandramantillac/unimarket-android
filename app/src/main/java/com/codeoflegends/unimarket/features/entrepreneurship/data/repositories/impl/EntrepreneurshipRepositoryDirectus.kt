@@ -1,6 +1,8 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl
 
+import android.util.Log
 import com.codeoflegends.unimarket.core.dto.DeleteDto
+import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipMapper
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
@@ -15,11 +17,12 @@ import javax.inject.Singleton
 
 @Singleton
 class EntrepreneurshipRepositoryDirectus @Inject constructor(
+    private val authRepository: AuthRepository,
     private val entrepreneurshipService: EntrepreneurshipService
 ): IEntrepreneurshipRepository {
     override suspend fun createEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit> = try {
         entrepreneurshipService.createEntrepreneurship(
-            EntrepreneurshipMapper.toNewEntrepreneurshipDto(entrepreneurship)
+            EntrepreneurshipMapper.toNewEntrepreneurshipDto(entrepreneurship, authRepository.getCurrentUserId()!!)
         )
         Result.success(Unit)
     } catch (e: Exception) {
@@ -62,7 +65,12 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
     }
 
     override suspend fun getAllEntrepreneurships(): Result<List<Entrepreneurship>> = try {
-        Result.success(emptyList())
+        val query = EntrepreneurshipDto.query().filter("user_founder","eq", authRepository.getCurrentUserId()!!.toString()).build()
+        val entrepreneurshipDtos = entrepreneurshipService.getMyEntrepreneurships(query).data
+        val entrepreneurshipList = entrepreneurshipDtos.map { entrepreneurshipDto ->
+            EntrepreneurshipMapper.entrepreneurshipDtoToEntrepreneurship(entrepreneurshipDto)
+        }
+        Result.success(entrepreneurshipList)
     } catch (e: Exception) {
         Result.failure(e)
     }

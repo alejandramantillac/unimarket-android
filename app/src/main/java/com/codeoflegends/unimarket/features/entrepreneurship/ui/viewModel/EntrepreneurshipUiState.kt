@@ -47,7 +47,6 @@ data class EntrepreneurshipUiState(
     val entrepreneurshipImageUri: Uri? = null,
     val statusOptions: List<String> = emptyList(),
     val subscriptionOptions: List<SubscriptionPlan> = emptyList()
-
 )
 
 

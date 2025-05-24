@@ -81,15 +81,6 @@ fun EntrepreneurshipBasicTab(state: EntrepreneurshipUiState, viewModel: Entrepre
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SimpleTextField(
-            value = state.entrepreneurshipUserFounder,
-            onValueChange = { viewModel.onUserFounderChanged(it) },
-            label = "Usuario Fundador ",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
         ImagePicker(
             selectedImageUri = state.entrepreneurshipImageUri,
             onImageSelected = { viewModel.onImageSelected(it) }

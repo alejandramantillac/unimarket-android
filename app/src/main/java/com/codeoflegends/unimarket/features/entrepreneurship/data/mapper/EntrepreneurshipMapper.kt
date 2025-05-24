@@ -25,7 +25,6 @@ object EntrepreneurshipMapper {
             //subscription = dto.subscription,
             status = dto.status,
             category = dto.category,
-            userFounder = dto.userFounder,
             deletedAt = dto.deletedAt,
             //partners = dto.partners,
             //products = dto.products,
@@ -48,7 +47,7 @@ object EntrepreneurshipMapper {
         )
     }
 
-    fun toNewEntrepreneurshipDto(entrepreneurship: Entrepreneurship): NewEntrepreneurshipDto {
+    fun toNewEntrepreneurshipDto(entrepreneurship: Entrepreneurship, userId: UUID): NewEntrepreneurshipDto {
         return NewEntrepreneurshipDto(
             name = entrepreneurship.name,
             slogan = entrepreneurship.slogan,
@@ -62,7 +61,7 @@ object EntrepreneurshipMapper {
             email = entrepreneurship.email,
             phone = entrepreneurship.phone,
             category = entrepreneurship.category,
-            userFounder = entrepreneurship.userFounder,
+            userFounder = userId,
             socialNetworks = entrepreneurship.socialNetworks,
         )
     }

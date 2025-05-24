@@ -46,18 +46,6 @@ fun DataContacRegisterTab(state: EntrepreneurshipUiState, viewModel: Entrepreneu
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        DropdownMenuBox(
-            label = "Plan de Suscripción",
-            options = state.subscriptionOptions.map { it.name },
-            selectedOption = state.subscriptionOptions.firstOrNull { it.id.toString() == state.entrepreneurshipSubscription }?.name
-                ?: "Seleccionar",
-            onOptionSelected = { selectedName ->
-                val selectedPlan = state.subscriptionOptions.find { it.name == selectedName }
-                selectedPlan?.let { viewModel.onSubscriptionChanged(it.id.toString()) }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-
         Spacer(modifier = Modifier.height(10.dp))
 
                 Column {

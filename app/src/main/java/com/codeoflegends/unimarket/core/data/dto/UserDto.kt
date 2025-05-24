@@ -9,4 +9,11 @@ data class UserDto(
     val lastName: String,
     val email: String,
     val profile: UserProfileDto
-)
+){
+    companion object {
+        fun query(): DirectusQuery {
+            return DirectusQuery()
+                .join("profile")
+        }
+    }
+}

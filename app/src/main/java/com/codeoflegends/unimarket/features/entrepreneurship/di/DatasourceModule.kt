@@ -1,8 +1,10 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.di
 
 import com.codeoflegends.unimarket.core.annotation.MainRetrofit
+import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipCategoryService
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipReviewService
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipService
+import com.codeoflegends.unimarket.features.entrepreneurship.service.UserGetDataService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,5 +26,17 @@ object DatasourceModule {
     @Singleton
     fun provideEntrepreneurshipReviewService(@MainRetrofit retrofit: Retrofit): EntrepreneurshipReviewService {
         return retrofit.create(EntrepreneurshipReviewService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEntrepreneurshipCategoryService(@MainRetrofit retrofit: Retrofit): EntrepreneurshipCategoryService {
+        return retrofit.create(EntrepreneurshipCategoryService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetUserDataService(@MainRetrofit retrofit: Retrofit): UserGetDataService {
+        return retrofit.create(UserGetDataService::class.java)
     }
 }

@@ -16,7 +16,6 @@ data class Entrepreneurship(
     val subscription: UUID? = null,
     val status: String,
     val category: Int,
-    val userFounder: UUID,
     val deletedAt: String? = null,
     val partners: List<UUID> = emptyList(),
     val products: List<UUID> = emptyList(),
