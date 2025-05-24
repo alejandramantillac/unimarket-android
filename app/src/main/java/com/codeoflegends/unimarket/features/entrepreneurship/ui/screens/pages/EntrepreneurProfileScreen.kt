@@ -26,6 +26,7 @@ import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.RatingBar
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipItem
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.MonthlySummaryChart
 
 @Composable
 fun ProfileScreen(
@@ -85,15 +86,7 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Resumen del mes", style = MaterialTheme.typography.titleMedium)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .background(Color(0xFFEDE7F6))
-        ) {
-            Text("Gráfica aquí", modifier = Modifier.align(Alignment.Center))
-        }
+        MonthlySummaryChart()
 
         Spacer(modifier = Modifier.height(16.dp))
 /*
@@ -138,9 +131,17 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.allEntrepreneurships) { entrepreneurship ->
-                EntrepreneurshipItem(entrepreneurship)
+                EntrepreneurshipItem(
+                    entrepreneurship = entrepreneurship,
+                    onClick = {
+                        manager.navController.navigate(
+                            Routes.ManageEntrepreneurship.createRoute(entrepreneurship.id.toString())
+                        )
+                    }
+                )
             }
         }
+
 
 
 

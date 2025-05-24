@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -13,7 +14,10 @@ import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 
 @Composable
-fun EntrepreneurshipItem(entrepreneurship: Entrepreneurship) {
+fun EntrepreneurshipItem(
+    entrepreneurship: Entrepreneurship,
+    onClick: () -> Unit // nuevo parámetro
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -26,7 +30,6 @@ fun EntrepreneurshipItem(entrepreneurship: Entrepreneurship) {
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            // Imagen o ícono del emprendimiento
             Icon(
                 imageVector = Icons.Default.Storefront,
                 contentDescription = null,
@@ -37,9 +40,11 @@ fun EntrepreneurshipItem(entrepreneurship: Entrepreneurship) {
             )
 
             Column(modifier = Modifier.weight(1f)) {
+                // Título con navegación
                 Text(
                     text = entrepreneurship.name,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.clickable { onClick() } // <-- aquí
                 )
                 Text(
                     text = entrepreneurship.slogan,
@@ -50,7 +55,6 @@ fun EntrepreneurshipItem(entrepreneurship: Entrepreneurship) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Estrellas vacías + rating numérico + reseñas
                     repeat(5) {
                         Icon(
                             imageVector = Icons.Default.StarBorder,
@@ -59,19 +63,16 @@ fun EntrepreneurshipItem(entrepreneurship: Entrepreneurship) {
                             tint = MaterialTheme.colorScheme.secondary
                         )
                     }
-                    Spacer(modifier = Modifier.width(4.dp))/*
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${entrepreneurship.rating} (${entrepreneurship.reviews} reseñas)",
+                        text = " (${entrepreneurship.reviews.count()} reseñas)",
                         style = MaterialTheme.typography.bodySmall
                     )
-                    */
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Column {
                         Text("Productos", style = MaterialTheme.typography.labelSmall)
                         Text("${entrepreneurship.products.count()}", style = MaterialTheme.typography.bodyMedium)
@@ -80,7 +81,6 @@ fun EntrepreneurshipItem(entrepreneurship: Entrepreneurship) {
                         Text("Ventas", style = MaterialTheme.typography.labelSmall)
                         Text("${entrepreneurship.orders.size}", style = MaterialTheme.typography.bodyMedium)
                     }
-
                 }
             }
         }

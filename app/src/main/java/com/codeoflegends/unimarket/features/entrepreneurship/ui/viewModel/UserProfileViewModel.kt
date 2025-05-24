@@ -63,7 +63,6 @@ class UserProfileViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(allEntrepreneurships = list)
             } catch (e: Exception) {
                 Log.e("UserProfileViewModel", "Error loading all entrepreneurships", e)
-                // Manejo de error si lo necesitas
             }
         }
     }
