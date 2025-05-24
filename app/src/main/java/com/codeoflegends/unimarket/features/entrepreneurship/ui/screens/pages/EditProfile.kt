@@ -1,107 +1,79 @@
-/*package com.codeoflegends.unimarket.features.profile.ui.screens
+package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages
 
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import com.codeoflegends.unimarket.core.ui.components.MainButton
-import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
-import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.ImagePicker
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
-import com.codeoflegends.unimarket.core.data.dto.UserDto
-
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileViewModel
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
 
 @Composable
-fun EditProfileScreen(viewModel: EntrepreneurshipViewModel, entrepreneurshipId: String) {
+fun EditProfileScreen(
+    manager: NavigationManager,
+    viewModel: UserProfileViewModel = hiltViewModel()
+) {
+    val state = viewModel.uiState.collectAsState().value
 
-    LaunchedEffect(entrepreneurshipId) {
-        viewModel.loadEntrepreneurshipWithFounder(entrepreneurshipId)
-    }
-
-
-    val selectedEntrepreneurship by viewModel.selectedEntrepreneurship.collectAsState()
-
-    var fullName by remember(user) {
-        mutableStateOf("${user?.firstName.orEmpty()} ${user?.lastName.orEmpty()}")
-    }
-    var email by remember(user) { mutableStateOf(user?.email.orEmpty()) }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
+    var name by remember { mutableStateOf(state.name) }
+    var email by remember { mutableStateOf(state.email) }
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        SimpleTextField(
-            value = fullName,
-            onValueChange = { fullName = it },
-            label = "Nombre Completo",
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = { manager.navController.popBackStack() }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+            }
+            Text("Editar perfil", style = MaterialTheme.typography.titleLarge)
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nombre completo") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        SimpleTextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = "Correo Electrónico",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SimpleTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = "Contraseña",
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SimpleTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = "Confirmar Contraseña",
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Correo electrónico") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        MainButton(
-            text = "Guardar Cambios",
+        Button(
             onClick = {
-
-                if (password != confirmPassword) {
-                    return@MainButton
-                }
-
-                val names = fullName.split(" ", limit = 2)
-                val firstName = names.getOrNull(0).orEmpty()
-                val lastName = names.getOrNull(1).orEmpty()
-
-                viewModel.updateUserProfile(
-                    firstName = firstName,
-                    lastName = lastName,
-                    email = email,
-                    password = if (password.isBlank()) null else password
-                )
+                // Aquí deberías llamar un método en el ViewModel para actualizar los datos
+                // viewModel.updateUserProfile(name, email)
+                manager.navController.popBackStack() // Por ahora simplemente regresamos
             },
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            Text("Guardar cambios")
+        }
+
+        state.error?.let {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Error: $it", color = MaterialTheme.colorScheme.error)
+        }
     }
-}*/
+}

@@ -11,6 +11,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 data class UserUiState(
@@ -18,7 +22,8 @@ data class UserUiState(
     val email: String = "",
     val loading: Boolean = false,
     val error: String? = null,
-    val allEntrepreneurships: List<Entrepreneurship> = emptyList()
+    val allEntrepreneurships: List<Entrepreneurship> = emptyList(),
+    val memberSince: String = "",
 )
 
 @HiltViewModel
@@ -60,10 +65,27 @@ class UserProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val list = getAllEntrepreneurshipUseCase()
-                _uiState.value = _uiState.value.copy(allEntrepreneurships = list)
+                val memberSince = getEarliestFormatted(list)
+                _uiState.value = _uiState.value.copy(
+                    allEntrepreneurships = list,
+                    memberSince = memberSince
+                )
+                Log.d("UserProfileViewModel", "Miembro desde: $memberSince")
             } catch (e: Exception) {
                 Log.e("UserProfileViewModel", "Error loading all entrepreneurships", e)
             }
         }
     }
+
+
+    private fun getEarliestFormatted(entrepreneurships: List<Entrepreneurship>): String {
+        val outputFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale("es"))
+        return entrepreneurships
+            .map { it.creationDate }
+            .minOrNull()
+            ?.format(outputFormatter) ?: "N/A"
+    }
+
+
+
 }

@@ -68,12 +68,14 @@ fun ProfileScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("1580", style = MaterialTheme.typography.titleSmall)
                     Text("Ventas totales")
+                    Text("1580", style = MaterialTheme.typography.titleSmall)
+
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("2023", style = MaterialTheme.typography.titleSmall)
                     Text("Miembro desde")
+                    Text(state.memberSince, style = MaterialTheme.typography.titleSmall)
+
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
