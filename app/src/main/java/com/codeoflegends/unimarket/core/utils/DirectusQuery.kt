@@ -76,7 +76,7 @@ class DirectusQuery {
         }
 
         if (filters.isNotEmpty()) {
-            params["filter"] = filters.joinToString(",") { it.toQueryString() }
+            params["filter"] = "{" + filters.joinToString(",") { it.toQueryString() } + "}"
         }
 
         if (sorts.isNotEmpty()) {
@@ -120,7 +120,7 @@ class DirectusQuery {
                 is String -> "\"$value\""
                 else -> value
             }
-            return "{\"$field\":{\"_$operator\":$formattedValue}}"
+            return "\"$field\":{\"_$operator\":$formattedValue}"
         }
     }
 

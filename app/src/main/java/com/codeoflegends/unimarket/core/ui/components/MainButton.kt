@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.core.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,13 +24,15 @@ fun MainButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    fillMaxWidth: Boolean = true,
+    height: Int = 44
 ) {
     Button(
         onClick = onClick,
         modifier = modifier
-            .fillMaxWidth()
-            .height(44.dp),
+            .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
+            .height(height.dp),
         shape = RoundedCornerShape(14.dp),
         enabled = !isLoading && enabled,
         colors = ButtonDefaults.buttonColors(
@@ -37,7 +40,8 @@ fun MainButton(
             contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.background(Color.Blue),
+            verticalAlignment = Alignment.CenterVertically) {
             if (isLoading) {
                 CircularProgressIndicator(
                     color = Color.White,

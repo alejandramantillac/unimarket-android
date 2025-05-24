@@ -68,4 +68,25 @@ class ProductRepositoryDirectus @Inject constructor(
         Log.e("ProductRepositoryDirectus", "Error fetching products: ${e.message}")
         Result.failure(e)
     }
+
+    override suspend fun getAllProductsByEntrepreneurship(
+        entrepreneurshipId: UUID,
+        nameContains: String,
+        page: Int,
+        limit: Int
+    ): Result<List<Product>> = try {
+        val productsDto = productService.getAllProducts(
+            ProductListDto.queryByEntrepreneurship(
+                entrepreneurshipId = entrepreneurshipId.toString(),
+                nameContains = nameContains,
+                page = page,
+                limit = limit
+            ).build()
+        ).data
+        val products = ProductMapper.listDtoToProductList(productsDto)
+        Result.success(products)
+    } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error fetching products by entrepreneurship: ${e.message}")
+        Result.failure(e)
+    }
 }
