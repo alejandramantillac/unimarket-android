@@ -5,6 +5,7 @@ import java.util.UUID
 data class Product(
     val id: UUID? = null,
     val entrepreneurship: Entrepreneurship,
+    val imageUrl: String? = null,
     val category: ProductCategory,
     val name: String,
     val description: String,

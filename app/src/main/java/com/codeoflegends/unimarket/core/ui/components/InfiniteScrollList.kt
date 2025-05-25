@@ -1,13 +1,16 @@
 package com.codeoflegends.unimarket.core.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -24,6 +27,7 @@ fun <T> InfiniteScrollList(
     itemContent: @Composable (T) -> Unit,
     items: List<T>,
     isLoading: Boolean,
+    titleContent: @Composable (() -> Unit)? = null,
     onLoadMore: () -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -50,19 +54,66 @@ fun <T> InfiniteScrollList(
     ) {
         headerContent?.let {
             item {
-                it()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    it()
+                }
             }
         }
 
-        if (items.isEmpty()) {
+        titleContent?.let {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp, bottom = 8.dp),
+                ) {
+                    it()
+                }
+            }
+        }
+
+        // No hay contenido
+        if (items.isEmpty() && !isLoading) {
             if (emptyContent != null) {
                 item {
-                    emptyContent()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        emptyContent()
+                    }
+                }
+            }
+        // Contenido vacío y cargando
+        } else if (items.isEmpty() && isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         } else {
-            items(items) { item ->
-                itemContent(item)
+            itemsIndexed(items) { index, item ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = 16.dp,
+                            vertical = if (index > 0) 12.dp else 0.dp
+                        )
+                ) {
+                    itemContent(item)
+                }
             }
 
             if (isLoading) {

@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.di
 
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.EntrepreneurshipReviewRepositoryDirectus
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.EntrepreneurshipReviewRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipRatingUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.DeleteEntrepreneurshipReviewUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetAllEntrepreneurshipReviewsUseCase
 import dagger.Binds
@@ -37,5 +38,10 @@ abstract class EntrepreneurshipReviewModule {
         @Singleton
         fun provideGetAllEntrepreneurshipReviewsUseCase(repository: EntrepreneurshipReviewRepository): GetAllEntrepreneurshipReviewsUseCase =
             GetAllEntrepreneurshipReviewsUseCase(repository)
+
+        @Provides
+        @Singleton
+        fun provideGetEntrepreneurshipRatingUseCase(repository: EntrepreneurshipReviewRepository): GetEntrepreneurshipRatingUseCase =
+            GetEntrepreneurshipRatingUseCase(repository)
     }
 }

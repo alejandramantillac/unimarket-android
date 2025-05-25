@@ -27,6 +27,10 @@ class DirectusQuery {
         filters.add(Filter(field, operator, value))
     }
 
+    fun filter(filter: Filter) = apply {
+        filters.add(filter)
+    }
+
     fun sort(field: String, direction: SortDirection = SortDirection.ASC) = apply {
         sorts.add(Sort(field, direction))
     }
@@ -76,7 +80,7 @@ class DirectusQuery {
         }
 
         if (filters.isNotEmpty()) {
-            params["filter"] = filters.joinToString(",") { it.toQueryString() }
+            params["filter"] = "{" + filters.joinToString(",") { it.toQueryString() } + "}"
         }
 
         if (sorts.isNotEmpty()) {
@@ -91,7 +95,9 @@ class DirectusQuery {
         deepQuery?.let { params["deep"] = it }
 
         if (aggregates.isNotEmpty()) {
-            params["aggregate"] = aggregates.joinToString(",") { it.toQueryString() }
+            aggregates.forEach { aggregate ->
+                params["aggregate[${aggregate.function.name.lowercase()}]"] = aggregate.field
+            }
         }
 
         groupByField?.let { params["groupBy"] = it }
@@ -120,7 +126,7 @@ class DirectusQuery {
                 is String -> "\"$value\""
                 else -> value
             }
-            return "{\"$field\":{\"_$operator\":$formattedValue}}"
+            return "\"$field\":{\"_$operator\":$formattedValue}"
         }
     }
 

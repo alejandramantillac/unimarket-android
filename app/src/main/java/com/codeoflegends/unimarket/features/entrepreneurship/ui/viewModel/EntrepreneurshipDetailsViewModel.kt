@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.core.ui.components.CommentData
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Tag
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipRatingUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetAllEntrepreneurshipReviewsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,17 +24,27 @@ sealed class EntrepreneurshipDetailsActionState {
     object Loading : EntrepreneurshipDetailsActionState()
 }
 
+sealed class EntrepreneurshipReviewActionState {
+    object Idle : EntrepreneurshipReviewActionState()
+    data class Error(val message: String) : EntrepreneurshipReviewActionState()
+    object Loading : EntrepreneurshipReviewActionState()
+}
+
 @HiltViewModel
 class EntrepreneurshipDetailsViewModel @Inject constructor(
     private val getEntrepreneurshipUseCase: GetEntrepreneurshipUseCase,
+    private val getEntrepreneurshipRatingUseCase: GetEntrepreneurshipRatingUseCase,
     private val getAllEntrepreneurshipReviewsUseCase: GetAllEntrepreneurshipReviewsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(EntrepreneurshipDetailsUiState())
     val uiState: StateFlow<EntrepreneurshipDetailsUiState> = _uiState.asStateFlow()
 
-    private val _actionState = MutableStateFlow<EntrepreneurshipDetailsActionState>(EntrepreneurshipDetailsActionState.Idle)
+    private val _actionState = MutableStateFlow<EntrepreneurshipDetailsActionState>(EntrepreneurshipDetailsActionState.Loading)
     val actionState: StateFlow<EntrepreneurshipDetailsActionState> = _actionState.asStateFlow()
+
+    private val _reviewState = MutableStateFlow<EntrepreneurshipReviewActionState>(EntrepreneurshipReviewActionState.Idle)
+    val reviewState: StateFlow<EntrepreneurshipReviewActionState> = _reviewState.asStateFlow()
 
     fun loadEntrepreneurshipDetails(entrepreneurshipId: UUID) {
         _actionState.value = EntrepreneurshipDetailsActionState.Loading
@@ -46,6 +57,12 @@ class EntrepreneurshipDetailsViewModel @Inject constructor(
                     description = entrepreneurship.description,
                     tags = entrepreneurship.tags
                 )
+
+                val reviewRating = getEntrepreneurshipRatingUseCase(entrepreneurshipId)
+                _uiState.value = _uiState.value.copy(
+                    averageRating = reviewRating.avgReview,
+                    totalReviews = reviewRating.totalReviews
+                )
                 _actionState.value = EntrepreneurshipDetailsActionState.Idle
             } catch (e: Exception) {
                 _actionState.value = EntrepreneurshipDetailsActionState.Error("Error al cargar el emprendimiento: ${e.message}")
@@ -54,7 +71,7 @@ class EntrepreneurshipDetailsViewModel @Inject constructor(
     }
 
     fun loadMoreReviews(entrepreneurshipId: UUID) {
-        _actionState.value = EntrepreneurshipDetailsActionState.Loading
+        _reviewState.value = EntrepreneurshipReviewActionState.Loading
 
         viewModelScope.launch {
             try {
@@ -85,10 +102,9 @@ class EntrepreneurshipDetailsViewModel @Inject constructor(
                     Log.i("EntrepreneurshipDetailsViewModel", "Page: ${_uiState.value.page}")
                     Log.i("EntrepreneurshipDetailsViewModel", "Reviews: ${_uiState.value.reviews}")
                 }
-
-                _actionState.value = EntrepreneurshipDetailsActionState.Idle
+                _reviewState.value = EntrepreneurshipReviewActionState.Idle
             } catch (e: Exception) {
-                _actionState.value = EntrepreneurshipDetailsActionState.Error("Error al cargar más reseñas: ${e.message}")
+                _reviewState.value = EntrepreneurshipReviewActionState.Error("Error al cargar más reseñas: ${e.message}")
             }
         }
     }

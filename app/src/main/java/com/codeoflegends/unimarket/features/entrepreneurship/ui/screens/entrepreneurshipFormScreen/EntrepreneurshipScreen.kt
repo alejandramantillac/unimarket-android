@@ -80,10 +80,10 @@ fun EntrepreneurshipScreen(
                 ) {
                     when (state.currentRoute) {
                         "home" -> EntrepreneurshipDetailPage(basicState = state)
-                        "products" -> EntrepreneurshipProductsPage(basicState = state)
+                        "products" -> EntrepreneurshipProductsPage(basicState = state, manager = manager)
                         "people" -> EntrepreneurshipMembersPage(basicState = state)
                         "orders" -> EntrepreneurshipOrdersPage(basicState = state)
-                        "metrics" -> EntrepreneurshipStatisticsPage(basicState = state)
+                        //"metrics" -> EntrepreneurshipStatisticsPage(basicState = state)
                     }
                 }
             }
