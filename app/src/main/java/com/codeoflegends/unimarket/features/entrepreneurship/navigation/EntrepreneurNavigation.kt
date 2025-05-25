@@ -1,6 +1,5 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.navigation
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -9,7 +8,7 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipFormScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.EntrepreneurshipScreen
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.ProfileScreen
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipProfileScreen
 //import com.codeoflegends.unimarket.features.profile.ui.screens.EditProfileScreen
 
 fun NavGraphBuilder.entrepreneurNavigation(
@@ -31,7 +30,7 @@ fun NavGraphBuilder.entrepreneurNavigation(
     }
 
     composable(Routes.EntrepreneurProfile.route) {
-        ProfileScreen(manager)
+        EntrepreneurshipProfileScreen(manager)
     }
 
     composable(

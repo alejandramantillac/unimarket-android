@@ -10,77 +10,135 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import coil.compose.AsyncImage
 
 @Composable
 fun EntrepreneurshipItem(
     entrepreneurship: Entrepreneurship,
-    onClick: () -> Unit // nuevo parámetro
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp),
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Storefront,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp)
-                    .padding(end = 16.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Column(modifier = Modifier.weight(1f)) {
-                // Título con navegación
-                Text(
-                    text = entrepreneurship.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.clickable { onClick() } // <-- aquí
-                )
-                Text(
-                    text = entrepreneurship.slogan,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    repeat(5) {
-                        Icon(
-                            imageVector = Icons.Default.StarBorder,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = " (${entrepreneurship.reviews.count()} reseñas)",
-                        style = MaterialTheme.typography.bodySmall
+            // Primera fila: Imagen y detalles principales
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                // Imagen del emprendimiento
+                Surface(
+                    modifier = Modifier.size(80.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    AsyncImage(
+                        model = "https://picsum.photos/200",
+                        contentDescription = "Imagen del emprendimiento",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                // Columna de detalles
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // Nombre y descripción
+                    Column {
+                        Text(
+                            text = entrepreneurship.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = entrepreneurship.slogan,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Column {
-                        Text("Productos", style = MaterialTheme.typography.labelSmall)
-                        Text("${entrepreneurship.products.count()}", style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Rating y reseñas
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 4.dp)
+                    ) {
+                        RatingStars(4.5f)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "(${entrepreneurship.reviews.count()} reseñas)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                    Column {
-                        Text("Ventas", style = MaterialTheme.typography.labelSmall)
-                        Text("${entrepreneurship.orders.size}", style = MaterialTheme.typography.bodyMedium)
-                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Segunda fila: Estadísticas
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Productos
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Productos",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "${entrepreneurship.products.count()}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                // Separador vertical
+                Divider(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(1.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
+                // Ventas
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Ventas",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "${entrepreneurship.orders.size}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }
