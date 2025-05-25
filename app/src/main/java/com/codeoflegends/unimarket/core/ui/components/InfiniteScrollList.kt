@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.core.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -75,10 +76,30 @@ fun <T> InfiniteScrollList(
             }
         }
 
-        if (items.isEmpty()) {
+        // No hay contenido
+        if (items.isEmpty() && !isLoading) {
             if (emptyContent != null) {
                 item {
-                    emptyContent()
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        emptyContent()
+                    }
+                }
+            }
+        // Contenido vacío y cargando
+        } else if (items.isEmpty() && isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         } else {

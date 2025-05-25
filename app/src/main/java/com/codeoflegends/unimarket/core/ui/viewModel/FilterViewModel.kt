@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.core.ui.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,6 +10,9 @@ import kotlinx.coroutines.flow.update
 data class FilterOption(
     val id: String,
     val label: String,
+    val field: String,
+    val operator: String,
+    val value: Any,
     val isSelected: Boolean = false
 )
 
@@ -49,6 +53,20 @@ abstract class FilterViewModel : ViewModel() {
 
     fun setFilters(filters: List<FilterOption>) {
         _filterState.update { it.copy(filters = filters) }
+    }
+
+    fun filterToQuery(): List<DirectusQuery.Filter> {
+        return _filterState.value.filters.filter { it.isSelected }.map { filter ->
+            DirectusQuery.Filter(
+                field = filter.field,
+                operator = filter.operator,
+                value = filter.value
+            )
+        }
+    }
+
+    fun hasActiveFilters(): Boolean {
+        return _filterState.value.filters.any { it.isSelected } || _filterState.value.searchQuery.isNotEmpty()
     }
 
     // Métodos abstractos que deben ser implementados por las clases hijas

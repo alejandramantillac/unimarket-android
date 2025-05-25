@@ -8,20 +8,7 @@ import javax.inject.Inject
 class GetAllProductsUseCase @Inject constructor(
     private val repository: ProductRepository
 ) {
-    suspend operator fun invoke(entrepreneurshipId: UUID? = null,
-                                nameContains: String = "",
-                                page: Int = 1,
-                                limit: Int = 10
-    ): List<Product> {
-        return if (entrepreneurshipId != null) {
-            repository.getAllProductsByEntrepreneurship(
-                entrepreneurshipId = entrepreneurshipId,
-                nameContains = nameContains,
-                limit = limit,
-                page = page
-            ).getOrThrow()
-        } else {
-            repository.getAllProducts().getOrThrow()
-        }
+    suspend operator fun invoke(): List<Product> {
+        return repository.getAllProducts().getOrThrow()
     }
 } 

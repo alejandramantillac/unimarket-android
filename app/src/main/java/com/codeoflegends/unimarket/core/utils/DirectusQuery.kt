@@ -27,6 +27,10 @@ class DirectusQuery {
         filters.add(Filter(field, operator, value))
     }
 
+    fun filter(filter: Filter) = apply {
+        filters.add(filter)
+    }
+
     fun sort(field: String, direction: SortDirection = SortDirection.ASC) = apply {
         sorts.add(Sort(field, direction))
     }

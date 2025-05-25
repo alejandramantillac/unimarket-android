@@ -7,5 +7,4 @@ data class EntrepreneurshipProductsUiState(
     val page: Int = 0,
     val limit: Int = 5,
     val hasMoreItems: Boolean = true,
-    val searchQuery: String = ""
 )

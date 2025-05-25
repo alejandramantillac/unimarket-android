@@ -1,11 +1,11 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.core.ui.viewModel.FilterOption
 import com.codeoflegends.unimarket.core.ui.viewModel.FilterViewModel
+import com.codeoflegends.unimarket.core.utils.DirectusQuery
+import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsByQueryUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,27 +15,32 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
-sealed class EntrepreneurshipProductsActionState {
-    object Idle : EntrepreneurshipProductsActionState()
-    object Loading : EntrepreneurshipProductsActionState()
-    data class Error(val message: String) : EntrepreneurshipProductsActionState()
-    object Success : EntrepreneurshipProductsActionState()
+sealed class EntrepreneurshipGeneralProductsActionState {
+    object Idle : EntrepreneurshipGeneralProductsActionState()
+    object Loading : EntrepreneurshipGeneralProductsActionState()
+    data class Error(val message: String) : EntrepreneurshipGeneralProductsActionState()
+    object Success : EntrepreneurshipGeneralProductsActionState()
 }
+
+sealed class EntrepreneurshipQueryProductsActionState {
+    object Idle : EntrepreneurshipQueryProductsActionState()
+    object Loading : EntrepreneurshipQueryProductsActionState()
+    data class Error(val message: String) : EntrepreneurshipQueryProductsActionState()
+}
+
 
 @HiltViewModel
 class EntrepreneurshipProductsViewModel @Inject constructor(
-    private val getAllEntrepreneurshipProductsUseCase: GetAllProductsUseCase,
+    private val getAllProductsByQueryUseCase: GetAllProductsByQueryUseCase,
     ): FilterViewModel() {
+
+    private var entrepreneurshipId: UUID? = null
 
     init {
         setFilters(
             listOf(
-                FilterOption("active", "Activos"),
-                FilterOption("inactive", "Inactivos"),
-                FilterOption("featured", "Destacados"),
-                FilterOption("new", "Nuevos"),
-                FilterOption("popular", "Populares"),
-                FilterOption("sale", "En oferta")
+                FilterOption(id = "activo", label = "Activo", field = "published", operator = "eq", value = true),
+                FilterOption(id = "inactivo", label = "Inactivo", field = "published", operator = "eq", value = false)
             )
         )
     }
@@ -43,22 +48,31 @@ class EntrepreneurshipProductsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(EntrepreneurshipProductsUiState())
     val uiState: StateFlow<EntrepreneurshipProductsUiState> = _uiState.asStateFlow()
 
-    private val _actionState = MutableStateFlow<EntrepreneurshipProductsActionState>(EntrepreneurshipProductsActionState.Idle)
-    val actionState: StateFlow<EntrepreneurshipProductsActionState> = _actionState.asStateFlow()
+    private val _actionState = MutableStateFlow<EntrepreneurshipGeneralProductsActionState>(EntrepreneurshipGeneralProductsActionState.Idle)
+    val actionState: StateFlow<EntrepreneurshipGeneralProductsActionState> = _actionState.asStateFlow()
+
+    private val _queryActionState = MutableStateFlow<EntrepreneurshipQueryProductsActionState>(EntrepreneurshipQueryProductsActionState.Loading)
+    val queryActionState: StateFlow<EntrepreneurshipQueryProductsActionState> = _queryActionState.asStateFlow()
+
+    fun initialize(entrepreneurshipId: UUID) {
+        this.entrepreneurshipId = entrepreneurshipId
+        loadMoreProducts(entrepreneurshipId)
+    }
 
     fun loadMoreProducts(entrepreneurshipId: UUID) {
         if (!_uiState.value.hasMoreItems) {
             return
         }
 
-        _actionState.value = EntrepreneurshipProductsActionState.Loading
+        _queryActionState.value = EntrepreneurshipQueryProductsActionState.Loading
         Log.i("EntrepreneurshipProductsViewModel", "Loading more products for entrepreneurship $entrepreneurshipId")
 
         viewModelScope.launch {
             try {
-                val products = getAllEntrepreneurshipProductsUseCase(
+                val products = getAllProductsByQueryUseCase(
                     entrepreneurshipId = entrepreneurshipId,
-                    nameContains = _uiState.value.searchQuery,
+                    nameContains = filterState.value.searchQuery,
+                    filters = filterToQuery(),
                     page = _uiState.value.page + 1,
                     limit = _uiState.value.limit
                 )
@@ -73,33 +87,33 @@ class EntrepreneurshipProductsViewModel @Inject constructor(
                 } else {
                     _uiState.value = _uiState.value.copy(hasMoreItems = false)
                 }
-                _actionState.value = EntrepreneurshipProductsActionState.Idle
+                _queryActionState.value = EntrepreneurshipQueryProductsActionState.Idle
             } catch (e: Exception) {
                 Log.i("EntrepreneurshipProductsViewModel", "Error al cargar los productos: ${e.message}")
-                _actionState.value =
-                    EntrepreneurshipProductsActionState.Error("Error al cargar productos: ${e.message}")
+                _queryActionState.value =
+                    EntrepreneurshipQueryProductsActionState.Error("Error al cargar productos: ${e.message}")
             }
         }
     }
 
-    fun updateSearchQuery(query: String?, entrepreneurshipId: UUID) {
-        Log.i("EntrepreneurshipProductsViewModel", "Updating search query")
+    fun resetQueryParameters() {
         _uiState.value = _uiState.value.copy(
-            searchQuery = query?: "",
             page = 0,
             products = emptyList(),
             hasMoreItems = true
         )
-        // Cargar productos con el nuevo término de búsqueda
-        loadMoreProducts(entrepreneurshipId)
     }
 
     override fun onSearchQueryChanged(query: String) {
-        TODO("Not yet implemented")
+        val currentId = entrepreneurshipId ?: return
+        resetQueryParameters()
+        loadMoreProducts(currentId)
     }
 
     override fun onFilterChanged(filterId: String) {
-        TODO("Not yet implemented")
+        val currentId = entrepreneurshipId ?: return
+        resetQueryParameters()
+        loadMoreProducts(currentId)
     }
 
     override fun onAdvancedFiltersToggled() {

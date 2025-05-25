@@ -51,7 +51,7 @@ fun NavigationBar(
         NavigationItem.Products,
         NavigationItem.People,
         NavigationItem.Orders,
-        NavigationItem.Statistics
+        //NavigationItem.Statistics
     )
 
     NavigationBar(

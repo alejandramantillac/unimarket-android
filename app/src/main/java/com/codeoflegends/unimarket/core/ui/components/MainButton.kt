@@ -40,8 +40,9 @@ fun MainButton(
             contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
-        Row(modifier = Modifier.background(Color.Blue),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (isLoading) {
                 CircularProgressIndicator(
                     color = Color.White,

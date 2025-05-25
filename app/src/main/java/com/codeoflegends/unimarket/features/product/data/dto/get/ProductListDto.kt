@@ -16,7 +16,8 @@ data class ProductListDto(
     val price: Double,
     val stockAlert: Int,
     val published: Boolean,
-    val entrepreneurship: EntrepreneurshipDto
+    val entrepreneurship: EntrepreneurshipDto,
+    val image: String? = null
 ) {
     companion object {
         fun query(): DirectusQuery {
@@ -24,7 +25,13 @@ data class ProductListDto(
                 .join("entrepreneurship")
         }
 
-        fun queryByEntrepreneurship(entrepreneurshipId: String, nameContains: String = "", page: Int, limit: Int): DirectusQuery {
+        fun queryByEntrepreneurship(
+            entrepreneurshipId: String,
+            nameContains: String = "",
+            filters: List<DirectusQuery.Filter>,
+            limit: Int,
+            page: Int
+        ): DirectusQuery {
             val query = DirectusQuery()
                 .paginate(page = page, limit = limit)
                 .filter("entrepreneurship", "eq", entrepreneurshipId)
@@ -32,6 +39,10 @@ data class ProductListDto(
 
             if (nameContains.isNotEmpty()) {
                 query.filter("name", "icontains", nameContains)
+            }
+
+            filters.forEach { filter ->
+                query.filter(filter)
             }
 
             Log.d("ProductListDto", "Query: ${query.build()}")
