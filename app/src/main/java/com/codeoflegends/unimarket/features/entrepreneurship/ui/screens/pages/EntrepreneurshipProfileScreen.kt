@@ -33,6 +33,9 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.Entre
 import coil.compose.AsyncImage
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileActionState
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Composable
 fun EntrepreneurshipProfileScreen(
@@ -40,61 +43,69 @@ fun EntrepreneurshipProfileScreen(
     viewModel: UserProfileViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState.collectAsState().value
+    val actionState = viewModel.actionState.collectAsState().value
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp, horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = null)
-            Icon(Icons.Default.Settings, contentDescription = null)
-        }
-
-        // inicio datos usuario
-        Card(
+    if (actionState is UserProfileActionState.Error) {
+        Text(
+            text = actionState.message,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(16.dp)
+        )
+    } else {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            shape = MaterialTheme.shapes.small
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            Column(
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp, horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = null)
+                Icon(Icons.Default.Settings, contentDescription = null)
+            }
+
+            // inicio datos usuario
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = MaterialTheme.shapes.small
             ) {
-                // Profile Header Section
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Surface(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .padding(end = 16.dp),
-                        shape = MaterialTheme.shapes.small,
-                        color = MaterialTheme.colorScheme.primaryContainer
+                    // Profile Header Section
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AsyncImage(
-                            model = "https://picsum.photos/200",
-                            contentDescription = "Foto de perfil",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                        Surface(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .padding(end = 16.dp),
+                            shape = MaterialTheme.shapes.small,
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        ) {
+                            AsyncImage(
+                                model = state.user.profile.profilePicture,
+                                contentDescription = "Foto de perfil",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
 
                     Column(
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            state.name ?: "Cargando...",
+                            text = state.user.firstName + " " + state.user.lastName,
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -108,125 +119,176 @@ fun EntrepreneurshipProfileScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        ),
-                        shape = MaterialTheme.shapes.small
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp)
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ),
+                            shape = MaterialTheme.shapes.small
                         ) {
-                            Text(
-                                "Ventas totales",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                            Text(
-                                "1580",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    "Ventas totales",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    "1580",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                            ),
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    "Miembro desde",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    text = state.user.profile.registrationDate.format(
+                                        DateTimeFormatter.ofPattern("MMMM yyyy", Locale("es"))
+                                    ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                            }
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
-                    
-                    Card(
-                        modifier = Modifier.weight(1f),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        ),
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp)
-                        ) {
-                            Text(
-                                "Miembro desde",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                            Text(
-                                state.memberSince,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                            )
-                        }
-                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    MainButton(
+                        onClick = {
+                            manager.navController.navigate(Routes.EditProfile.createRoute("id_del_emprendimiento"))
+                        },
+                        text = "Editar Perfil",
+                        fillMaxWidth = true,
+                        leftIcon = Icons.Default.Edit
+                    )
                 }
-                
-                Spacer(modifier = Modifier.height(8.dp))
+            }
+            // fin datos usuario
+            //Spacer(modifier = Modifier.height(16.dp))
 
-                MainButton(
-                    onClick = {
-                        manager.navController.navigate(Routes.EditProfile.createRoute("id_del_emprendimiento"))
+            /*
+            MonthlySummaryChart()
+             */
+            //Spacer(modifier = Modifier.height(16.dp))
+            /*
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFEDE7F6), RoundedCornerShape(12.dp))
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.CardGiftcard, contentDescription = null, tint = Color(0xFF6A1B9A))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("¡Desbloquea Todo Tu Potencial!")
+                            Text("Aumenta tus ventas con suscripción premium", style = MaterialTheme.typography.bodySmall)
+                        }
+                        Button(onClick = { /* Esto esta pendiente por implementar*/ }) {
+                            Text("Mejorar")
+                        }
+                    }
+            */
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "Mis Emprendimientos",
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+            ) {
+                InfiniteScrollList(
+                    items = state.entrepreneurships,
+                    onLoadMore = { },
+                    isLoading = actionState is UserProfileActionState.Loading,
+                    itemContent = { entrepreneurship ->
+                        EntrepreneurshipItem(
+                            entrepreneurship = entrepreneurship,
+                            onClick = {
+                                manager.navController.navigate(
+                                    Routes.ManageEntrepreneurship.createRoute(entrepreneurship.id.toString())
+                                )
+                            }
+                        )
                     },
-                    text = "Editar Perfil",
-                    fillMaxWidth = true,
-                    leftIcon = Icons.Default.Edit
                 )
             }
-        }
-        // fin datos usuario
-        //Spacer(modifier = Modifier.height(16.dp))
 
-        /*
-        MonthlySummaryChart()
-         */
-        //Spacer(modifier = Modifier.height(16.dp))
-/*
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFEDE7F6), RoundedCornerShape(12.dp))
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.CardGiftcard, contentDescription = null, tint = Color(0xFF6A1B9A))
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text("¡Desbloquea Todo Tu Potencial!")
-                Text("Aumenta tus ventas con suscripción premium", style = MaterialTheme.typography.bodySmall)
+            /**
+             * itemContent = { entrepreneurship ->
+             *                 EntrepreneurshipItem(
+             *                     entrepreneurship = entrepreneurship,
+             *                     onClick = {
+             *                         manager.navController.navigate(
+             *                             Routes.ManageEntrepreneurship.createRoute(entrepreneurship.id.toString())
+             *                         )
+             *                     }
+             *                 )
+             *             },
+             *             emptyContent = {
+             *                 Text("No tienes emprendimientos aún. ¡Crea uno nuevo!")
+             *             }
+             */
+            /*
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("Mis emprendimientos", style = MaterialTheme.typography.titleMedium)
+                Text("", color = Color(0xFF6A1B9A))
+                ClickableTextLink("+ Nuevo", {
+                    manager.navController.navigate(Routes.EntrepreneurshipForm.route)
+                })
             }
-            Button(onClick = { /* Esto esta pendiente por implementar*/ }) {
-                Text("Mejorar")
-            }
-        }
-*/
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = "Mis Emprendimientos",
-            style = MaterialTheme.typography.titleMedium,
-        )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(320.dp)
-        ) {
-            InfiniteScrollList(
-                items = state.allEntrepreneurships,
-                onLoadMore = { },
-                isLoading = state.loading,
-                itemContent = { entrepreneurship ->
+            Spacer(modifier = Modifier.height(8.dp))
+
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.allEntrepreneurships) { entrepreneurship ->
                     EntrepreneurshipItem(
                         entrepreneurship = entrepreneurship,
                         onClick = {
@@ -235,59 +297,11 @@ fun EntrepreneurshipProfileScreen(
                             )
                         }
                     )
-                },
-            )
-        }
-
-        /**
-         * itemContent = { entrepreneurship ->
-         *                 EntrepreneurshipItem(
-         *                     entrepreneurship = entrepreneurship,
-         *                     onClick = {
-         *                         manager.navController.navigate(
-         *                             Routes.ManageEntrepreneurship.createRoute(entrepreneurship.id.toString())
-         *                         )
-         *                     }
-         *                 )
-         *             },
-         *             emptyContent = {
-         *                 Text("No tienes emprendimientos aún. ¡Crea uno nuevo!")
-         *             }
-         */
-        /*
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Mis emprendimientos", style = MaterialTheme.typography.titleMedium)
-            Text("", color = Color(0xFF6A1B9A))
-            ClickableTextLink("+ Nuevo", {
-                manager.navController.navigate(Routes.EntrepreneurshipForm.route)
-            })
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(state.allEntrepreneurships) { entrepreneurship ->
-                EntrepreneurshipItem(
-                    entrepreneurship = entrepreneurship,
-                    onClick = {
-                        manager.navController.navigate(
-                            Routes.ManageEntrepreneurship.createRoute(entrepreneurship.id.toString())
-                        )
-                    }
-                )
+                }
             }
+             */
+
+
         }
-         */
-
-
     }
 }

@@ -3,6 +3,8 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.core.data.model.User
+import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetUserDataUseCase
@@ -15,16 +17,30 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 import javax.inject.Inject
 
 data class UserUiState(
-    val name: String = "",
-    val email: String = "",
-    val loading: Boolean = false,
-    val error: String? = null,
-    val allEntrepreneurships: List<Entrepreneurship> = emptyList(),
-    val memberSince: String = "",
+    val user: User = User(
+        id = UUID.randomUUID(),
+        firstName = "",
+        lastName = "",
+        email = "",
+        profile = UserProfile(
+            profilePicture = "",
+            userRating = 0f,
+            partnerRating = 0f,
+            registrationDate = LocalDateTime.now()
+        )
+    ),
+    val entrepreneurships: List<Entrepreneurship> = emptyList(),
 )
+
+sealed class UserProfileActionState {
+    object Idle : UserProfileActionState()
+    data class Error(val message: String) : UserProfileActionState()
+    object Loading : UserProfileActionState()
+}
 
 @HiltViewModel
 class UserProfileViewModel @Inject constructor(
@@ -32,8 +48,11 @@ class UserProfileViewModel @Inject constructor(
     private val getAllEntrepreneurshipUseCase: GetAllEntrepreneurship,
     ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UserUiState(loading = true))
+    private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+
+    private val _actionState = MutableStateFlow<UserProfileActionState>(UserProfileActionState.Loading)
+    val actionState: StateFlow<UserProfileActionState> = _actionState.asStateFlow()
 
     init {
         loadUserData()
@@ -41,22 +60,29 @@ class UserProfileViewModel @Inject constructor(
     }
 
     private fun loadUserData() {
+        _actionState.value = UserProfileActionState.Loading
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loading = true, error = null)
             try {
                 val userDto = getUserDataUseCase()
                 Log.d("UserProfileViewModel", "User data loaded: $userDto")
-                _uiState.value = UserUiState(
-                    name = "${userDto.firstName} ${userDto.lastName}",
-                    email = userDto.email,
-                    loading = false
-                )
+                _uiState.value = _uiState.value.copy(
+                    user = User(
+                        id = UUID.fromString(userDto.id),
+                        firstName = userDto.firstName,
+                        lastName = userDto.lastName,
+                        email = userDto.email,
+                        profile = UserProfile(
+                            profilePicture = userDto.profile.profilePicture,
+                            userRating = userDto.profile.userRating,
+                            partnerRating = userDto.profile.partnerRating,
+                            registrationDate = LocalDateTime.parse(userDto.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME),
+                            )
+                        )
+                    )
+                _actionState.value = UserProfileActionState.Idle
             } catch (e: Exception) {
                 Log.e("UserProfileViewModel", "Error loading user data", e)
-                _uiState.value = _uiState.value.copy(
-                    loading = false,
-                    error = e.message ?: "Error desconocido"
-                )
+                _actionState.value = UserProfileActionState.Error("Error al cargar el usuario: ${e.message}")
             }
         }
     }
@@ -65,27 +91,14 @@ class UserProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val list = getAllEntrepreneurshipUseCase()
-                val memberSince = getEarliestFormatted(list)
+
                 _uiState.value = _uiState.value.copy(
-                    allEntrepreneurships = list,
-                    memberSince = memberSince
+                    entrepreneurships = list
                 )
-                Log.d("UserProfileViewModel", "Miembro desde: $memberSince")
+                Log.d("UserProfileViewModel", "Emprendimeintos: $list")
             } catch (e: Exception) {
                 Log.e("UserProfileViewModel", "Error loading all entrepreneurships", e)
             }
         }
     }
-
-
-    private fun getEarliestFormatted(entrepreneurships: List<Entrepreneurship>): String {
-        val outputFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale("es"))
-        return entrepreneurships
-            .map { it.creationDate }
-            .minOrNull()
-            ?.format(outputFormatter) ?: "N/A"
-    }
-
-
-
 }

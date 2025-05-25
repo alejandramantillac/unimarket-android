@@ -47,7 +47,7 @@ fun EntrepreneurshipItem(
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     AsyncImage(
-                        model = "https://picsum.photos/200",
+                        model = entrepreneurship.customization.profileImg,
                         contentDescription = "Imagen del emprendimiento",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop

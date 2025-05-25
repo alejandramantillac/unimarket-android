@@ -20,8 +20,8 @@ fun EditProfileScreen(
 ) {
     val state = viewModel.uiState.collectAsState().value
 
-    var name by remember { mutableStateOf(state.name) }
-    var email by remember { mutableStateOf(state.email) }
+    var name by remember { mutableStateOf(state.user.firstName + state.user.lastName) }
+    var email by remember { mutableStateOf(state.user.email) }
 
     Column(
         modifier = Modifier
@@ -70,10 +70,11 @@ fun EditProfileScreen(
         ) {
             Text("Guardar cambios")
         }
-
+        /*
         state.error?.let {
             Spacer(modifier = Modifier.height(16.dp))
             Text("Error: $it", color = MaterialTheme.colorScheme.error)
         }
+         */
     }
 }
