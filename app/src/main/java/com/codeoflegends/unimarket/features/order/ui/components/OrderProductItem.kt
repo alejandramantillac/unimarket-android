@@ -12,45 +12,45 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.core.ui.components.ProductImage
-import com.codeoflegends.unimarket.features.order.data.model.OrderProduct
+import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 
 @Composable
 fun OrderProductItem(
-    product: OrderProduct,
+    product: ProductVariant,
+    quantity: Int,
+    totalPrice: Double,
     modifier: Modifier = Modifier
 ) {
-    val selectedVariant = product.product.variants.firstOrNull() // Selecciona la primera variante como ejemplo
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Imagen de la variante o producto
+        // Imagen del producto
         ProductImage(
-            imageUrl = selectedVariant?.variantImages?.firstOrNull(), // Usa la primera imagen de la variante
+            imageUrl = product.variantImages.firstOrNull(),
             modifier = Modifier
                 .size(64.dp)
                 .padding(end = 8.dp)
         )
-        // Nombre de la variante o producto
+        // Nombre del producto
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = selectedVariant?.name ?: product.product.name, // Usa el nombre de la variante si está disponible
+                text = product.name,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "${product.quantity} unidades",
+                text = "$quantity unidades",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         // Precio total
         Text(
-            text = "$${product.totalPrice}",
+            text = "$$totalPrice",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary
         )

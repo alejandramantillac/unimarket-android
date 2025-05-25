@@ -3,43 +3,78 @@ package com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen
 import DeliveryDetails
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.components.TabSelector
-import com.codeoflegends.unimarket.features.order.data.mock.MockOrderDatabase
 import com.codeoflegends.unimarket.features.order.ui.components.OrderProductList
-import com.codeoflegends.unimarket.features.order.ui.components.OrderStatusHistory
 import com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages.ClientDetails
 import com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages.PaymentDetails
-import androidx.compose.ui.tooling.preview.Preview
-import com.codeoflegends.unimarket.features.order.ui.components.OrderProductItem
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewModel
 import java.util.UUID
 
 @Composable
-fun OrderSummaryScreen(onTabSelected: (Int) -> Unit, orderId: UUID?) {
-    
-    var selectedTabIndex by remember { mutableStateOf(0) }
+fun OrderSummaryScreen(
+    orderId: String?,
+    viewModel: OrderSummaryViewModel = hiltViewModel(),
+    manager: NavigationManager? = null
+) {
+    // Cargar la orden desde el ViewModel
+    LaunchedEffect(orderId) {
+        viewModel.loadOrder(orderId)
+    }
 
-    // Obtén la orden mock
-    val mockOrder = MockOrderDatabase.getMockOrder()
+    // Observar el estado de la UI
+    val uiState by viewModel.uiState.collectAsState()
+
+    if (uiState.id == null) {
+        // Mostrar mensaje si la orden no existe
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Orden no encontrada",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
+        }
+        return
+    }
+
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     val tabs = listOf(
         Tab(
             title = "Pago",
-            content = { PaymentDetails(payment = mockOrder.payment) }
+            content = {
+                uiState.payment?.let { payment ->
+                    uiState.order?.let { order ->
+                        PaymentDetails(payment = payment, order = order)
+                    } ?: Text("Información de la orden no disponible")
+                } ?: Text("Información de pago no disponible")
+            }
         ),
         Tab(
             title = "Cliente",
-            content = { ClientDetails(client = mockOrder.client) }
+            content = {
+                uiState.client?.let {
+                    ClientDetails(client = it)
+                } ?: Text("Información del cliente no disponible")
+            }
         ),
         Tab(
             title = "Entrega",
-            content = { DeliveryDetails(delivery = mockOrder.delivery) }
+            content = {
+                uiState.delivery?.let {
+                    DeliveryDetails(delivery = it)
+                } ?: Text("Información de entrega no disponible")
+            }
         )
     )
 
@@ -47,7 +82,7 @@ fun OrderSummaryScreen(onTabSelected: (Int) -> Unit, orderId: UUID?) {
         // Título del pedido
         item {
             Text(
-                text = "Pedido #${mockOrder.id}",
+                text = "Pedido #${uiState.id}",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(16.dp)
             )
@@ -56,20 +91,10 @@ fun OrderSummaryScreen(onTabSelected: (Int) -> Unit, orderId: UUID?) {
         // Fecha del pedido
         item {
             Text(
-                text = mockOrder.date,
+                text = uiState.date,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(horizontal = 16.dp)
-            )
-        }
-
-        // Estado del pedido
-        item {
-            Text(
-                text = "Estado: ${mockOrder.status.lastOrNull()?.status ?: "Desconocido"}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
 
@@ -85,24 +110,7 @@ fun OrderSummaryScreen(onTabSelected: (Int) -> Unit, orderId: UUID?) {
         // Lista de productos
         item {
             OrderProductList(
-                products = mockOrder.products,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        // Subtítulo: Historial de estados
-        item {
-            Text(
-                text = "Historial de estados",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(16.dp, vertical = 2.dp)
-            )
-        }
-
-        // Historial de estados
-        item {
-            OrderStatusHistory(
-                statusHistory = mockOrder.status,
+                products = uiState.products,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -112,20 +120,8 @@ fun OrderSummaryScreen(onTabSelected: (Int) -> Unit, orderId: UUID?) {
             TabSelector(
                 tabs = tabs,
                 selectedTabIndex = selectedTabIndex,
-                onTabSelected = { index ->
-                    selectedTabIndex = index
-                    onTabSelected(index)
-                }
+                onTabSelected = { selectedTabIndex = it }
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OrderSummaryScreenPreview() {
-    OrderSummaryScreen(
-        onTabSelected = {},
-        orderId = UUID.randomUUID()
-    )
 }

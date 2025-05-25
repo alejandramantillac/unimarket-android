@@ -12,24 +12,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.codeoflegends.unimarket.features.order.data.model.OrderProduct
+import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 
 @Composable
 fun OrderProductList(
-    products: List<OrderProduct>,
+    products: List<ProductVariant>,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)), // Bordes curvos
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(
+       /* Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -46,6 +43,6 @@ fun OrderProductList(
                     )
                 }
             }
-        }
+        }*/
     }
 }

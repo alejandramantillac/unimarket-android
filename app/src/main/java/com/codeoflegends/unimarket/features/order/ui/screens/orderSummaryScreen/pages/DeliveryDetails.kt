@@ -20,10 +20,7 @@ fun DeliveryDetails(delivery: Delivery, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)), // Bordes curvos
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
@@ -39,30 +36,6 @@ fun DeliveryDetails(delivery: Delivery, modifier: Modifier = Modifier) {
             )
             Divider(color = Color.LightGray, thickness = 1.dp)
 
-            // Método de entrega
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "👍",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = "Método de entrega",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = delivery.method,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-            }
 
             // Ubicación de entrega
             Row(
@@ -82,14 +55,14 @@ fun DeliveryDetails(delivery: Delivery, modifier: Modifier = Modifier) {
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = delivery.location,
+                        text = delivery.deliveryAddress,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
             }
 
-            // Fecha y hora de entrega
+            // Estado de entrega
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,11 +76,11 @@ fun DeliveryDetails(delivery: Delivery, modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "Fecha y hora de entrega",
+                        text = "Estado de entrega",
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = delivery.dateTime,
+                        text = delivery.status.name,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )

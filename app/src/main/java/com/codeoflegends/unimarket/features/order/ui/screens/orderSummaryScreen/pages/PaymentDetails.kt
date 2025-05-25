@@ -17,19 +17,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.core.ui.components.MainButton
-import com.codeoflegends.unimarket.features.order.data.model.Payment
 import androidx.compose.ui.text.font.FontWeight
+import com.codeoflegends.unimarket.features.order.data.model.Order
+import com.codeoflegends.unimarket.features.order.data.model.Payment
 
 @Composable
-fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
+fun PaymentDetails(order: Order, payment: Payment, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)), // Bordes curvos
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
@@ -38,7 +36,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Método de pago
+            // Metodo de pago
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -48,7 +46,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = payment.method,
+                    text = payment.paymentMethod.name,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.LightGray
                 )
@@ -64,7 +62,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                     text = "Subtotal",
                 )
                 Text(
-                    text = payment.subtotal.toString(),
+                    text = order.subtotal.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.LightGray
                 )
@@ -79,7 +77,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                     text = "Descuentos",
                 )
                 Text(
-                    text = payment.discounts.toString(),
+                    text = order.discount.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.LightGray
                 )
@@ -96,7 +94,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                     text = "Total",
                 )
                 Text(
-                    text = payment.total.toString(),
+                    text = order.total.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.LightGray
                 )
@@ -107,7 +105,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Evidencias de pago",
@@ -115,7 +113,7 @@ fun PaymentDetails(payment: Payment, modifier: Modifier = Modifier) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Image(
-                    painter = rememberAsyncImagePainter(model = payment.evidenceImage),
+                    painter = rememberAsyncImagePainter(model = payment.paymentEvidences),
                     contentDescription = "Evidencia de pago",
                     modifier = Modifier
                         .size(150.dp)
