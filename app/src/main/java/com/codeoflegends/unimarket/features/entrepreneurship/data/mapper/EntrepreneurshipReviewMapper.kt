@@ -3,14 +3,14 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.mapper
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.ReviewRatingDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipReview
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.ReviewRating
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 object EntrepreneurshipReviewMapper {
-    private val dateFormatter = DateTimeFormatter.ISO_DATE_TIME
-
     fun entrepreneurshipReviewDtoToEntrepreneurshipReview(
         dto: EntrepreneurshipReviewDto
     ): EntrepreneurshipReview {
@@ -31,6 +31,15 @@ object EntrepreneurshipReviewMapper {
             dateCreated = LocalDateTime.parse(dto.dateCreated, DateTimeFormatter.ISO_DATE_TIME),
             rating = dto.rating,
             comment = dto.comment
+        )
+    }
+
+    fun entrepreneurshipReviewRatingDtoToEntrepreneurshipReviewRating(
+        dto: ReviewRatingDto
+    ): ReviewRating {
+        return ReviewRating(
+            totalReviews = dto.count.id.toInt(),
+            avgReview = dto.avg.rating
         )
     }
 }

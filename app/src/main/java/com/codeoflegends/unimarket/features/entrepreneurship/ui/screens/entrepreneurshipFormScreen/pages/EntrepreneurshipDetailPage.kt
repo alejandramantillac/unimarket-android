@@ -2,20 +2,28 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepr
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue  // Añadir esta importación
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.Comment
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
+import com.codeoflegends.unimarket.core.ui.components.LoadingOverlay
+import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.core.ui.components.TagType
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipBanner
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDetails
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDetailsActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDetailsViewModel
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 
@@ -25,6 +33,7 @@ fun EntrepreneurshipDetailPage(
     basicState: EntrepreneurshipBasicUiState
 ) {
     val actionState by viewModel.actionState.collectAsState()
+    val reviewState by viewModel.reviewState.collectAsState()
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(basicState.id) {
@@ -36,91 +45,59 @@ fun EntrepreneurshipDetailPage(
         TagType.entries.find { it.displayName.lowercase() == tag.name.lowercase() }
     }
 
-    val entrepreneurshipReviews = state.reviews
-    val totalReviews = entrepreneurshipReviews.count()
-    val averageReviewRating = if (totalReviews > 0) {
-        entrepreneurshipReviews.map { it.rating }.average().toFloat()
+    if (actionState is EntrepreneurshipDetailsActionState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     } else {
-        0f
-    }
+        InfiniteScrollList(
+            items = state.reviews,
+            onLoadMore = { viewModel.loadMoreReviews(basicState.id) },
+            isLoading = reviewState is EntrepreneurshipReviewActionState.Loading,
+            itemContent = { review ->
+                Comment(comment = review)
+            },
+            headerContent = {
+                Column {
+                    EntrepreneurshipBanner(
+                        name = basicState.name,
+                        profileUrl = basicState.customization.profileImg,
+                        bannerUrl = basicState.customization.bannerImg,
+                        slogan = state.slogan
+                    )
 
-    InfiniteScrollList(
-        items = entrepreneurshipReviews,
-        onLoadMore = { viewModel.loadMoreReviews(basicState.id) },
-        isLoading = actionState is EntrepreneurshipDetailsActionState.Loading,
-        itemContent = { review ->
-            Comment(comment = review)
-        },
-        headerContent = {
-            Column {
-                EntrepreneurshipBanner(
-                    name = basicState.name,
-                    profileUrl = basicState.customization.profileImg,
-                    bannerUrl = basicState.customization.bannerImg,
-                    slogan = state.slogan
-                )
+                    Row(Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+                        RatingStars(rating = state.averageRating)
+                        Text(
+                            text = "(${state.totalReviews} Reseñas)",
+                            style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
 
-                EntrepreneurshipDetails(
-                    description = state.description,
-                    entrepreneurshipTags = entrepreneurshipTags
-                )
-            }
-        }
-    )
-
-    /*
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        item {
-            EntrepreneurshipBanner(
-                name = state.name,
-                profileUrl = state.customization.profileImg,
-                bannerUrl = state.customization.bannerImg,
-                slogan = state.slogan
-            )
-        }
-
-        item {
-            EntrepreneurshipDetails(
-                description = state.description,
-                entrepreneurshipTags = entrepreneurshipTags
-            )
-        }
-
-        /**
-         * CommentSection(
-         *             comments = entrepreneurshipReviews,
-         *             emptyContent = "No tienes reseñas por ahora. Una gran oportunidad para impresionar a tus primeros clientes.",
-         *             header = {
-         *                 Text(
-         *                     text = "Valoraciones y reseñas",
-         *                     style = MaterialTheme.typography.titleLarge,
-         *                     fontWeight = FontWeight.Bold
-         *                 )
-         *             }
-         *         )
-         */
-        // Sección de comentarios
-        /*
-        item {
-            CommentSection(
-                comments = entrepreneurshipReviews,
-                emptyContent = "No tienes reseñas por ahora. Una gran oportunidad para impresionar a tus primeros clientes.",
-                header = {
+                    EntrepreneurshipDetails(
+                        description = state.description,
+                        entrepreneurshipTags = entrepreneurshipTags
+                    )
+                }
+            },
+            titleContent = {
+                Column(
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                ) {
                     Text(
                         text = "Valoraciones y reseñas",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium
                     )
-                },
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-         */
-
+                    Text(
+                        text = "Las calificaciones y reseñas vienen de clientes que han comprado en tu emprendimiento.",
+                        style = androidx.compose.material3.MaterialTheme.typography.titleSmall
+                    )
+                }
+            },
+        )
     }
-
-     */
 }

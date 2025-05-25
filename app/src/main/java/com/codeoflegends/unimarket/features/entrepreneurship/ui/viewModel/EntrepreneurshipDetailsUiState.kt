@@ -10,5 +10,7 @@ data class EntrepreneurshipDetailsUiState(
     val reviews: List<CommentData> = emptyList(),
     val page: Int = 0,
     val limit: Int = 5,
-    val hasMoreItems: Boolean = false
+    val hasMoreItems: Boolean = false,
+    val averageRating: Float = 0f,
+    val totalReviews: Int = 0
 )

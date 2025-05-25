@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -25,6 +26,7 @@ fun <T> InfiniteScrollList(
     itemContent: @Composable (T) -> Unit,
     items: List<T>,
     isLoading: Boolean,
+    titleContent: @Composable (() -> Unit)? = null,
     onLoadMore: () -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -51,7 +53,25 @@ fun <T> InfiniteScrollList(
     ) {
         headerContent?.let {
             item {
-                it()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    it()
+                }
+            }
+        }
+
+        titleContent?.let {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp, bottom = 8.dp),
+                ) {
+                    it()
+                }
             }
         }
 

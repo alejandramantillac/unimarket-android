@@ -91,7 +91,9 @@ class DirectusQuery {
         deepQuery?.let { params["deep"] = it }
 
         if (aggregates.isNotEmpty()) {
-            params["aggregate"] = aggregates.joinToString(",") { it.toQueryString() }
+            aggregates.forEach { aggregate ->
+                params["aggregate[${aggregate.function.name.lowercase()}]"] = aggregate.field
+            }
         }
 
         groupByField?.let { params["groupBy"] = it }
