@@ -1,8 +1,11 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.di
 
-import com.codeoflegends.unimarket.features.entrepreneurship.service.CollaboratorApi
+import com.codeoflegends.unimarket.core.annotation.MainRetrofit
+import com.codeoflegends.unimarket.features.entrepreneurship.data.remote.CollaboratorApi
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.CollaboratorRepository
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.CollaboratorRepositoryImpl
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repository.CollaboratorRepositoryImpl
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.collaborator.GetCollaboratorsUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,17 +15,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CollaboratorModule {
+abstract class CollaboratorModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideCollaboratorApi(retrofit: Retrofit): CollaboratorApi {
-        return retrofit.create(CollaboratorApi::class.java)
+    abstract fun bindCollaboratorRepository(
+        collaboratorRepositoryImpl: CollaboratorRepositoryImpl
+    ): CollaboratorRepository
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideCollaboratorApi(repository: CollaboratorRepository): GetCollaboratorsUseCase=
+            GetCollaboratorsUseCase(repository)
     }
 
-    @Provides
-    @Singleton
-    fun provideCollaboratorRepository(api: CollaboratorApi): CollaboratorRepository {
-        return CollaboratorRepositoryImpl(api)
-    }
-} 
+}

@@ -5,8 +5,10 @@ import retrofit2.http.*
 import java.util.UUID
 
 interface CollaboratorApi {
-    @GET("items/collaborators/entrepreneurship/{entrepreneurshipId}")
-    suspend fun getCollaborators(@Path("entrepreneurshipId") entrepreneurshipId: UUID): List<CollaboratorDto>
 
+    @GET("/items/Collaborator")
+    suspend fun getCollaborators(
+        @Query("filter[entrepreneurship_id][eq]") entrepreneurshipId: UUID
+    ): List<CollaboratorDto>
 
-} 
+}

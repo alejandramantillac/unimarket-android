@@ -52,6 +52,13 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
     data object EntrepreneurProfile : Routes("/entrepreneur")
 
+    data object Collaborators : Routes("/entrepreneurship/{id}/collaborators") {
+        val base get() = "/entrepreneurship/"
+        fun createRoute(id: String): String {
+            return "/entrepreneurship/$id/collaborators"
+        }
+    }
+
     companion object {
         fun fromRoute(route: String): Routes? = when (route) {
             Login.route -> Login
@@ -65,11 +72,13 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
             EntrepreneurshipView.route -> EntrepreneurshipView
             EntrepreneurshipForm.route -> EntrepreneurshipForm
             EntrepreneurProfile.route -> EntrepreneurProfile
+            Collaborators.route -> Collaborators
             else -> {
                 // Handle dynamic routes
                 when {
                     route.startsWith("/manage/product/") -> ManageProduct
                     route.startsWith("/product/") -> ProductView
+                    route.startsWith("/entrepreneurship/") && route.endsWith("/collaborators") -> Collaborators
                     else -> null
                 }
             }

@@ -3,6 +3,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repository
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.toDomain
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Collaborator
 import com.codeoflegends.unimarket.features.entrepreneurship.data.remote.CollaboratorApi
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.CollaboratorRepository
 import java.util.UUID
 import javax.inject.Inject
 

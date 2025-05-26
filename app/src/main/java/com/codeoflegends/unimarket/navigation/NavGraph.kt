@@ -1,7 +1,9 @@
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.CollaboratorsScreen
-import java.util.UUID
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.CollaboratorViewModel
+package com.codeoflegends.unimarket.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 
 @Composable
 fun NavGraph(
@@ -13,21 +15,5 @@ fun NavGraph(
         startDestination = "entrepreneurship_list"
     ) {
         // ... existing routes ...
-
-        composable(
-            route = "collaborators/{entrepreneurshipId}",
-            arguments = listOf(
-                navArgument("entrepreneurshipId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val entrepreneurshipId = backStackEntry.arguments?.getString("entrepreneurshipId")
-            val collaboratorViewModel: CollaboratorViewModel = hiltViewModel()
-            entrepreneurshipId?.let {
-                CollaboratorsScreen(
-                    viewModel = collaboratorViewModel,
-                    entrepreneurshipId = UUID.fromString(it)
-                )
-            }
-        }
     }
 } 

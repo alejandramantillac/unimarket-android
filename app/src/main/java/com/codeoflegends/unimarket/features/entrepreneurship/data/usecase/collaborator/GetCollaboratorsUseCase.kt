@@ -1,7 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.collaborator
 
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Collaborator
-import com.codeoflegends.unimarket.features.entrepreneurship.data.repository.CollaboratorRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.CollaboratorRepository
 import java.util.UUID
 import javax.inject.Inject
 
