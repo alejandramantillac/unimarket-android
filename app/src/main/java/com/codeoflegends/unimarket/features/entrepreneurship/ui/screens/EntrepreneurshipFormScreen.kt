@@ -1,123 +1,177 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
-import com.codeoflegends.unimarket.core.ui.components.Tab
-import com.codeoflegends.unimarket.core.ui.components.TabSelector
-import com.codeoflegends.unimarket.core.ui.state.ToastHandler
-import com.codeoflegends.unimarket.core.validation.FormField
-import com.codeoflegends.unimarket.core.validation.FormState
-import com.codeoflegends.unimarket.core.validation.validators.NotEmptyValidator
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.DataContacRegisterTab
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipBasicTab
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipActionState
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
+import com.codeoflegends.unimarket.core.ui.components.MainLayout
+import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicFormViewModel
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicFormActionState
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntrepreneurshipFormScreen(
-    viewModel: EntrepreneurshipViewModel = hiltViewModel(),
+    viewModel: EntrepreneurshipBasicFormViewModel = hiltViewModel(),
     manager: NavigationManager? = null
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.state.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
-
-    val formState = remember(state) {
-        FormState(
-            fields = mapOf(
-                "name" to FormField(state.entrepreneurshipName, listOf(NotEmptyValidator("El nombre es obligatorio"))),
-                "description" to FormField(state.entrepreneurshipDescription, listOf(
-                    NotEmptyValidator("La descripción es obligatoria")
-                )),
-                "category" to FormField(state.entrepreneurshipCategory, listOf(NotEmptyValidator("Selecciona una categoría")))
-            )
-        )
-    }
-    val isFormValid = remember(state) { formState.validateAll() }
+    var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(actionState) {
         when (actionState) {
-            is EntrepreneurshipActionState.Success -> {
-                ToastHandler.showSuccess("¡Emprendimiento guardado!")
+            is EntrepreneurshipBasicFormActionState.Success -> {
                 manager?.navController?.popBackStack()
             }
-            is EntrepreneurshipActionState.Error -> {
-                ToastHandler.handleError((actionState as EntrepreneurshipActionState.Error).message)
+            is EntrepreneurshipBasicFormActionState.Error -> {
+                // TODO: Mostrar error
             }
             else -> {}
         }
     }
 
-    if (actionState is EntrepreneurshipActionState.Loading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
-    }
+    MainLayout(
+        barOptions = AppBarOptions(
+            show = true,
+            showBackButton = true,
+            title = "Nuevo Emprendimiento",
+            onBackClick = { manager?.navController?.popBackStack() }
+        ),
+        pageLoading = actionState is EntrepreneurshipBasicFormActionState.Loading,
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .padding(vertical = 52.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Nombre del emprendimiento
+                OutlinedTextField(
+                    value = state.name,
+                    onValueChange = { viewModel.updateName(it) },
+                    label = { Text("Nombre del emprendimiento") },
+                    leadingIcon = { Icon(Icons.Default.Store, contentDescription = null) },
+                    supportingText = { Text("${state.name.length}/50") },
+                    isError = state.name.length > 50,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Datos del Emprendimiento",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+                // Slogan
+                OutlinedTextField(
+                    value = state.slogan,
+                    onValueChange = { viewModel.updateSlogan(it) },
+                    label = { Text("Slogan") },
+                    leadingIcon = { Icon(Icons.Default.Tag, contentDescription = null) },
+                    supportingText = { Text("${state.slogan.length}/100") },
+                    isError = state.slogan.length > 100,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        var selectedTab by remember { mutableStateOf(0) }
-        TabSelector(
-            tabs = listOf(
-                Tab("Básico") {
-                    EntrepreneurshipBasicTab(state, viewModel)
-                },
-                Tab("Contactos") {
-                    DataContacRegisterTab(state, viewModel)
+                // Descripción
+                OutlinedTextField(
+                    value = state.description,
+                    onValueChange = { viewModel.updateDescription(it) },
+                    label = { Text("Descripción") },
+                    leadingIcon = { Icon(Icons.Default.Description, contentDescription = null) },
+                    supportingText = { Text("${state.description.length}/500") },
+                    isError = state.description.length > 500,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    maxLines = 5
+                )
+
+                // Correo electrónico
+                OutlinedTextField(
+                    value = state.email,
+                    onValueChange = { viewModel.updateEmail(it) },
+                    label = { Text("Correo electrónico") },
+                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                    isError = state.email.isNotEmpty() && !state.email.contains("@"),
+                    supportingText = {
+                        if (state.email.isNotEmpty() && !state.email.contains("@")) {
+                            Text("Ingrese un correo electrónico válido")
+                        }
+                    },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Teléfono
+                OutlinedTextField(
+                    value = state.phone,
+                    onValueChange = { viewModel.updatePhone(it) },
+                    label = { Text("Teléfono de contacto") },
+                    leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+                    supportingText = { Text("Formato: +XX XXX XXX XXXX") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Categoría con búsqueda
+                ExposedDropdownMenuBox(
+                    expanded = state.isCategoryExpanded,
+                    onExpandedChange = { viewModel.toggleCategoryExpanded() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = {
+                            searchQuery = it
+                            viewModel.toggleCategoryExpanded()
+                        },
+                        label = { Text("Categoría") },
+                        leadingIcon = { Icon(Icons.Default.Category, contentDescription = null) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = state.isCategoryExpanded) },
+                        readOnly = false,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = state.isCategoryExpanded,
+                        onDismissRequest = { viewModel.toggleCategoryExpanded() }
+                    ) {
+                        viewModel.getFilteredCategories(searchQuery).forEach { category ->
+                            DropdownMenuItem(
+                                text = { Text(category.name) },
+                                onClick = {
+                                    viewModel.updateSelectedCategory(category)
+                                    searchQuery = category.name
+                                    viewModel.toggleCategoryExpanded()
+                                }
+                            )
+                        }
+                    }
                 }
-            ),
-            selectedTabIndex = selectedTab,
-            onTabSelected = { selectedTab = it }
-        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-        Column(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-            Button(
-                onClick = { viewModel.saveEntrepreneurship() },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                enabled = isFormValid
-            ) {
-                Text(  "Crear Emprendimiento" )
+                MainButton(
+                    text = "Crear Emprendimiento",
+                    onClick = { viewModel.saveEntrepreneurship() },
+                    enabled = state.name.isNotEmpty() &&
+                            state.email.isNotEmpty() &&
+                            state.selectedCategory != null,
+                    leftIcon = Icons.Default.Save
+                )
             }
         }
-
-    }
+    )
 }
 

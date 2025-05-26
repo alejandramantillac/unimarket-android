@@ -10,7 +10,5 @@ data class NewEntrepreneurshipDto(
     val email: String,
     val phone: String,
     val category: Int,
-    val socialNetworks: List<SocialNetwork>,
-    val customization: NewEntrepreneurshipCustomizationDto,
-    val userFounder: UUID
+    val customization: NewEntrepreneurshipCustomizationDto
 )

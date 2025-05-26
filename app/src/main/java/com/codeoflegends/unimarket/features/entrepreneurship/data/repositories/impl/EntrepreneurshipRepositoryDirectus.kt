@@ -6,6 +6,8 @@ import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.Au
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipMapper
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCreate
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IEntrepreneurshipRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipService
 import java.time.Instant
@@ -20,7 +22,7 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
     private val authRepository: AuthRepository,
     private val entrepreneurshipService: EntrepreneurshipService
 ): IEntrepreneurshipRepository {
-    override suspend fun createEntrepreneurship(entrepreneurship: Entrepreneurship): Result<Unit> = try {
+    override suspend fun createEntrepreneurship(entrepreneurship: EntrepreneurshipCreate): Result<Unit> = try {
         entrepreneurshipService.createEntrepreneurship(
             EntrepreneurshipMapper.toNewEntrepreneurshipDto(entrepreneurship, authRepository.getCurrentUserId()!!)
         )

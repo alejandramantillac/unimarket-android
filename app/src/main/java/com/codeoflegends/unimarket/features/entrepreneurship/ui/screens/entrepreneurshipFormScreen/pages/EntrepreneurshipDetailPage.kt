@@ -19,13 +19,10 @@ import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.core.ui.components.TagType
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipBanner
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDetails
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDetailsActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDetailsViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewActionState
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipUiState
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 
 @Composable
 fun EntrepreneurshipDetailPage(

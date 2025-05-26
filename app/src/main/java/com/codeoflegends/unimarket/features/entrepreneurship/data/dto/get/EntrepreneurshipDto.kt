@@ -13,7 +13,6 @@ data class EntrepreneurshipDto(
     val email: String,
     val phone: String,
     //val subscription: UUID,
-    val status: String,
     val category: Int,
     val userFounder: UUID,
     val deletedAt: String?,

@@ -19,7 +19,6 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepre
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicViewModel
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 
 @Composable
 fun EntrepreneurshipScreen(

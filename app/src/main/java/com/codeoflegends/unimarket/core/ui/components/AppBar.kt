@@ -65,7 +65,7 @@ fun AppBar(
 
             Text(
                 text = barOptions.title,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 color = Color.White,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center

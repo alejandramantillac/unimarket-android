@@ -14,7 +14,6 @@ data class Entrepreneurship(
     val email: String,
     val phone: String,
     val subscription: UUID? = null,
-    val status: String,
     val category: Int,
     val deletedAt: String? = null,
     val partners: List<UUID> = emptyList(),
@@ -32,4 +31,14 @@ data class EntrepreneurshipCustomization(
     val bannerImg: String,
     val color1: String,
     val color2: String,
+)
+
+data class EntrepreneurshipCreate(
+    val name: String,
+    val slogan: String,
+    val description: String,
+    val email: String,
+    val phone: String,
+    val category: Int,
+    val customization: EntrepreneurshipCustomization,
 )

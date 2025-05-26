@@ -7,6 +7,8 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.Entrep
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.update.UpdateEntrepreneurshipCustomizationDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.update.UpdateEntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCreate
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -23,7 +25,6 @@ object EntrepreneurshipMapper {
             email = dto.email,
             phone = dto.phone,
             //subscription = dto.subscription,
-            status = dto.status,
             category = dto.category,
             deletedAt = dto.deletedAt,
             //partners = dto.partners,
@@ -47,7 +48,7 @@ object EntrepreneurshipMapper {
         )
     }
 
-    fun toNewEntrepreneurshipDto(entrepreneurship: Entrepreneurship, userId: UUID): NewEntrepreneurshipDto {
+    fun toNewEntrepreneurshipDto(entrepreneurship: EntrepreneurshipCreate, userId: UUID): NewEntrepreneurshipDto {
         return NewEntrepreneurshipDto(
             name = entrepreneurship.name,
             slogan = entrepreneurship.slogan,
@@ -60,9 +61,7 @@ object EntrepreneurshipMapper {
             ),
             email = entrepreneurship.email,
             phone = entrepreneurship.phone,
-            category = entrepreneurship.category,
-            userFounder = userId,
-            socialNetworks = entrepreneurship.socialNetworks,
+            category = entrepreneurship.category
         )
     }
 
