@@ -11,7 +11,7 @@ import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
-
+/*
 @Singleton
 class OrderRepositoryImpl @Inject constructor(): OrderRepository {
 
@@ -31,4 +31,4 @@ class OrderRepositoryImpl @Inject constructor(): OrderRepository {
     }
 
 
-}
+}*/

@@ -67,13 +67,6 @@ fun ClientDetails(client: User, modifier: Modifier = Modifier) {
                     Text(text = client.email, style = MaterialTheme.typography.bodySmall)
                 }
             }
-
-            // Botón de contactar
-            MainButton(
-                text = "Contactar",
-                onClick = { /* Acción al contactar */ },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
         }
     }
 }

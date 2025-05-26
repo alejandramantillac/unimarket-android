@@ -48,7 +48,7 @@ class OrderListViewModel @Inject constructor(
                 _uiState.value = OrderListUiState(
                     orders = orderList.map { order ->
                         OrderItemUiState(
-                            id = order.id.toString(),
+                            id = order.id,
                             clientName = order.userCreated.firstName,
                             clientPhoto = order.userCreated.profile.profilePicture,
                             productCount = order.orderDetails.sumOf { it.amount },

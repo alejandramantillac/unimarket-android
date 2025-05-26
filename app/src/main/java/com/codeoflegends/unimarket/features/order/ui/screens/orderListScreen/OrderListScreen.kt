@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.order.ui.screens.orderListScreen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,91 @@ fun OrderListScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Card: Clientes recurrentes
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.Gray)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Clientes recurrentes",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "75%", // Cambiar por el valor real
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Porcentaje de clientes que han comprado más de una vez",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        // Card: Promedio por orden
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.Gray)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Promedio por orden",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "$50.00", // Cambiar por el valor real
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        // Botón: Ver análisis completo
+        /*MainButton(
+            text = "Ver análisis completo",
+            onClick = {},
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        )*/
+
+        // Barra de búsqueda
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            placeholder = { Text("Buscar") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        )
+
+        // Tabs de filtro
+        var selectedTab by remember { mutableStateOf(0) }
+        val tabs = listOf(
+            com.codeoflegends.unimarket.core.ui.components.Tab(
+                title = "Todos",
+                content = { }
+            ),
+            com.codeoflegends.unimarket.core.ui.components.Tab(
+                title = "Pendiente",
+                content = { }
+            ),
+            com.codeoflegends.unimarket.core.ui.components.Tab(
+                title = "Completado",
+                content = { }
+            )
+        )
+
+        com.codeoflegends.unimarket.core.ui.components.TabSelector(
+            tabs = tabs,
+            selectedTabIndex = selectedTab,
+            onTabSelected = { index -> selectedTab = index }
+        )
+
+        // Lista de órdenes
         when (actionState) {
             is OrderActionState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -51,9 +137,9 @@ fun OrderListScreen(
                 )
             }
             else -> {
-                // Lista de órdenes
                 uiState.orders.forEach { order ->
                     ListItemComponent(
+                        id = order.id,
                         image = rememberImagePainter(data = order.clientPhoto),
                         title = order.clientName,
                         subtitle = "${order.productCount} productos ~ $${order.totalPrice}",
@@ -65,8 +151,9 @@ fun OrderListScreen(
                             else -> Color.Gray
                         },
                         modifier = Modifier.clickable {
+                            Log.d("OrderListScreen", "Orden seleccionada: ${order.id}")
                             manager?.navController?.navigate(
-                                Routes.OrderSummary.createRoute(order.id)
+                                Routes.OrderSummary.createRoute(order.id.toString())
                             )
                         }
                     )

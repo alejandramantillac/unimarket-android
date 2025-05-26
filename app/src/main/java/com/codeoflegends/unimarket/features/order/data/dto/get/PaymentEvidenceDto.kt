@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class PaymentEvidenceDto(
     val id: UUID,
-    val uploadedAt: LocalDateTime,
+    val uploadedAt: String,
     val description: String,
     val url: String,
 )

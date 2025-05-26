@@ -12,11 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.core.ui.components.ProductImage
+import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import java.text.NumberFormat
+import java.util.Locale
+import kotlin.times
 
 @Composable
 fun OrderProductItem(
-    product: ProductVariant,
+    product: OrderDetail,
     quantity: Int,
     totalPrice: Double,
     modifier: Modifier = Modifier
@@ -29,7 +33,7 @@ fun OrderProductItem(
     ) {
         // Imagen del producto
         ProductImage(
-            imageUrl = product.variantImages.firstOrNull(),
+            imageUrl = product.productVariant.variantImages.firstOrNull(),
             modifier = Modifier
                 .size(64.dp)
                 .padding(end = 8.dp)
@@ -39,18 +43,20 @@ fun OrderProductItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = product.name,
+                text = product.productVariant.name,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "$quantity unidades",
+                text = product.amount.toString() + " unidades",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         // Precio total
+        val formattedPrice = NumberFormat.getNumberInstance(Locale("es", "CO")).format(product.unitPrice * product.amount)
+
         Text(
-            text = "$$totalPrice",
+            text = "$$formattedPrice",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary
         )

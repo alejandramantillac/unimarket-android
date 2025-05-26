@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen
 
 import DeliveryDetails
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -25,6 +26,8 @@ fun OrderSummaryScreen(
     viewModel: OrderSummaryViewModel = hiltViewModel(),
     manager: NavigationManager? = null
 ) {
+
+    Log.d("OrderSummaryScreen", "ID de la orden recibida: $orderId")
     // Cargar la orden desde el ViewModel
     LaunchedEffect(orderId) {
         viewModel.loadOrder(orderId)

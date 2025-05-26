@@ -15,10 +15,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.UUID
 
 @Composable
 fun ListItemComponent(
     modifier: Modifier = Modifier,
+    id: UUID,
     image: Painter,
     title: String,
     subtitle: String,

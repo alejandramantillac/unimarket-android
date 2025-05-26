@@ -122,6 +122,12 @@ fun BuyerHomeScreen(
         }
 
         MainButton(
+            onClick = { manager.navController.navigate(Routes.ManageOrder.route) },
+            modifier = Modifier.fillMaxWidth(),
+            text = "Ir a ManageOrder"
+        )
+
+        MainButton(
             onClick = { manager.authViewModel.logout() },
             modifier = Modifier.fillMaxWidth(),
             text = "Cerrar sesión"

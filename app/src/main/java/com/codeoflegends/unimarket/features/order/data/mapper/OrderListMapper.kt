@@ -13,11 +13,12 @@ import java.util.UUID
 object OrderListMapper {
     fun fromDto(dto: OrderListDto): Order {
         return Order(
+            id = dto.id,
             status = OrderStatus(
                 id = dto.status.id,
                 name = dto.status.name
             ),
-            date = dto.date,
+            date = dto.date.toString(),
             subtotal = dto.subtotal,
             discount = dto.discount,
             total = dto.total,

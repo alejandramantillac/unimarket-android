@@ -8,9 +8,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 data class Order (
-    val id: UUID? = null,
+    val id: UUID,
     val status: OrderStatus,
-    val date: LocalDateTime,
+    val date: String,
     val subtotal: Int,
     val discount: Int,
     val total: Int,

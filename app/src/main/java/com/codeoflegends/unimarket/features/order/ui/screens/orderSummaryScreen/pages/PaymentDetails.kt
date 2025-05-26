@@ -112,14 +112,16 @@ fun PaymentDetails(order: Order, payment: Payment, modifier: Modifier = Modifier
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Image(
-                    painter = rememberAsyncImagePainter(model = payment.paymentEvidences),
-                    contentDescription = "Evidencia de pago",
-                    modifier = Modifier
-                        .size(150.dp)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Crop
-                )
+                payment.paymentEvidences.forEach { evidence ->
+                    Image(
+                        painter = rememberAsyncImagePainter(model = evidence.url),
+                        contentDescription = "Evidencia de pago",
+                        modifier = Modifier
+                            .size(150.dp)
+                            .padding(8.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
 
             // Botón de confirmar pago

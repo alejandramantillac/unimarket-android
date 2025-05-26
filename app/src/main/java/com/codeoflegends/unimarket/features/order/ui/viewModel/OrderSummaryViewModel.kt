@@ -54,11 +54,12 @@ class OrderSummaryViewModel @Inject constructor(
         viewModelScope.launch {
             _actionState.value = OrderSummaryActionState.Loading
             try {
-                val order = getOrderUseCase(uuid)
+                val order = getOrderUseCase(UUID.fromString(orderId))
+
                 _uiState.value = OrderSummaryUiState(
                     id = order.id ?: UUID.randomUUID(),
                     status = order.status.toString(),
-                    products = order.orderDetails.map { it.productVariant },
+                    products = order.orderDetails.map { it },
                     payment = order.payments.firstOrNull(),
                     client = order.userCreated,
                     delivery = order.delivery.firstOrNull(),
