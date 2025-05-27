@@ -8,6 +8,7 @@ import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
 import com.codeoflegends.unimarket.features.order.data.model.OrderList
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -46,7 +47,12 @@ object OrderListMapper {
                         id = detailDto.productVariant.id,
                         name = detailDto.productVariant.name,
                         stock = detailDto.productVariant.stock,
-                        variantImages = detailDto.productVariant.variantImages.map { it.imageUrl }
+                        variantImages = detailDto.productVariant.variantImages.map {
+                            VariantImage(
+                                id = it.id,
+                                imageUrl = it.imageUrl
+                            )
+                        }
                     )
                 )
             },

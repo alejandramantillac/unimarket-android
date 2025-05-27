@@ -6,7 +6,6 @@ import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.repositories.interfaces.OrderRepository
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.mapper.ProductMapper
-import com.codeoflegends.unimarket.features.product.data.mock.MockProductDatabase
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
 import javax.inject.Inject

@@ -3,7 +3,6 @@ package com.codeoflegends.unimarket.features.order.data.mock
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
-import com.codeoflegends.unimarket.features.product.data.mock.MockProductDatabase
 import java.util.UUID
 
 object MockOrderDatabase {

@@ -34,64 +34,67 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         val base get() = "/order/"
         fun createRoute(id: String): String {
             return "/order/$id"
-    // Role Selection Route
-    data object RoleSelection : Routes("/role_selection")
-
-    data object ManageEntrepreneurship : Routes("/manage/entrepreneurship/{id}") {
-        val base get() = "/manage/entrepreneurship/"
-        fun createRoute(id: String): String {
-            return "/manage/entrepreneurship/$id"
         }
     }
 
-    data object EntrepreneurshipView : Routes("/entrepreneurship/{id}") {
-        val base get() = "/entrepreneurship/"
-        fun createRoute(id: String): String {
-            return "/entrepreneurship/$id"
+        // Role Selection Route
+        data object RoleSelection : Routes("/role_selection")
+
+        data object ManageEntrepreneurship : Routes("/manage/entrepreneurship/{id}") {
+            val base get() = "/manage/entrepreneurship/"
+            fun createRoute(id: String): String {
+                return "/manage/entrepreneurship/$id"
+            }
         }
-    }
 
-    data object EditProfile : Routes("/edit_profile/{id}") {
-        val base get() = "/edit_profile/"
-        fun createRoute(id: String): String {
-            return "/edit_profile/$id"
+        data object EntrepreneurshipView : Routes("/entrepreneurship/{id}") {
+            val base get() = "/entrepreneurship/"
+            fun createRoute(id: String): String {
+                return "/entrepreneurship/$id"
+            }
         }
-    }
 
-    data object EntrepreneurshipForm : Routes("/entrepreneurship/form")
-
-    data object EntrepreneurProfile : Routes("/entrepreneur")
-
-    data object Collaborators : Routes("/entrepreneurship/{id}/collaborators") {
-        val base get() = "/entrepreneurship/"
-        fun createRoute(id: String): String {
-            return "/entrepreneurship/$id/collaborators"
+        data object EditProfile : Routes("/edit_profile/{id}") {
+            val base get() = "/edit_profile/"
+            fun createRoute(id: String): String {
+                return "/edit_profile/$id"
+            }
         }
-    }
 
-    companion object {
-        fun fromRoute(route: String): Routes? = when (route) {
-            Login.route -> Login
-            Register.route -> Register
-            ForgotPassword.route -> ForgotPassword
-            Home.route -> Home
-            ManageProduct.route -> ManageProduct
-            ProductView.route -> ProductView
-            RoleSelection.route -> RoleSelection
-            ManageEntrepreneurship.route -> ManageEntrepreneurship
-            EntrepreneurshipView.route -> EntrepreneurshipView
-            EntrepreneurshipForm.route -> EntrepreneurshipForm
-            EntrepreneurProfile.route -> EntrepreneurProfile
-            Collaborators.route -> Collaborators
-            else -> {
-                // Handle dynamic routes
-                when {
-                    route.startsWith("/manage/product/") -> ManageProduct
-                    route.startsWith("/product/") -> ProductView
-                    route.startsWith("/entrepreneurship/") && route.endsWith("/collaborators") -> Collaborators
-                    else -> null
+        data object EntrepreneurshipForm : Routes("/entrepreneurship/form")
+
+        data object EntrepreneurProfile : Routes("/entrepreneur")
+
+        data object Collaborators : Routes("/entrepreneurship/{id}/collaborators") {
+            val base get() = "/entrepreneurship/"
+            fun createRoute(id: String): String {
+                return "/entrepreneurship/$id/collaborators"
+            }
+        }
+
+        companion object {
+            fun fromRoute(route: String): Routes? = when (route) {
+                Login.route -> Login
+                Register.route -> Register
+                ForgotPassword.route -> ForgotPassword
+                Home.route -> Home
+                ManageProduct.route -> ManageProduct
+                ProductView.route -> ProductView
+                RoleSelection.route -> RoleSelection
+                ManageEntrepreneurship.route -> ManageEntrepreneurship
+                EntrepreneurshipView.route -> EntrepreneurshipView
+                EntrepreneurshipForm.route -> EntrepreneurshipForm
+                EntrepreneurProfile.route -> EntrepreneurProfile
+                Collaborators.route -> Collaborators
+                else -> {
+                    // Handle dynamic routes
+                    when {
+                        route.startsWith("/manage/product/") -> ManageProduct
+                        route.startsWith("/product/") -> ProductView
+                        route.startsWith("/entrepreneurship/") && route.endsWith("/collaborators") -> Collaborators
+                        else -> null
+                    }
                 }
             }
         }
     }
-}

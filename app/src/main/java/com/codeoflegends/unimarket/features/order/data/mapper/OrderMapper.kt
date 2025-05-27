@@ -11,6 +11,7 @@ import com.codeoflegends.unimarket.features.order.data.model.Payment
 import com.codeoflegends.unimarket.features.order.data.model.PaymentEvidence
 import com.codeoflegends.unimarket.features.order.data.model.PaymentMethod
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -64,7 +65,12 @@ object OrderMapper {
                         id = detailDto.productVariant.id,
                         name = detailDto.productVariant.name,
                         stock = detailDto.productVariant.stock,
-                        variantImages = detailDto.productVariant.variantImages.map { it.imageUrl }
+                        variantImages = detailDto.productVariant.variantImages.map {
+                            VariantImage(
+                                id = it.id,
+                                imageUrl = it.imageUrl
+                            )
+                        }
                     )
                 )
             },
