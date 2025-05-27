@@ -1,11 +1,11 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 
-
 import android.net.Uri
 import android.util.Log
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SocialNetwork
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +16,7 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.Delete
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetCategoryUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,22 +35,17 @@ sealed class EntrepreneurshipActionState {
 @HiltViewModel
 class EntrepreneurshipViewModel @Inject constructor(
     private val createEntrepreneurshipUseCase: CreateEntrepreneurshipUseCase,
-    private val getAllEntrepreneurshipUseCase: GetAllEntrepreneurship,
     private val getEntrepreneurshipUseCase: GetEntrepreneurshipUseCase,
     private val deleteEntrepreneurshipUseCase: DeleteEntrepreneurshipUseCase,
-    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase
+    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase,
+    private val getEntrepreneurshipCategory: GetCategoryUseCase
 ) : ViewModel() {
-
-    private val defaultCategoriesOptions = listOf(
-        "Comida",
-        "Electrónica",
-        "Joyeria",
-        "Decoración",
-    )
-
 
     private val currentYear = LocalDate.now().year
     val yearOptions: List<String> = (1950..currentYear).map { it.toString() }.reversed()
+
+    private val _selectedEntrepreneurship = MutableStateFlow<Entrepreneurship?>(null)
+    val selectedEntrepreneurship: StateFlow<Entrepreneurship?> = _selectedEntrepreneurship
 
     private val defaultStatusOptions = listOf("Activo", "Inactivo")
 
@@ -59,23 +55,26 @@ class EntrepreneurshipViewModel @Inject constructor(
         SubscriptionPlan(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Premium", 19.99, "Plan completo", "Todo incluido")
     )
 
-
     private val _uiState = MutableStateFlow(
         EntrepreneurshipUiState(
-            categoryOptions = defaultCategoriesOptions,
+            categoryOptions = listOf(),
             yearOptions = yearOptions,
-            entrepreneurshipCategory = "0",
-            selectedCategory = defaultCategoriesOptions[0],
+            entrepreneurshipCategory = "",
+            selectedCategory = "",
             entrepreneurshipSocialNetworks = listOf(
-                SocialNetwork(id = 1, platform = "Instagram", url = ""),
-                SocialNetwork(id = 2, platform = "TikTok", url = "")
-            ) ,
+                SocialNetwork(media = "Instagram", url = ""),
+                SocialNetwork(media = "TikTok", url = "")
+            ),
             entrepreneurshipStatus = defaultStatusOptions[0],
             entrepreneurshipSubscription = defaultSubscriptionPlans[0].id.toString(),
             statusOptions = defaultStatusOptions,
-            subscriptionOptions= defaultSubscriptionPlans
+            subscriptionOptions = defaultSubscriptionPlans
         )
     )
+
+    init {
+        getCategories()
+    }
 
     fun onNameChanged(name: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipName = name)
@@ -85,11 +84,9 @@ class EntrepreneurshipViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(entrepreneurshipImageUri = uri)
     }
 
-
     fun onDescriptionChanged(description: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipDescription = description)
     }
-
 
     fun onEmailChanged(email: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipEmail = email)
@@ -107,7 +104,6 @@ class EntrepreneurshipViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(entrepreneurshipSubscription = subscriptionId)
     }
 
-
     fun onStatusChanged(status: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipStatus = status)
     }
@@ -121,14 +117,13 @@ class EntrepreneurshipViewModel @Inject constructor(
 
     fun onSocialNetworkPlatformChanged(index: Int, platform: String) {
         val updatedList = _uiState.value.entrepreneurshipSocialNetworks.toMutableList()
-        val updatedItem = updatedList[index].copy(platform = platform)
+        val updatedItem = updatedList[index].copy(media = platform)
         updatedList[index] = updatedItem
         _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
     }
 
     fun addSocialNetwork() {
-        val newId = (_uiState.value.entrepreneurshipSocialNetworks.maxOfOrNull { it.id } ?: 0) + 1
-        val updatedList = _uiState.value.entrepreneurshipSocialNetworks + SocialNetwork(id = newId, platform = "", url = "")
+        val updatedList = _uiState.value.entrepreneurshipSocialNetworks + SocialNetwork(media = "", url = "")
         _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
     }
 
@@ -138,7 +133,6 @@ class EntrepreneurshipViewModel @Inject constructor(
         }
         _uiState.value = _uiState.value.copy(entrepreneurshipSocialNetworks = updatedList)
     }
-
 
     fun onUserFounderChanged(userFounder: String) {
         _uiState.value = _uiState.value.copy(entrepreneurshipUserFounder = userFounder)
@@ -154,23 +148,24 @@ class EntrepreneurshipViewModel @Inject constructor(
         )
     }
 
-
     fun onTabSelected(tab: Int) {
         _uiState.value = _uiState.value.copy(selectedTab = tab)
     }
+
     val uiState: StateFlow<EntrepreneurshipUiState> = _uiState.asStateFlow()
 
     private val _actionState = MutableStateFlow<EntrepreneurshipActionState>(EntrepreneurshipActionState.Idle)
     val actionState: StateFlow<EntrepreneurshipActionState> = _actionState.asStateFlow()
 
     fun onCategorySelected(categoryName: String) {
-        val index = defaultCategoriesOptions.indexOf(categoryName).takeIf { it >= 0 } ?: 0
+        val categories = _uiState.value.categoryOptions
+        val index = categories.indexOf(categoryName).takeIf { it >= 0 } ?: 0
         _uiState.value = _uiState.value.copy(
             selectedCategory = categoryName,
             entrepreneurshipCategory = index.toString()
         )
     }
-
+/**
     fun saveEntrepreneurship() {
         val state = _uiState.value
 
@@ -185,25 +180,16 @@ class EntrepreneurshipViewModel @Inject constructor(
                 name = state.entrepreneurshipName,
                 slogan = state.entrepreneurshipSlogan,
                 description = state.entrepreneurshipDescription,
-                creationDate = LocalDateTime.of(
-                    state.entrepreneurshipYear.toIntOrNull() ?: 2000,
-                    1,
-                    1,
-                    0,
-                    0
-                ),
+                creationDate = LocalDateTime.now(),
                 email = state.entrepreneurshipEmail,
                 phone = state.entrepreneurshipPhone,
-                subscription = UUID.fromString(state.entrepreneurshipSubscription),
-                status = state.entrepreneurshipStatus,
                 category = state.entrepreneurshipCategory.toIntOrNull() ?: 0,
                 socialNetworks = state.entrepreneurshipSocialNetworks,
-                userFounder = UUID.fromString(state.entrepreneurshipUserFounder),
                 customization = EntrepreneurshipCustomization(
-                    profileImg = state.profileImg,
-                    bannerImg = state.bannerImg,
-                    color1 = state.color1,
-                    color2 = state.color2
+                    profileImg = state.customization.profileImg,
+                    bannerImg = state.customization.bannerImg,
+                    color1 = state.customization.color1,
+                    color2 = state.customization.color2
                 ),
             )
 
@@ -221,12 +207,21 @@ class EntrepreneurshipViewModel @Inject constructor(
             _actionState.value = EntrepreneurshipActionState.Error("Error en los datos: ${e.message}")
         }
     }
-
+*/
     fun clearForm() {
         _uiState.value = EntrepreneurshipUiState(
-            categoryOptions = defaultCategoriesOptions,
-            entrepreneurshipCategory = "0",
-            selectedCategory = defaultCategoriesOptions[0]
+            categoryOptions = _uiState.value.categoryOptions,
+            entrepreneurshipCategory = "",
+            selectedCategory = "",
+            yearOptions = yearOptions,
+            entrepreneurshipSocialNetworks = listOf(
+                SocialNetwork(media = "Instagram", url = ""),
+                SocialNetwork(media = "TikTok", url = "")
+            ),
+            entrepreneurshipStatus = defaultStatusOptions[0],
+            entrepreneurshipSubscription = defaultSubscriptionPlans[0].id.toString(),
+            statusOptions = defaultStatusOptions,
+            subscriptionOptions = defaultSubscriptionPlans
         )
     }
 
@@ -262,10 +257,13 @@ class EntrepreneurshipViewModel @Inject constructor(
                     description = entrepreneurship.description,
                     email = entrepreneurship.email,
                     phone = entrepreneurship.phone,
-                    profileImg =  entrepreneurship.customization.profileImg,
-                    bannerImg = entrepreneurship.customization.bannerImg,
-                    color1 = entrepreneurship.customization.color1,
-                    color2 = entrepreneurship.customization.color2,
+                    customization = EntrepreneurshipCustomization(
+                        profileImg =  entrepreneurship.customization.profileImg,
+                        bannerImg = entrepreneurship.customization.bannerImg,
+                        color1 = entrepreneurship.customization.color1,
+                        color2 = entrepreneurship.customization.color2,
+                    ),
+                    reviews = entrepreneurship.reviews,
                     tags = entrepreneurship.tags,
                     entrepreneurship = entrepreneurship
                 )
@@ -278,8 +276,45 @@ class EntrepreneurshipViewModel @Inject constructor(
         }
     }
 
-
     fun onNavigationItemSelected(route: String) {
         _uiState.value = _uiState.value.copy(currentRoute = route)
+    }
+
+    fun updateUserProfile(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String?,
+        profileImageUri: Uri? = null
+    ) {
+        val currentEntrepreneurship = _selectedEntrepreneurship.value
+        if (currentEntrepreneurship == null) {
+            _actionState.value = EntrepreneurshipActionState.Error("No se encontró el emprendimiento seleccionado.")
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                _actionState.value = EntrepreneurshipActionState.Success
+            } catch (e: Exception) {
+                _actionState.value = EntrepreneurshipActionState.Error("Error al actualizar el perfil: ${e.message}")
+            }
+        }
+    }
+
+    // Obtengo las categorías del repositorio
+    fun getCategories() {
+        viewModelScope.launch {
+            try {
+                val categories = getEntrepreneurshipCategory()
+                _uiState.value = _uiState.value.copy(
+                    categoryOptions = categories.map { it.name },
+                    entrepreneurshipCategory = categories.firstOrNull()?.id?.toString() ?: "",
+                    selectedCategory = categories.firstOrNull()?.name ?: ""
+                )
+            } catch (e: Exception) {
+                _actionState.value = EntrepreneurshipActionState.Error("Error al cargar las categorías: ${e.message}")
+            }
+        }
     }
 }

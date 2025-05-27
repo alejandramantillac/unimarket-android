@@ -14,6 +14,7 @@ import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.To
 import com.codeoflegends.unimarket.features.auth.data.service.JwtDecoder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -92,4 +93,15 @@ class AuthRepositoryImpl @Inject constructor(
             AuthResult.Error(e)
         }
     }
+
+    override suspend fun getCurrentUserId(): UUID? {
+        val token = tokenRepository.getAccessToken()
+        return if (token != null) {
+            val decoded = jwtDecoder.decodePayload(token)
+           UUID.fromString(decoded.userId)
+        } else {
+            null
+        }
+    }
+
 }

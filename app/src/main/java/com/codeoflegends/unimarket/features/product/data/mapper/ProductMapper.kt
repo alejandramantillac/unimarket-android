@@ -30,7 +30,8 @@ object ProductMapper {
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
                 name = dto.entrepreneurship.name
-            )
+            ),
+            imageUrl = dto.image
         )
     }
     

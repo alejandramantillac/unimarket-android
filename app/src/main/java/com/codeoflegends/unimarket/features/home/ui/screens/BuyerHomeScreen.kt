@@ -23,8 +23,10 @@ import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewMode
 @Composable
 fun BuyerHomeScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
+    productViewModel: ProductViewModel = hiltViewModel()
 ) {
     val authState by manager.authViewModel.authState.collectAsState()
+    val products by productViewModel.products.collectAsState()
 
     Column(
         modifier = Modifier
@@ -68,6 +70,62 @@ fun BuyerHomeScreen(
                 }
             }
         }
+
+        MainButton(
+            onClick = { manager.navController.navigate(Routes.ManageProduct.base) },
+            modifier = Modifier.fillMaxWidth(),
+            text = "Crear Producto"
+        )
+
+        // Lista de productos disponibles
+        if (products.isNotEmpty()) {
+            Text(
+                text = "Productos disponibles",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(products) { product ->
+                    ProductItem(
+                        product = product,
+                        onEditClick = {
+                            manager.navController.navigate(
+                                Routes.ManageProduct.createRoute(product.id!!.toString())
+                            )
+                        },
+                        onViewClick = {
+                            manager.navController.navigate(
+                                Routes.ProductView.createRoute(product.id!!.toString())
+                            )
+                        }
+                    )
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No hay productos disponibles",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
+
+        MainButton(
+            onClick = { manager.navController.navigate(Routes.ManageOrder.route) },
+            modifier = Modifier.fillMaxWidth(),
+            text = "Ir a ManageOrder"
+        )
 
         MainButton(
             onClick = { manager.authViewModel.logout() },

@@ -5,7 +5,7 @@ class DirectusQuery {
     private val joins = mutableListOf<Join>()
     private val filters = mutableListOf<Filter>()
     private var limit: Int? = null
-    private var offset: Int? = null
+    private var page: Int? = null
     private val sorts = mutableListOf<Sort>()
     private var searchQuery: String? = null
     private var deepQuery: String? = null
@@ -27,13 +27,17 @@ class DirectusQuery {
         filters.add(Filter(field, operator, value))
     }
 
+    fun filter(filter: Filter) = apply {
+        filters.add(filter)
+    }
+
     fun sort(field: String, direction: SortDirection = SortDirection.ASC) = apply {
         sorts.add(Sort(field, direction))
     }
 
-    fun paginate(limit: Int, offset: Int? = null) = apply {
+    fun paginate(limit: Int, page: Int? = null) = apply {
         this.limit = limit
-        this.offset = offset
+        this.page = page
     }
 
     fun search(query: String) = apply {
@@ -76,7 +80,7 @@ class DirectusQuery {
         }
 
         if (filters.isNotEmpty()) {
-            params["filter"] = filters.joinToString(",") { it.toQueryString() }
+            params["filter"] = "{" + filters.joinToString(",") { it.toQueryString() } + "}"
         }
 
         if (sorts.isNotEmpty()) {
@@ -84,14 +88,16 @@ class DirectusQuery {
         }
 
         limit?.let { params["limit"] = it.toString() }
-        offset?.let { params["offset"] = it.toString() }
+        page?.let { params["page"] = it.toString() }
 
         searchQuery?.let { params["search"] = it }
 
         deepQuery?.let { params["deep"] = it }
 
         if (aggregates.isNotEmpty()) {
-            params["aggregate"] = aggregates.joinToString(",") { it.toQueryString() }
+            aggregates.forEach { aggregate ->
+                params["aggregate[${aggregate.function.name.lowercase()}]"] = aggregate.field
+            }
         }
 
         groupByField?.let { params["groupBy"] = it }
@@ -120,7 +126,7 @@ class DirectusQuery {
                 is String -> "\"$value\""
                 else -> value
             }
-            return "{\"$field\":{\"_$operator\":$formattedValue}}"
+            return "\"$field\":{\"_$operator\":$formattedValue}"
         }
     }
 

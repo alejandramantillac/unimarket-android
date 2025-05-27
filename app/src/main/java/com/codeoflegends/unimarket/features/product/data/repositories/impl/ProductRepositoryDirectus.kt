@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.product.data.repositories.impl
 
 import android.util.Log
 import com.codeoflegends.unimarket.core.dto.DeleteDto
+import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import com.codeoflegends.unimarket.features.product.data.datasource.ProductService
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
@@ -66,6 +67,29 @@ class ProductRepositoryDirectus @Inject constructor(
         Result.success(products)
     } catch (e: Exception) {
         Log.e("ProductRepositoryDirectus", "Error fetching products: ${e.message}")
+        Result.failure(e)
+    }
+
+    override suspend fun getAllProductsByQuery(
+        entrepreneurshipId: UUID,
+        nameContains: String,
+        filters: List<DirectusQuery.Filter>,
+        limit: Int,
+        page: Int
+    ): Result<List<Product>> = try {
+        val productsDto = productService.getAllProducts(
+            ProductListDto.queryByEntrepreneurship(
+                entrepreneurshipId = entrepreneurshipId.toString(),
+                nameContains = nameContains,
+                filters = filters,
+                limit = limit,
+                page = page
+            ).build()
+        ).data
+        val products = ProductMapper.listDtoToProductList(productsDto)
+        Result.success(products)
+    } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error fetching products by entrepreneurship: ${e.message}")
         Result.failure(e)
     }
 }

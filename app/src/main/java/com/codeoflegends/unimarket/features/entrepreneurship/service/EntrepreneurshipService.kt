@@ -1,10 +1,18 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.service
 
+import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.dto.DirectusDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.update.UpdateEntrepreneurshipDto
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
+import java.util.UUID
 
 interface EntrepreneurshipService {
     @GET("/items/Entrepreneurship/{entrepreneurshipId}")
@@ -12,8 +20,26 @@ interface EntrepreneurshipService {
         @Path("entrepreneurshipId") entrepreneurshipId: String,
         @QueryMap query: Map<String, String>
     ): DirectusDto<EntrepreneurshipDto>
-    //suspend fun getEntrepreneurshipList(): List<Entrepreneurship>
-    //suspend fun createEntrepreneurship(entrepreneurship: Entrepreneurship): Entrepreneurship
-    //suspend fun updateEntrepreneurship(entrepreneurship: Entrepreneurship): Entrepreneurship
-    //suspend fun deleteEntrepreneurship(id: String): Boolean
+
+    @POST("/items/Entrepreneurship")
+    suspend fun createEntrepreneurship(
+        @Body entrepreneurship: NewEntrepreneurshipDto
+    )
+
+    @PATCH("/items/Entrepreneurship/{entrepreneurshipId}")
+    suspend fun updateEntrepreneurship(
+        @Path("entrepreneurshipId") entrepreneurshipId: UUID,
+        @Body entrepreneurship: UpdateEntrepreneurshipDto
+    )
+
+    @PATCH("/items/Entrepreneurship/{entrepreneurshipId}")
+    suspend fun deleteEntrepreneurship(
+        @Path("entrepreneurshipId") entrepreneurshipId: UUID,
+        @Body delete: DeleteDto
+    )
+
+    @GET("/items/Entrepreneurship")
+    suspend fun getMyEntrepreneurships(
+        @QueryMap query: Map<String, String>
+    ): DirectusDto<List<EntrepreneurshipDto>>
 }

@@ -19,40 +19,50 @@ enum class TagType(
     val icon: ImageVector,
     val color: Long // Color en formato Long (0xAARRGGBB)
 ) {
-    ELECTRONICS(
-        "Tag 1",
+    TECHNOLOGY(
+        "tecnología",
         Icons.Default.Devices,
         0xFF2196F3
     ),
-    CLOTHING(
-        "Tag 2",
-        Icons.Default.ShoppingBag,
-        0xFFE91E63
-    ),
-    FOOD(
-        "Tag 3",
-        Icons.Default.Restaurant,
+    ORGANIC(
+        "orgánica",
+        Icons.Default.Spa,
         0xFF4CAF50
     ),
-    BOOKS(
-        "Tag 4",
-        Icons.Default.MenuBook,
+    SWEETS(
+        "dulces",
+        Icons.Default.Cake,
+        0xFFE91E63
+    ),
+    HEALTHY_FOOD(
+        "comida saludable",
+        Icons.Default.Restaurant,
+        0xFF8BC34A
+    ),
+    DESSERTS(
+        "postres",
+        Icons.Default.Icecream,
         0xFF9C27B0
     ),
-    SPORTS(
-        "Tag 5",
-        Icons.Default.SportsSoccer,
+    SNACKS(
+        "snacks",
+        Icons.Default.LocalCafe,
         0xFFFF9800
     ),
-    BEAUTY(
-        "Tag 6",
-        Icons.Default.Face,
-        0xFFF44336
+    BEVERAGES(
+        "bebidas",
+        Icons.Default.LocalBar,
+        0xFF00BCD4
     ),
-    HOME(
-        "Tag 7",
-        Icons.Default.Home,
-        0xFF795548
+    VEGAN(
+        "vegana",
+        Icons.Default.Eco,
+        0xFF009688
+    ),
+    FOOD(
+        "comida",
+        Icons.Default.Restaurant,
+        0xFFF44336
     ),
     MORE(
         "",

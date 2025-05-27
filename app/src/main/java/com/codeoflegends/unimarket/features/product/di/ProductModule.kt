@@ -13,6 +13,7 @@ import javax.inject.Singleton
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
+import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsByQueryUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
 
@@ -57,5 +58,10 @@ abstract class ProductModule {
         @Singleton
         fun provideGetAllProductsUseCase(repository: ProductRepository): GetAllProductsUseCase =
             GetAllProductsUseCase(repository)
+
+        @Provides
+        @Singleton
+        fun provideGetAllProductsByQueryUseCase(repository: ProductRepository): GetAllProductsByQueryUseCase =
+            GetAllProductsByQueryUseCase(repository)
     }
 } 
