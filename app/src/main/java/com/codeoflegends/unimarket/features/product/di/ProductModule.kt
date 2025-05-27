@@ -1,7 +1,9 @@
 package com.codeoflegends.unimarket.features.product.di
 
+import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductCategoryRepositoryDirectus
 import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import com.codeoflegends.unimarket.features.product.data.repositories.impl.ProductRepositoryDirectus
+import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductCategoryRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -11,6 +13,7 @@ import javax.inject.Singleton
 import com.codeoflegends.unimarket.features.product.data.usecase.CreateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.UpdateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductUseCase
+import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsByQueryUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
 
@@ -23,7 +26,13 @@ abstract class ProductModule {
     abstract fun bindProductRepository(
         productRepositoryImpl: ProductRepositoryDirectus
     ): ProductRepository
-    
+
+    @Binds
+    @Singleton
+    abstract fun bindProductCategoryRepository(
+        productCategoryRepositoryImpl: ProductCategoryRepositoryDirectus
+    ): ProductCategoryRepository
+
     companion object {
         @Provides
         @Singleton
@@ -49,5 +58,10 @@ abstract class ProductModule {
         @Singleton
         fun provideGetAllProductsUseCase(repository: ProductRepository): GetAllProductsUseCase =
             GetAllProductsUseCase(repository)
+
+        @Provides
+        @Singleton
+        fun provideGetAllProductsByQueryUseCase(repository: ProductRepository): GetAllProductsByQueryUseCase =
+            GetAllProductsByQueryUseCase(repository)
     }
 } 

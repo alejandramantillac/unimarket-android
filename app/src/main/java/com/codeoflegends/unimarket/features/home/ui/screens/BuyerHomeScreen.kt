@@ -23,10 +23,8 @@ import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewMode
 @Composable
 fun BuyerHomeScreen(
     manager: NavigationManager = NavigationManager(rememberNavController(), viewModel()),
-    productViewModel: ProductViewModel = hiltViewModel()
 ) {
     val authState by manager.authViewModel.authState.collectAsState()
-    val products by productViewModel.products.collectAsState()
 
     Column(
         modifier = Modifier

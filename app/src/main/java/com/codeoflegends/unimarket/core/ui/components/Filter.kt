@@ -113,11 +113,13 @@ fun Filter(
             Icon(
                 imageVector = Icons.Default.FilterList,
                 contentDescription = "Filtros avanzados",
-                tint = if (filterState.showAdvancedFilters)
-                    MaterialTheme.colorScheme.primary
-                else
+              
+                tint = if (filterState.showAdvancedFilters) 
+                    MaterialTheme.colorScheme.primary 
+                else 
                     MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
+              
+              modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .clickable(enabled = advancedFiltersContent != null) {
                         viewModel.toggleAdvancedFilters()

@@ -31,7 +31,7 @@ fun App() {
     AppContentWrapper {
         AppNavigation(
             NavigationManager(rememberNavController(), hiltViewModel()),
-            startDestination = Routes.Home.route,
+            startDestination = Routes.RoleSelection.route,
         )
     }
 }

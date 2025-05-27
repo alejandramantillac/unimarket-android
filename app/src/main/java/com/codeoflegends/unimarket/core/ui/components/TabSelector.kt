@@ -42,7 +42,7 @@ fun TabSelector(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 2.dp)
+                            .padding(horizontal = 4.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .background(
                                 if (isSelected) MaterialTheme.colorScheme.background else Color.Transparent

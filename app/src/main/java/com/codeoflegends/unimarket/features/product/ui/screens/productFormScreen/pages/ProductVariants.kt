@@ -6,8 +6,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,11 +24,12 @@ import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductFormViewModel
-import java.util.UUID
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 
 @Composable
 fun ProductVariants(viewModel: ProductFormViewModel) {
@@ -43,21 +42,21 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
     // Campos para nueva variante
     var name by remember { mutableStateOf("") }
     var stock by remember { mutableStateOf("") }
-    var imageUris by remember { mutableStateOf<List<String>>(emptyList()) }
+    var images by remember { mutableStateOf<List<VariantImage>>(emptyList()) }
 
     // Image picker launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            imageUris = imageUris + it.toString()
+            images = images + VariantImage(imageUrl=it.toString())
         }
     }
 
     fun resetFields() {
         name = ""
         stock = ""
-        imageUris = emptyList()
+        images = emptyList()
         editingVariant = null
     }
 
@@ -81,13 +80,20 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                     showDialog = true
                 },
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar Variante", tint = Color.White)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Agregar Variante",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Lista de variantes existentes
         Column(
@@ -123,7 +129,7 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                             // Imagen principal de la variante (si existe)
                             if (variant.variantImages.isNotEmpty()) {
                                 Image(
-                                    painter = rememberAsyncImagePainter(variant.variantImages.first().toUri()),
+                                    painter = rememberAsyncImagePainter(variant.variantImages.first().imageUrl.toUri()),
                                     contentDescription = "Imagen variante",
                                     modifier = Modifier.size(64.dp),
                                     contentScale = ContentScale.Crop
@@ -147,7 +153,7 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                                 editingVariant = variant
                                 name = variant.name
                                 stock = variant.stock.toString()
-                                imageUris = variant.variantImages
+                                images = variant.variantImages
                                 showDialog = true
                             }) {
                                 Icon(Icons.Default.Edit, contentDescription = "Editar")
@@ -170,13 +176,14 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                 resetFields()
             },
             confirmButton = {
-                Button(
+                MainButton(
+                    text = if (editingVariant == null) "Agregar" else "Guardar",
                     onClick = {
                         val variant = ProductVariant(
                             id = editingVariant?.id,
                             name = name,
                             stock = stock.toIntOrNull() ?: 0,
-                            variantImages = imageUris
+                            variantImages = images
                         )
                         if (editingVariant == null) {
                             viewModel.addVariant(variant)
@@ -187,17 +194,16 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                         resetFields()
                     },
                     enabled = name.isNotBlank() && stock.isNotBlank()
-                ) {
-                    Text(if (editingVariant == null) "Agregar" else "Guardar")
-                }
+                )
             },
             dismissButton = {
-                OutlinedButton(onClick = {
-                    showDialog = false
-                    resetFields()
-                }) {
-                    Text("Cancelar")
-                }
+                SecondaryButton(
+                    text = "Cancelar",
+                    onClick = {
+                        showDialog = false
+                        resetFields()
+                    }
+                )
             },
             title = {
                 Text(if (editingVariant == null) "Nueva Variante" else "Editar Variante")
@@ -220,18 +226,18 @@ fun ProductVariants(viewModel: ProductFormViewModel) {
                             Text("Seleccionar Imagen")
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (imageUris.isNotEmpty()) {
-                            Text("${imageUris.size} imagen(es) seleccionada(s)", style = MaterialTheme.typography.bodySmall)
+                        if (images.isNotEmpty()) {
+                            Text("${images.size} imagen(es) seleccionada(s)", style = MaterialTheme.typography.bodySmall)
                         } else {
                             Text("Opcional", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
                         }
                     }
                     // Previsualización de imágenes seleccionadas
-                    if (imageUris.isNotEmpty()) {
+                    if (images.isNotEmpty()) {
                         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                            imageUris.forEach { uri ->
+                            images.forEach { image ->
                                 Image(
-                                    painter = rememberAsyncImagePainter(uri.toUri()),
+                                    painter = rememberAsyncImagePainter(image.imageUrl.toUri()),
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(48.dp)

@@ -2,10 +2,12 @@ package com.codeoflegends.unimarket.features.product.ui.screens.productFormScree
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +19,8 @@ import com.codeoflegends.unimarket.features.product.data.model.ProductSpecificat
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductFormViewModel
 import java.util.UUID
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 
 @Composable
 fun ProductSpecifications(viewModel: ProductFormViewModel) {
@@ -54,11 +58,16 @@ fun ProductSpecifications(viewModel: ProductFormViewModel) {
                     showDialog = true
                 },
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(MaterialTheme.shapes.medium)
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar Especificación", tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Agregar Especificación",
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
 
@@ -88,17 +97,9 @@ fun ProductSpecifications(viewModel: ProductFormViewModel) {
                             .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        SimpleTextField(
-                            value = spec.key,
-                            onValueChange = {},
-                            label = "Característica",
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        SimpleTextField(
-                            value = spec.value,
-                            onValueChange = {},
-                            label = "Detalle",
+                        Text(
+                            text = spec.key,
+                            style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
                         IconButton(onClick = {
@@ -107,7 +108,7 @@ fun ProductSpecifications(viewModel: ProductFormViewModel) {
                             value = spec.value
                             showDialog = true
                         }) {
-                            Icon(Icons.Default.Add, contentDescription = "Editar")
+                            Icon(Icons.Default.Edit, contentDescription = "Editar")
                         }
                         IconButton(onClick = { viewModel.removeSpecification(spec.id) }) {
                             Icon(Icons.Default.Delete, contentDescription = "Eliminar")
@@ -126,7 +127,8 @@ fun ProductSpecifications(viewModel: ProductFormViewModel) {
                 resetFields()
             },
             confirmButton = {
-                Button(
+                MainButton(
+                    text = if (editingSpec == null) "Agregar" else "Guardar",
                     onClick = {
                         val spec = ProductSpecification(
                             id = editingSpec?.id,
@@ -142,17 +144,16 @@ fun ProductSpecifications(viewModel: ProductFormViewModel) {
                         resetFields()
                     },
                     enabled = key.isNotBlank() && value.isNotBlank()
-                ) {
-                    Text(if (editingSpec == null) "Agregar" else "Guardar")
-                }
+                )
             },
             dismissButton = {
-                OutlinedButton(onClick = {
-                    showDialog = false
-                    resetFields()
-                }) {
-                    Text("Cancelar")
-                }
+                SecondaryButton(
+                    text = "Cancelar",
+                    onClick = {
+                        showDialog = false
+                        resetFields()
+                    }
+                )
             },
             title = {
                 Text(if (editingSpec == null) "Nueva Especificación" else "Editar Especificación")

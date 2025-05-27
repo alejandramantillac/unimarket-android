@@ -17,6 +17,8 @@ import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen
 import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.product.ui.viewModel.validation.ProductValidation
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 
 /**
  * Screen for creating or editing a product
@@ -101,31 +103,24 @@ fun ProductFormScreen(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
+            MainButton(
+                text = if (isEdit) "Guardar Cambios" else "Crear Producto",
                 onClick = { viewModel.saveProduct() },
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
                 enabled = canSaveProduct
-            ) {
-                Text(if (isEdit) "Guardar Cambios" else "Crear Producto")
-            }
+            )
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            OutlinedButton(
+            SecondaryButton(
+                text = if (isEdit) "Eliminar Producto" else "Cancelar",
                 onClick = { 
                     if (isEdit) {
                         viewModel.deleteProduct()
                     } else {
                         manager?.navController?.popBackStack()
                     }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    if (isEdit) "Eliminar Producto" else "Cancelar"
-                )
-            }
+                }
+            )
         }
     }
 }

@@ -54,7 +54,7 @@ fun LoginScreen(
     manager.authViewModel.loginEvent.CollectAsEventEffect {
         when (it) {
             is AuthResult.Success -> {
-                manager.navController.navigateIfAuthorized(next, manager) {
+                manager.navController.navigateIfAuthorized(Routes.RoleSelection.route, manager) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
             }

@@ -8,7 +8,7 @@ import java.util.UUID
  * Used only at the data layer for API communication
  */
 data class ProductDetailDto(
-    val id: UUID?,
+    val id: UUID,
     val category: String,
     val name: String,
     val description: String,
@@ -25,6 +25,7 @@ data class ProductDetailDto(
                 .join("entrepreneurship")
                 .join("specifications")
                 .join("variants")
+                .join("variants.variant_images")
         }
     }
 } 

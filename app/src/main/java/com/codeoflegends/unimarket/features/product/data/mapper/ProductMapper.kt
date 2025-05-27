@@ -2,10 +2,10 @@ package com.codeoflegends.unimarket.features.product.data.mapper
 
 import com.codeoflegends.unimarket.features.product.data.dto.create.EntrepreneurshipCreateDto
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
-import com.codeoflegends.unimarket.features.product.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
-import com.codeoflegends.unimarket.features.product.data.model.Category
+import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
+import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
@@ -15,44 +15,10 @@ import java.util.UUID
  */
 object ProductMapper {
     
-    fun productToListDto(product: Product): ProductListDto {
-        return ProductListDto(
-            id = product.id!!,
-            category = product.category.name,
-            name = product.name,
-            description = product.description,
-            price = product.price,
-            stockAlert = product.stockAlert,
-            published = product.published,
-            entrepreneurship = EntrepreneurshipDto(
-                id = product.entrepreneurship.id.toString(),
-                name = product.entrepreneurship.name
-            )
-        )
-    }
-    
-    fun productToDetailDto(product: Product): ProductDetailDto {
-        return ProductDetailDto(
-            id = product.id,
-            category = product.category.name,
-            name = product.name,
-            description = product.description,
-            price = product.price,
-            stockAlert = product.stockAlert,
-            published = product.published,
-            entrepreneurship = EntrepreneurshipDto(
-                id = product.entrepreneurship.id.toString(),
-                name = product.entrepreneurship.name
-            ),
-            variants = product.variants.map { VariantMapper.mapToDto(it) },
-            specifications = product.specifications.map { SpecificationMapper.mapToDto(it) }
-        )
-    }
-    
     fun listDtoToProduct(dto: ProductListDto): Product {
         return Product(
             id = dto.id,
-            category = Category(
+            category = ProductCategory(
                 name = dto.category,
                 description = "" // This field is not available in the DTO
             ),
@@ -64,14 +30,15 @@ object ProductMapper {
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
                 name = dto.entrepreneurship.name
-            )
+            ),
+            imageUrl = dto.image
         )
     }
     
     fun detailDtoToProduct(dto: ProductDetailDto): Product {
         return Product(
             id = dto.id,
-            category = Category(
+            category = ProductCategory(
                 name = dto.category,
                 description = "" // This field is not available in the DTO
             ),
@@ -107,5 +74,18 @@ object ProductMapper {
     
     fun listDtoToProductList(dtos: List<ProductListDto>): List<Product> {
         return dtos.map { listDtoToProduct(it) }
+    }
+
+    fun toUpdateProductDto(product: Product): UpdateProductDto {
+        return UpdateProductDto(
+            category = product.category.name,
+            name = product.name,
+            description = product.description,
+            price = product.price,
+            stockAlert = product.stockAlert,
+            published = product.published,
+            variants = product.variants.map { VariantMapper.toUpdateVariantDto(it) },
+            specifications = product.specifications.map { SpecificationMapper.toUpdateSpecificationDto(it) }
+        )
     }
 } 

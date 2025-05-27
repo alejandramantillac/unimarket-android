@@ -90,7 +90,7 @@ fun <T> InfiniteScrollList(
                     }
                 }
             }
-            // Contenido vacío y cargando
+        // Contenido vacío y cargando
         } else if (items.isEmpty() && isLoading) {
             item {
                 Box(
