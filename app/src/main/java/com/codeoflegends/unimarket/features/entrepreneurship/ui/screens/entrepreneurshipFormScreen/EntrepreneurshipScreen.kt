@@ -13,10 +13,10 @@ import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.NavigationBar
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipDetailPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipMembersPage
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipOrdersPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipProductsPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicViewModel
+import com.codeoflegends.unimarket.features.order.ui.screens.orderListScreen.OrderListScreen
 
 @Composable
 fun EntrepreneurshipScreen(
@@ -79,7 +79,7 @@ fun EntrepreneurshipScreen(
                         "home" -> EntrepreneurshipDetailPage(basicState = state)
                         "products" -> EntrepreneurshipProductsPage(basicState = state, manager = manager)
                         "people" -> EntrepreneurshipMembersPage(entrepreneurshipId = state.id)
-                        "orders" -> EntrepreneurshipOrdersPage(basicState = state)
+                        "orders" -> OrderListScreen(manager = manager, basicState = state)
                         //"metrics" -> EntrepreneurshipStatisticsPage(basicState = state)
                     }
                 }

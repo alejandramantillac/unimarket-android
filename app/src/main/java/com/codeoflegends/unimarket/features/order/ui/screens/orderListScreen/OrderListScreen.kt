@@ -18,22 +18,30 @@ import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.Filter
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.ListItemComponent
-import com.codeoflegends.unimarket.core.ui.components.MainButton
-import com.codeoflegends.unimarket.features.order.data.mock.MockOrderDatabase
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderActionState
 import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderListViewModel
+import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 @Composable
 fun OrderListScreen(
     viewModel: OrderListViewModel = hiltViewModel(),
     manager: NavigationManager? = null,
-    onOrderClick: (UUID) -> Unit = {}
+    onOrderClick: (UUID) -> Unit = {},
+    basicState: EntrepreneurshipBasicUiState = EntrepreneurshipBasicUiState(
+        id = UUID.randomUUID(),
+        name = "Mi Emprendimiento"
+    )
 ) {
+    viewModel.entrepreneurshipId.update {
+        basicState.id
+    }
+
     val uiState by viewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(top = 48.dp, start = 16.dp, end = 16.dp)) {
         // Título: Pedidos
         Text(
             text = "Pedidos",
