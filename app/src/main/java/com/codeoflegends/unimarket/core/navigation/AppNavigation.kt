@@ -7,6 +7,7 @@ import com.codeoflegends.unimarket.features.auth.navigation.authNavigation
 import com.codeoflegends.unimarket.features.auth.ui.viewModel.AuthViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.navigation.entrepreneurNavigation
 import com.codeoflegends.unimarket.features.home.navigation.homeNavigation
+import com.codeoflegends.unimarket.features.order.navigation.orderNavigation
 import com.codeoflegends.unimarket.features.product.navigation.productNavigation
 
 @Composable
@@ -21,6 +22,7 @@ fun AppNavigation(
         authNavigation(manager)
         homeNavigation(manager)
         productNavigation(manager)
+        orderNavigation(manager)
         entrepreneurNavigation(manager)
    }
 }

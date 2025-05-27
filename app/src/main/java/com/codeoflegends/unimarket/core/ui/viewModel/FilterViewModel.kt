@@ -73,4 +73,4 @@ abstract class FilterViewModel : ViewModel() {
     protected abstract fun onSearchQueryChanged(query: String)
     protected abstract fun onFilterChanged(filterId: String)
     protected abstract fun onAdvancedFiltersToggled()
-} 
+}
