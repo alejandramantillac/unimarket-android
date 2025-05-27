@@ -1,14 +1,11 @@
 package com.codeoflegends.unimarket.features.order.ui.viewModel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.core.ui.viewModel.FilterOption
 import com.codeoflegends.unimarket.core.ui.viewModel.FilterViewModel
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.usecase.GetAllOrdersUseCase
-import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderUseCase
-import com.codeoflegends.unimarket.features.order.data.usecase.UpdateOrderStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,6 +35,8 @@ class OrderListViewModel @Inject constructor(
         )
     }
 
+    val entrepreneurshipId: MutableStateFlow<UUID?> = MutableStateFlow(null)
+
     private val _uiState = MutableStateFlow(OrderListUiState())
     val uiState: StateFlow<OrderListUiState> = _uiState.asStateFlow()
 
@@ -47,15 +46,11 @@ class OrderListViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<OrderActionState>(OrderActionState.Idle)
     val actionState: StateFlow<OrderActionState> = _actionState.asStateFlow()
 
-    init {
-        loadOrders()
-    }
-
     fun loadOrders() {
         _actionState.value = OrderActionState.Loading
         viewModelScope.launch {
             try {
-                val orderList = getAllOrdersUseCase()
+                val orderList = getAllOrdersUseCase(entrepreneurshipId.value!!)
                 orderList.forEach { order ->
                     Log.d("OrderListViewModel", "Order ID: ${order.id}, OrderDetails: ${order.orderDetails}")
                 }
