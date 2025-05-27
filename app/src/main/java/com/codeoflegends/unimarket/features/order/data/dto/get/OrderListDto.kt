@@ -13,6 +13,7 @@ class OrderListDto (
     val discount: Int,
     val total: Int,
     val userCreated: UserDto,
+    val orderDetails: List<OrderDetailDto> = emptyList()
 ){
     companion object {
         fun query(entrepreneurship: String): DirectusQuery {

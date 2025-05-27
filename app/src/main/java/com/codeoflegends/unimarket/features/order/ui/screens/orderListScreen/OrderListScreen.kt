@@ -15,6 +15,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.Filter
+import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.ListItemComponent
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.order.data.mock.MockOrderDatabase
@@ -93,51 +95,19 @@ fun OrderListScreen(
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )*/
 
-        // Barra de búsqueda
-        OutlinedTextField(
-            value = "",
-            onValueChange = {},
-            placeholder = { Text("Buscar") },
+        // Componente Filter
+        Filter(
+            viewModel = viewModel,
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
 
-        // Tabs de filtro
-        var selectedTab by remember { mutableStateOf(0) }
-        val tabs = listOf(
-            com.codeoflegends.unimarket.core.ui.components.Tab(
-                title = "Todos",
-                content = { }
-            ),
-            com.codeoflegends.unimarket.core.ui.components.Tab(
-                title = "Pendiente",
-                content = { }
-            ),
-            com.codeoflegends.unimarket.core.ui.components.Tab(
-                title = "Completado",
-                content = { }
-            )
-        )
-
-        com.codeoflegends.unimarket.core.ui.components.TabSelector(
-            tabs = tabs,
-            selectedTabIndex = selectedTab,
-            onTabSelected = { index -> selectedTab = index }
-        )
-
         // Lista de órdenes
-        when (actionState) {
-            is OrderActionState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            is OrderActionState.Error -> {
-                Text(
-                    text = (actionState as OrderActionState.Error).message,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-            else -> {
-                uiState.orders.forEach { order ->
+        InfiniteScrollList(
+            items = uiState.orders,
+            isLoading = actionState is OrderActionState.Loading,
+            onLoadMore = { viewModel.loadOrders() },
+            itemContent = { order ->
+                Column {
                     ListItemComponent(
                         id = order.id,
                         image = rememberImagePainter(data = order.clientPhoto),
@@ -159,7 +129,13 @@ fun OrderListScreen(
                     )
                     Divider(color = Color.LightGray, thickness = 1.dp)
                 }
+            },
+            emptyContent = {
+                Text(
+                    text = "No hay órdenes disponibles",
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
-        }
+        )
     }
 }

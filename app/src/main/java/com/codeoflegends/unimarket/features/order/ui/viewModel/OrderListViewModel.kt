@@ -3,6 +3,8 @@ package com.codeoflegends.unimarket.features.order.ui.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.core.ui.viewModel.FilterOption
+import com.codeoflegends.unimarket.core.ui.viewModel.FilterViewModel
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.usecase.GetAllOrdersUseCase
 import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderUseCase
@@ -25,7 +27,16 @@ sealed class OrderActionState {
 @HiltViewModel
 class OrderListViewModel @Inject constructor(
     private val getAllOrdersUseCase: GetAllOrdersUseCase,
-) : ViewModel() {
+) : FilterViewModel() {
+
+    init {
+        setFilters(
+            listOf(
+                FilterOption(id = "pendiente", label = "Pendiente", field = "status", operator = "eq", value = "Pendiente"),
+                FilterOption(id = "confirmado", label = "confirmado", field = "status", operator = "eq", value = "confirmado"),
+            )
+        )
+    }
 
     private val _uiState = MutableStateFlow(OrderListUiState())
     val uiState: StateFlow<OrderListUiState> = _uiState.asStateFlow()
@@ -45,8 +56,12 @@ class OrderListViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val orderList = getAllOrdersUseCase()
+                orderList.forEach { order ->
+                    Log.d("OrderListViewModel", "Order ID: ${order.id}, OrderDetails: ${order.orderDetails}")
+                }
+                val filteredOrders = applyFilters(orderList)
                 _uiState.value = OrderListUiState(
-                    orders = orderList.map { order ->
+                    orders = filteredOrders.map { order ->
                         OrderItemUiState(
                             id = order.id,
                             clientName = order.userCreated.firstName,
@@ -64,6 +79,40 @@ class OrderListViewModel @Inject constructor(
                 _actionState.value = OrderActionState.Error("Error al cargar órdenes: ${e.message}")
             }
         }
+    }
+
+    private fun applyFilters(orderList: List<Order>): List<Order> {
+        val activeFilters = filterToQuery()
+        return orderList.filter { order ->
+            activeFilters.all { filter ->
+                when (filter.field) {
+                    "clientName" -> order.userCreated.firstName.contains(filter.value.toString(), ignoreCase = true)
+                    "status" -> order.status.name == filter.value
+                    else -> true
+                }
+            }
+        }.filter { order ->
+            filterState.value.searchQuery.isEmpty() ||
+                    order.userCreated.firstName.contains(filterState.value.searchQuery, ignoreCase = true)
+        }
+    }
+
+    fun resetQueryParameters() {
+        _uiState.value = OrderListUiState(orders = emptyList())
+    }
+
+    override fun onSearchQueryChanged(query: String) {
+        resetQueryParameters()
+        loadOrders()
+    }
+
+    override fun onFilterChanged(filterId: String) {
+        resetQueryParameters()
+        loadOrders()
+    }
+
+    override fun onAdvancedFiltersToggled() {
+        // Implementar lógica adicional si es necesario
     }
 
     companion object {

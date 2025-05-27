@@ -4,8 +4,10 @@ import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderListDto
 import com.codeoflegends.unimarket.features.order.data.model.Order
+import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
 import com.codeoflegends.unimarket.features.order.data.model.OrderList
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
+import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -35,7 +37,19 @@ object OrderListMapper {
                 )
             ),
             payments = emptyList(),
-            orderDetails = emptyList(),
+            orderDetails = dto.orderDetails.map { detailDto ->
+                OrderDetail(
+                    id = detailDto.id,
+                    amount = detailDto.amount,
+                    unitPrice = detailDto.unitPrice,
+                    productVariant = ProductVariant(
+                        id = detailDto.productVariant.id,
+                        name = detailDto.productVariant.name,
+                        stock = detailDto.productVariant.stock,
+                        variantImages = detailDto.productVariant.variantImages.map { it.imageUrl }
+                    )
+                )
+            },
             delivery = emptyList()
         )
     }
