@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun SimpleTextField(
@@ -17,12 +19,14 @@ fun SimpleTextField(
     label: String,
     modifier: Modifier = Modifier,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    trailingIcon: @Composable (() -> Unit)? = null
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    style: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyMedium,
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label, color = Color.Gray) },
+        label = { Text(label, color = Color.Gray, style = style, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         visualTransformation = visualTransformation,
         trailingIcon = trailingIcon,
         colors = TextFieldDefaults.colors(
@@ -39,6 +43,8 @@ fun SimpleTextField(
             unfocusedPlaceholderColor = Color.Gray,
             focusedPlaceholderColor = Color.Gray,
         ),
-        modifier = modifier.fillMaxWidth()
+        singleLine = true,
+        modifier = modifier.fillMaxWidth(),
+        keyboardOptions = keyboardOptions
     )
 }

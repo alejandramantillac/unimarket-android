@@ -25,7 +25,6 @@ import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
 import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
@@ -55,7 +54,7 @@ fun LoginScreen(
     manager.authViewModel.loginEvent.CollectAsEventEffect {
         when (it) {
             is AuthResult.Success -> {
-                manager.navController.navigateIfAuthorized(next, manager) {
+                manager.navController.navigateIfAuthorized(Routes.RoleSelection.route, manager) {
                     popUpTo(Routes.Login.route) { inclusive = true }
                 }
             }

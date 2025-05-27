@@ -3,7 +3,6 @@ package com.codeoflegends.unimarket.features.auth.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,12 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
-import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
@@ -30,8 +27,7 @@ import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
-import com.codeoflegends.unimarket.core.ui.components.MessageSnackbar
-import com.codeoflegends.unimarket.core.ui.state.ErrorHandler
+import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.features.auth.ui.components.PasswordTextField
 
 @Composable
@@ -47,7 +43,7 @@ fun RegisterScreen(
     manager.authViewModel.registerEvent.CollectAsEventEffect {
         when (it) {
             is AuthResult.Success -> {
-                ErrorHandler.showSuccess(
+                ToastHandler.showSuccess(
                     message = "Registro exitoso",
                     dismissTimeout = 3f
                 )
@@ -56,7 +52,7 @@ fun RegisterScreen(
                 }
             }
             is AuthResult.Error -> {
-                ErrorHandler.handleError(it.exception)
+                ToastHandler.handleError(it.exception)
             }
             else -> {}
         }

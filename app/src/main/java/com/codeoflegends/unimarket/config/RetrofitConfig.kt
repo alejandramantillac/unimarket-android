@@ -4,7 +4,7 @@ import okhttp3.Authenticator
 import okhttp3.Interceptor
 
 object RetrofitConfig {
-    const val URL = "http://35.237.238.109"
+    const val URL = "http://35.231.238.114"
 }
 
 interface AuthInterceptor : Interceptor
