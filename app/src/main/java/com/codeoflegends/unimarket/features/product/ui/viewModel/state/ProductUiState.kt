@@ -1,11 +1,13 @@
 package com.codeoflegends.unimarket.features.product.ui.viewModel.state
 
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
-import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Review
 import java.util.UUID
+import java.time.LocalDateTime
 
 /**
  * ProductFormData: Contains all editable fields for a product
@@ -52,10 +54,11 @@ data class ProductFormUiState(
  * Combined state class for the product view model
  */
 data class ProductUiState(
+    val uiState: ProductFormUiState = ProductFormUiState(),
     val formData: ProductFormData = ProductFormData(),
     val formOptions: ProductFormOptions = ProductFormOptions(),
-    val uiState: ProductFormUiState = ProductFormUiState(),
-    
     // Reference to original product when editing or viewing
-    val selectedProduct: Product? = null
+    val selectedProduct: Product? = null,
+    val showRatingModal: Boolean = false,
+    val reviews: List<Review> = emptyList()
 ) 

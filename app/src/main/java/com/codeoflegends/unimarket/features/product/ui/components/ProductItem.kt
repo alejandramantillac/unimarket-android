@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.product.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -26,11 +27,15 @@ import com.codeoflegends.unimarket.features.product.data.model.Product
 fun ProductItem(
     product: Product,
     onEditClick: () -> Unit,
-    onViewClick: () -> Unit
+    onViewClick: () -> Unit,
+    isShopper: Boolean = false
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .then(
+                if (isShopper) Modifier.clickable { onViewClick() } else Modifier
+            ),
         elevation = CardDefaults.cardElevation(2.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -79,29 +84,31 @@ fun ProductItem(
                 )
             }
 
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                IconButton(
-                    onClick = onViewClick,
-                    modifier = Modifier.size(36.dp)
+            if (!isShopper) {
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        Icons.Rounded.Description,
-                        contentDescription = "Ver detalles",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                IconButton(
-                    onClick = onEditClick,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        Icons.Rounded.EditNote,
-                        contentDescription = "Editar producto",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    IconButton(
+                        onClick = onViewClick,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.Description,
+                            contentDescription = "Ver detalles",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(
+                        onClick = onEditClick,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.EditNote,
+                            contentDescription = "Editar producto",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
