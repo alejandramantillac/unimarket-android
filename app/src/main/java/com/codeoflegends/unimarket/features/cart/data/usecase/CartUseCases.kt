@@ -5,6 +5,7 @@ import com.codeoflegends.unimarket.features.cart.data.model.CartVariant
 import com.codeoflegends.unimarket.features.cart.data.repositories.interfaces.CartRepository
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import java.util.UUID
 import javax.inject.Inject
 
@@ -24,7 +25,14 @@ class AddToCartUseCase @Inject constructor(
             price = product.price,
             imageUrl = variant.variantImages.firstOrNull()?.imageUrl,
             productId = product.id!!,
-            productName = product.name
+            productName = product.name,
+            stock = variant.stock,
+            variantImages = variant.variantImages.map { 
+                VariantImage(
+                    id = it.id,
+                    imageUrl = it.imageUrl
+                )
+            }
         )
         return repository.addItem(cartVariant, quantity)
     }

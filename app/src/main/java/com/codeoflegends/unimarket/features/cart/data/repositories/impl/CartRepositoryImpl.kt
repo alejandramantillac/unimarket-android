@@ -85,23 +85,25 @@ class CartRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun updateItemQuantity(itemId: UUID, quantity: Int): Result<Unit> = try {
-        if (quantity <= 0) {
-            return removeItem(itemId)
-        }
-
-        val currentCart = cartFlow.value
-        val updatedItems = currentCart.items.map {
-            if (it.id == itemId) {
-                it.copy(quantity = quantity)
+    override suspend fun updateItemQuantity(itemId: UUID, quantity: Int): Result<Unit> {
+        return try {
+            if (quantity <= 0) {
+                removeItem(itemId)
             } else {
-                it
+                val currentCart = cartFlow.value
+                val updatedItems = currentCart.items.map {
+                    if (it.id == itemId) {
+                        it.copy(quantity = quantity)
+                    } else {
+                        it
+                    }
+                }
+                saveCartToPrefs(Cart(updatedItems))
+                Result.success(Unit)
             }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-        saveCartToPrefs(Cart(updatedItems))
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Result.failure(e)
     }
 
     override suspend fun clearCart(): Result<Unit> = try {

@@ -1,9 +1,12 @@
 package com.codeoflegends.unimarket.features.cart.data.model
 
+import com.codeoflegends.unimarket.core.data.model.User
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import java.util.UUID
 
 data class Cart(
     val items: List<CartItem> = emptyList(),
+    val userCreated: User? = null,
 ) {
     val totalItems: Int
         get() = items.sumOf { it.quantity }
@@ -24,5 +27,7 @@ data class CartVariant(
     val price: Double,
     val imageUrl: String?,
     val productId: UUID,
-    val productName: String
+    val productName: String,
+    val stock: Int,
+    val variantImages: List<VariantImage> = emptyList()
 ) 
