@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.product.data.repositories.interface
 
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.product.data.model.Review
 import java.util.UUID
 
 interface ProductRepository {
@@ -17,4 +18,6 @@ interface ProductRepository {
         limit: Int,
         page: Int
     ): Result<List<Product>>
+    suspend fun createReview(productId: UUID, rating: Int, comment: String): Result<Unit>
+    suspend fun getProductReviews(productId: UUID, page: Int, limit: Int): Result<List<Review>>
 }
