@@ -4,7 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
-import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject
 
@@ -405,7 +407,19 @@ class ProductFormViewModel @Inject constructor(
         private val defaultBusinessOptions = listOf(
             Entrepreneurship(
                 id = UUID.fromString("00000000-0000-0000-0000-000000000007"),
-                name = "Emarket"
+                name = "Emarket",
+                slogan = "",
+                description = "",
+                creationDate = LocalDateTime.now(),
+                customization = EntrepreneurshipCustomization(
+                    profileImg = "",
+                    bannerImg = "",
+                    color1 = "",
+                    color2 = ""
+                ),
+                email = "",
+                phone = "",
+                category = 0
             )
         )
         

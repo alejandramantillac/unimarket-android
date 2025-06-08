@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.home.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,6 +40,13 @@ fun BuyerHomeScreen(
             text = "¡Bienvenido a UniMarket!",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
+        )
+
+        // LOG VISUAL DEL ROL
+        Text(
+            text = "Authorities: ${authState.authorities}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error
         )
 
         Card(
@@ -92,18 +100,24 @@ fun BuyerHomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(products) { product ->
+                    val isShopper = authState.authorities.contains("Shopper", ignoreCase = true)
                     ProductItem(
                         product = product,
-                        onEditClick = {
-                            manager.navController.navigate(
-                                Routes.ManageProduct.createRoute(product.id!!.toString())
-                            )
-                        },
+                        onEditClick = {}, // No acción para editar si es shopper
                         onViewClick = {
-                            manager.navController.navigate(
-                                Routes.ProductView.createRoute(product.id!!.toString())
-                            )
-                        }
+                            Log.d("BuyerHomeScreen", "Authorities: ${authState.authorities}, isBuyer: $isShopper")
+                            manager.navController.currentBackStackEntry?.savedStateHandle?.set("lastIsBuyer", isShopper)
+                            if (isShopper) {
+                                manager.navController.navigate(
+                                    Routes.ProductBuyerView.createRoute(product.id!!.toString())
+                                )
+                            } else {
+                                manager.navController.navigate(
+                                    Routes.ProductView.createRoute(product.id!!.toString())
+                                )
+                            }
+                        },
+                        isShopper = isShopper
                     )
                 }
             }
@@ -119,6 +133,16 @@ fun BuyerHomeScreen(
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
+        }
+
+        // Mostrar el último valor de isBuyer si existe
+        val lastIsBuyer = manager.navController.currentBackStackEntry?.savedStateHandle?.get<Boolean>("lastIsBuyer")
+        if (lastIsBuyer != null) {
+            Text(
+                text = "Último isBuyer: $lastIsBuyer",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         MainButton(
