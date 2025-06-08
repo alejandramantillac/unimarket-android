@@ -21,12 +21,14 @@ object EntrepreneurshipReviewMapper {
                 firstName = dto.userCreated.firstName,
                 lastName = dto.userCreated.lastName,
                 email = dto.userCreated.email,
-                profile = UserProfile(
-                    profilePicture = dto.userCreated.profile.profilePicture,
-                    userRating = dto.userCreated.profile.userRating,
-                    partnerRating = dto.userCreated.profile.partnerRating,
-                    registrationDate = LocalDateTime.parse(dto.userCreated.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
-                )
+                profile = dto.userCreated.profile?.let { profileDto ->
+                    UserProfile(
+                        profilePicture = profileDto.profilePicture,
+                        userRating = profileDto.userRating,
+                        partnerRating = profileDto.partnerRating,
+                        registrationDate = LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                    )
+                } ?: UserProfile("", 0f, 0f, LocalDateTime.now())
             ),
             dateCreated = LocalDateTime.parse(dto.dateCreated, DateTimeFormatter.ISO_DATE_TIME),
             rating = dto.rating,

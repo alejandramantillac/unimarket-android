@@ -8,7 +8,7 @@ data class UserDto(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val profile: UserProfileDto?
+    val profile: UserProfileDto
 ){
     companion object {
         fun query(): DirectusQuery {

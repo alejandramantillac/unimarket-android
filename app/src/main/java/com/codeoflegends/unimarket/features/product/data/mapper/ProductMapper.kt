@@ -6,9 +6,11 @@ import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDt
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
-import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
+import java.time.LocalDateTime
 
 /**
  * Mapper class responsible for converting between data layer DTOs and domain models
@@ -29,7 +31,19 @@ object ProductMapper {
             published = dto.published,
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
-                name = dto.entrepreneurship.name
+                name = dto.entrepreneurship.name,
+                slogan = "",
+                description = "",
+                creationDate = LocalDateTime.now(),
+                customization = EntrepreneurshipCustomization(
+                    profileImg = "",
+                    bannerImg = "",
+                    color1 = "",
+                    color2 = ""
+                ),
+                email = "",
+                phone = "",
+                category = 0
             ),
             imageUrl = dto.image
         )
@@ -49,7 +63,19 @@ object ProductMapper {
             published = dto.published,
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
-                name = dto.entrepreneurship.name
+                name = dto.entrepreneurship.name,
+                slogan = "",
+                description = "",
+                creationDate = LocalDateTime.now(),
+                customization = EntrepreneurshipCustomization(
+                    profileImg = "",
+                    bannerImg = "",
+                    color1 = "",
+                    color2 = ""
+                ),
+                email = "",
+                phone = "",
+                category = 0
             ),
             variants = dto.variants.map { VariantMapper.mapFromDto(it) },
             specifications = dto.specifications.map { SpecificationMapper.mapFromDto(it) },
