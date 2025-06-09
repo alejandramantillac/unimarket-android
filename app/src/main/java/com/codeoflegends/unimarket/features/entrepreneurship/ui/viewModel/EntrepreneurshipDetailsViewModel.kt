@@ -18,7 +18,6 @@ import java.util.UUID
 import javax.inject.Inject
 
 sealed class EntrepreneurshipDetailsActionState {
-    object Idle : EntrepreneurshipDetailsActionState()
     object Success : EntrepreneurshipDetailsActionState()
     data class Error(val message: String) : EntrepreneurshipDetailsActionState()
     object Loading : EntrepreneurshipDetailsActionState()
@@ -63,7 +62,7 @@ class EntrepreneurshipDetailsViewModel @Inject constructor(
                     averageRating = reviewRating.avgReview,
                     totalReviews = reviewRating.totalReviews
                 )
-                _actionState.value = EntrepreneurshipDetailsActionState.Idle
+                _actionState.value = EntrepreneurshipDetailsActionState.Success
             } catch (e: Exception) {
                 _actionState.value = EntrepreneurshipDetailsActionState.Error("Error al cargar el emprendimiento: ${e.message}")
             }

@@ -10,7 +10,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipGeneralProductsActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipProductsViewModel
 import androidx.compose.ui.platform.LocalFocusManager
@@ -23,6 +22,7 @@ import com.codeoflegends.unimarket.core.ui.components.Filter
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipQueryProductsActionState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 
 @Composable
 fun EntrepreneurshipProductsPage(

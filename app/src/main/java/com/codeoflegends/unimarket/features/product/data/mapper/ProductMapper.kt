@@ -29,6 +29,7 @@ object ProductMapper {
             price = dto.price,
             stockAlert = dto.stockAlert,
             published = dto.published,
+            discount = dto.discount,
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
                 name = dto.entrepreneurship.name,
@@ -59,6 +60,7 @@ object ProductMapper {
             name = dto.name,
             description = dto.description,
             price = dto.price,
+            discount = dto.discount,
             stockAlert = dto.stockAlert,
             published = dto.published,
             entrepreneurship = Entrepreneurship(

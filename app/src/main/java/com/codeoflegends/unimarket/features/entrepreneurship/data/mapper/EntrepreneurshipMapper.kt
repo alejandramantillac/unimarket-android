@@ -1,5 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.mapper
 
+import com.codeoflegends.unimarket.core.data.model.User
+import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipCustomizationDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Tag
@@ -10,6 +12,9 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepre
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCreate
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipPartner
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.ProductPreview
+import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -24,11 +29,37 @@ object EntrepreneurshipMapper {
             creationDate = LocalDateTime.parse(dto.creationDate, DateTimeFormatter.ISO_DATE_TIME),
             email = dto.email,
             phone = dto.phone,
-            //subscription = dto.subscription,
             category = dto.category,
             deletedAt = dto.deletedAt,
-            //partners = dto.partners,
-            //products = dto.products,
+            partners = dto.partners.map { partnerDto ->
+                EntrepreneurshipPartner(
+                    id = partnerDto.id,
+                    role = partnerDto.role,
+                    user = User(
+                        id = UUID.fromString(partnerDto.user[0].id),
+                        firstName = partnerDto.user[0].firstName,
+                        lastName = partnerDto.user[0].lastName,
+                        email = partnerDto.user[0].email,
+                        profile = UserProfile(
+                            profilePicture = partnerDto.user[0].profile.profilePicture,
+                            userRating = partnerDto.user[0].profile.userRating,
+                            partnerRating = partnerDto.user[0].profile.partnerRating,
+                            registrationDate = LocalDateTime.parse(
+                                partnerDto.user[0].profile.registrationDate,
+                                DateTimeFormatter.ISO_DATE_TIME
+                            )
+                        )
+                    )
+                )
+            },
+            products = dto.products.map { productDto ->
+                ProductPreview(
+                    id = UUID.fromString(productDto.id),
+                    name = productDto.name,
+                    price = productDto.price,
+                    imageUrl = productDto.image,
+                )
+            },
             //collaborations = dto.collaborations,
             //orders = dto.orders,
             //socialNetworks = dto.social_networks.map { SocialNetwork(1,it,"") },

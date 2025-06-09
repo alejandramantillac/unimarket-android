@@ -147,4 +147,26 @@ class ProductRepositoryDirectus @Inject constructor(
         Log.e("ProductRepositoryDirectus", "Error fetching product reviews: ${'$'}{e.message}", e)
         Result.failure(e)
     }
+
+    override suspend fun getAllProductsByQuery(
+        nameContains: String,
+        filters: List<DirectusQuery.Filter>,
+        limit: Int,
+        page: Int
+    ): Result<List<Product>> = try {
+        val productsDto = productService.getAllProducts(
+            ProductListDto.queryByFilters(
+                nameContains = nameContains,
+                filters = filters,
+                limit = limit,
+                page = page
+            ).build()
+        ).data
+        Log.d("ProductRepositoryDirectus", "Fetched products by filters: ${productsDto.size} items")
+        val products = ProductMapper.listDtoToProductList(productsDto)
+        Result.success(products)
+    } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error fetching products by filters: ", e)
+        Result.failure(e)
+    }
 }
