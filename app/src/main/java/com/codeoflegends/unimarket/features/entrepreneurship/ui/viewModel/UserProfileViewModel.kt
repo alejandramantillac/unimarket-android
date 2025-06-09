@@ -71,14 +71,16 @@ class UserProfileViewModel @Inject constructor(
                         firstName = userDto.firstName,
                         lastName = userDto.lastName,
                         email = userDto.email,
-                        profile = UserProfile(
-                            profilePicture = userDto.profile.profilePicture,
-                            userRating = userDto.profile.userRating,
-                            partnerRating = userDto.profile.partnerRating,
-                            registrationDate = LocalDateTime.parse(userDto.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME),
+                        profile = userDto.profile?.let { profileDto ->
+                            UserProfile(
+                                profilePicture = profileDto.profilePicture,
+                                userRating = profileDto.userRating,
+                                partnerRating = profileDto.partnerRating,
+                                registrationDate = LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
                             )
-                        )
+                        } ?: UserProfile("", 0f, 0f, LocalDateTime.now())
                     )
+                )
                 _actionState.value = UserProfileActionState.Idle
             } catch (e: Exception) {
                 Log.e("UserProfileViewModel", "Error loading user data", e)

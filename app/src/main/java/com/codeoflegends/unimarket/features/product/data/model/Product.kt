@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.product.data.model
 
 import java.util.UUID
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 
 data class Product(
     val id: UUID? = null,

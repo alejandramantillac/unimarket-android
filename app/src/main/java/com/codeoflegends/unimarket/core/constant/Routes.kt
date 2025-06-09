@@ -24,6 +24,13 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    data object ProductBuyerView : Routes("/product_buyer/{id}") {
+        val base get() = "/product_buyer/"
+        fun createRoute(id: String): String {
+            return "/product_buyer/$id"
+        }
+    }
+
     // Order Routes
 
     data object ManageOrder : Routes("/manage/order") {
@@ -80,6 +87,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                 Home.route -> Home
                 ManageProduct.route -> ManageProduct
                 ProductView.route -> ProductView
+                ProductBuyerView.route -> ProductBuyerView
                 RoleSelection.route -> RoleSelection
                 ManageEntrepreneurship.route -> ManageEntrepreneurship
                 EntrepreneurshipView.route -> EntrepreneurshipView
@@ -91,6 +99,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                     when {
                         route.startsWith("/manage/product/") -> ManageProduct
                         route.startsWith("/product/") -> ProductView
+                        route.startsWith("/product_buyer/") -> ProductBuyerView
                         route.startsWith("/entrepreneurship/") && route.endsWith("/collaborators") -> Collaborators
                         else -> null
                     }
