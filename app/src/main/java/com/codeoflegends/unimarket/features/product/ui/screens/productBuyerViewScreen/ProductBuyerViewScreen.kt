@@ -14,13 +14,17 @@ import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewMode
 import com.codeoflegends.unimarket.features.product.ui.screens.productBuyerViewScreen.pages.ProductBuyerDetailPage
 import com.codeoflegends.unimarket.features.product.ui.screens.productBuyerViewScreen.pages.ProductBuyerReviewsPage
 import com.codeoflegends.unimarket.features.product.ui.screens.productBuyerViewScreen.pages.ProductBuyerReviewFormPage
-import com.codeoflegends.unimarket.core.ui.state.ToastHandler
+import com.codeoflegends.unimarket.core.ui.state.MessageManager
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ShoppingCart
 import java.util.*
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
+import com.codeoflegends.unimarket.features.cart.ui.viewmodel.CartViewModel
+import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.constant.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +33,9 @@ fun ProductBuyerViewScreen(
     manager: NavigationManager
 ) {
     val viewModel: ProductViewModel = hiltViewModel()
+    val cartViewModel: CartViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
+    val cartState by cartViewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
     var selectedTab by remember { mutableStateOf(0) }
     val context = LocalContext.current
@@ -44,10 +50,10 @@ fun ProductBuyerViewScreen(
     LaunchedEffect(actionState) {
         when (actionState) {
             is ProductActionState.Success -> {
-                Toast.makeText(context, "Reseña creada exitosamente", Toast.LENGTH_SHORT).show()
+                MessageManager.showSuccess("Reseña creada exitosamente")
             }
             is ProductActionState.Error -> {
-                Toast.makeText(context, (actionState as ProductActionState.Error).message, Toast.LENGTH_LONG).show()
+                MessageManager.showError((actionState as ProductActionState.Error).message)
             }
             else -> {}
         }
@@ -60,13 +66,27 @@ fun ProductBuyerViewScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(product?.name ?: "Producto") },
+                title = { Text(product?.name ?: "Detalles del producto") },
                 navigationIcon = {
                     IconButton(onClick = { manager.navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver"
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                actions = {
+                    // Botón del carrito con badge
+                    BadgedBox(
+                        badge = {
+                            if (cartState.cart.totalItems > 0) {
+                                Badge { Text(cartState.cart.totalItems.toString()) }
+                            }
+                        }
+                    ) {
+                        IconButton(onClick = { manager.navController.navigate(Routes.Cart.route) }) {
+                            Icon(
+                                imageVector = Icons.Default.ShoppingCart,
+                                contentDescription = "Ver carrito"
+                            )
+                        }
                     }
                 }
             )
@@ -90,14 +110,32 @@ fun ProductBuyerViewScreen(
                         TabSelector(
                             tabs = listOf(
                                 Tab("Detalles") {
-                                    Column {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp)
+                                    ) {
                                         ProductBuyerDetailPage(product, reviews)
                                         Spacer(modifier = Modifier.height(16.dp))
-                                        Button(
-                                            onClick = { /* TODO: Acción de añadir al carrito */ },
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Text("Añadir al carrito")
+                                        
+                                        // Si el producto tiene variantes, mostrar el botón de añadir al carrito
+                                        if (product.variants.isNotEmpty()) {
+                                            val firstVariant = product.variants.first()
+                                            MainButton(
+                                                text = "Añadir al carrito",
+                                                onClick = { 
+                                                    cartViewModel.addToCart(product, firstVariant, 1)
+                                                    MessageManager.showSuccess("Producto añadido al carrito")
+                                                },
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        } else {
+                                            Text(
+                                                text = "Este producto no tiene variantes disponibles",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.padding(vertical = 8.dp)
+                                            )
                                         }
                                     }
                                 },

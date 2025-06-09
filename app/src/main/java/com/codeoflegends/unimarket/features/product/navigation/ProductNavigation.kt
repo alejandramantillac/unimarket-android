@@ -10,6 +10,8 @@ import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen
 import com.codeoflegends.unimarket.features.product.ui.screens.productViewScreen.ProductViewScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.features.product.ui.screens.productBuyerViewScreen.ProductBuyerViewScreen
+import com.codeoflegends.unimarket.features.cart.ui.screens.CartScreen
+import com.codeoflegends.unimarket.features.cart.ui.viewmodel.CartViewModel
 
 fun NavGraphBuilder.productNavigation(
     manager: NavigationManager
@@ -46,6 +48,17 @@ fun NavGraphBuilder.productNavigation(
         ProductBuyerViewScreen(
             productId = productId,
             manager = manager
+        )
+    }
+
+    composable(route = Routes.Cart.route) {
+        val cartViewModel: CartViewModel = hiltViewModel()
+        CartScreen(
+            cartViewModel = cartViewModel,
+            onOrderCreated = { orderId ->
+                manager.navController.navigate(Routes.OrderSummary.createRoute(orderId.toString()))
+            },
+            onBackClick = { manager.navController.popBackStack() }
         )
     }
 }
