@@ -35,13 +35,23 @@ class OrderRepositoryDirectus @Inject constructor(
         ).data
 
         val order = OrderMapper.orderDtoToOrder(orderDto)
-        if (order != null) {
-            Result.success(order)
-        } else {
-            Result.failure(Exception("El mapeo de OrderDto a Order devolvió nulo"))
-        }
+        Result.success(order)
     } catch (e: Exception) {
+        Log.e("OrderRepositoryDirectus", "Error fetching order: ${e.message}")
         Result.failure(e)
+    }
+
+    override suspend fun createOrder(orderDto: OrderDto): Result<Order> = try {
+        val createdOrderDto = orderService.createOrder(orderDto).data
+        val order = OrderMapper.orderDtoToOrder(createdOrderDto)
+        Result.success(order)
+    } catch (e: Exception) {
+        Log.e("OrderRepositoryDirectus", "Error creating order: ${e.message}")
+        Result.failure(e)
+    }
+
+    override suspend fun updateOrderStatus(orderId: UUID, newStatus: String): Result<Order> {
+        TODO("Not yet implemented")
     }
 }
 

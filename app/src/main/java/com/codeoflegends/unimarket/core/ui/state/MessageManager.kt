@@ -35,4 +35,34 @@ object MessageManager {
     fun dismissMessage() {
         currentMessage = null
     }
+
+    fun showError(
+        message: String,
+        actionLabel: String? = null,
+        onAction: (() -> Unit)? = null,
+        dismissTimeout: Float = 5f
+    ) {
+        showMessage(
+            message = message,
+            isError = true,
+            actionLabel = actionLabel,
+            onAction = onAction,
+            dismissTimeout = dismissTimeout
+        )
+    }
+
+    fun showSuccess(
+        message: String,
+        actionLabel: String? = null,
+        onAction: (() -> Unit)? = null,
+        dismissTimeout: Float = 5f
+    ) {
+        showMessage(
+            message = message,
+            isError = false,
+            actionLabel = actionLabel,
+            onAction = onAction,
+            dismissTimeout = dismissTimeout
+        )
+    }
 }
