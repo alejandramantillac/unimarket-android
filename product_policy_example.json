@@ -1,0 +1,60 @@
+{
+  "_or": [
+    {
+      "entrepreneurship": {
+        "user_founder": { 
+          "_eq": "$CURRENT_USER" 
+        }
+      }
+    },
+    {
+      "entrepreneurship_id": {
+        "_in": {
+          "Partner": {
+            "user_profile": {
+              "_eq": "$CURRENT_USER"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "_in": {
+          "CollaborationProducts": {
+            "collaboration": {
+              "CollaborationMembers": {
+                "entrepreneurship": {
+                  "user_founder": { 
+                    "_eq": "$CURRENT_USER" 
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "_in": {
+          "CollaborationProducts": {
+            "collaboration": {
+              "CollaborationMembers": {
+                "entrepreneurship_id": {
+                  "_in": {
+                    "Partner": {
+                      "user_profile": {
+                        "_eq": "$CURRENT_USER"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

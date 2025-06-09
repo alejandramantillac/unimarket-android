@@ -1,0 +1,85 @@
+{
+  "_or": [
+    {
+      "entrepreneurship": {
+        "user_founder": { 
+          "_eq": "$CURRENT_USER" 
+        }
+      }
+    },
+    {
+      "entrepreneurship": {
+        "id": {
+          "_in": {
+            "_func": {
+              "name": "json_array",
+              "args": [
+                {
+                  "_func": {
+                    "name": "json_extract_array",
+                    "args": [
+                      {
+                        "_func": {
+                          "name": "group_concat_json",
+                          "args": [
+                            {
+                              "Partner": {
+                                "user_profile": {
+                                  "_eq": "$CURRENT_USER"
+                                },
+                                "entrepreneurship": "id"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "_in": {
+          "_func": {
+            "name": "json_array",
+            "args": [
+              {
+                "_func": {
+                  "name": "json_extract_array",
+                  "args": [
+                    {
+                      "_func": {
+                        "name": "group_concat_json",
+                        "args": [
+                          {
+                            "CollaborationProducts": {
+                              "collaboration": {
+                                "CollaborationMembers": {
+                                  "entrepreneurship": {
+                                    "user_founder": {
+                                      "_eq": "$CURRENT_USER"
+                                    }
+                                  }
+                                }
+                              },
+                              "product": "id"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
