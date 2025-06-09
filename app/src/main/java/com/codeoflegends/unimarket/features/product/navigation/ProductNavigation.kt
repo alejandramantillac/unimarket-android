@@ -55,6 +55,7 @@ fun NavGraphBuilder.productNavigation(
         val cartViewModel: CartViewModel = hiltViewModel()
         CartScreen(
             cartViewModel = cartViewModel,
+            manager = manager,
             onOrderCreated = { orderId ->
                 manager.navController.navigate(Routes.OrderSummary.createRoute(orderId.toString()))
             },

@@ -20,8 +20,8 @@ fun EditProfileScreen(
 ) {
     val state = viewModel.uiState.collectAsState().value
 
-    var name by remember { mutableStateOf(state.user.firstName + state.user.lastName) }
-    var email by remember { mutableStateOf(state.user.email) }
+    var name by remember { mutableStateOf("${state.user.firstName ?: ""} ${state.user.lastName ?: ""}".trim()) }
+    var email by remember { mutableStateOf(state.user.email ?: "") }
 
     Column(
         modifier = Modifier

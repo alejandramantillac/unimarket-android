@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.cart.data.usecase
 
+import android.util.Log
 import com.codeoflegends.unimarket.core.data.dto.UserDto
 import com.codeoflegends.unimarket.core.data.dto.UserProfileDto
 import com.codeoflegends.unimarket.features.cart.data.model.Cart
@@ -21,17 +22,23 @@ class CreateOrderFromCartUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(cart: Cart): Result<Order> {
         if (cart.items.isEmpty()) {
-            return Result.failure(IllegalStateException("Cart is empty"))
+            Log.d("CreateOrder", "Cart is empty")
+            return Result.failure(IllegalStateException("El carrito está vacío"))
         }
 
         if (cart.userCreated == null) {
-            return Result.failure(IllegalStateException("User not authenticated"))
+            Log.d("CreateOrder", "User not authenticated")
+            return Result.failure(IllegalStateException("Debes iniciar sesión para realizar la compra"))
         }
+
+        Log.d("CreateOrder", "Creating order for user: ${cart.userCreated.id}")
+        Log.d("CreateOrder", "Cart items count: ${cart.items.size}")
+        Log.d("CreateOrder", "Cart subtotal: ${cart.subtotal}")
 
         val orderDto = OrderDto(
             id = UUID.randomUUID(),
             status = OrderStatusDto(
-                id = UUID.fromString("d5128a08-9c70-4c45-b9c5-2ce1d8c5681e"), // PENDING status ID
+                id = UUID.fromString("d47ec182-2b06-4fc4-ba8f-692d53a985c6"), // PENDING status ID
                 name = "PENDING"
             ),
             date = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
@@ -40,16 +47,19 @@ class CreateOrderFromCartUseCase @Inject constructor(
             total = cart.subtotal.toInt(),
             userCreated = UserDto(
                 id = cart.userCreated.id.toString(),
-                firstName = cart.userCreated.firstName,
-                lastName = cart.userCreated.lastName,
-                email = cart.userCreated.email,
-                profile = UserProfileDto(
-                    id = cart.userCreated.id.toString(),
-                    profilePicture = cart.userCreated.profile.profilePicture,
-                    userRating = cart.userCreated.profile.userRating,
-                    partnerRating = cart.userCreated.profile.partnerRating,
-                    registrationDate = cart.userCreated.profile.registrationDate.format(DateTimeFormatter.ISO_DATE_TIME)
-                )
+                firstName = cart.userCreated.firstName ?: "",
+                lastName = cart.userCreated.lastName ?: "",
+                email = cart.userCreated.email ?: "",
+                profile = cart.userCreated.profile?.let { profile ->
+                    UserProfileDto(
+                        id = cart.userCreated.id.toString(),
+                        profilePicture = profile.profilePicture.orEmpty(),
+                        userRating = profile.userRating ?: 0f,
+                        partnerRating = profile.partnerRating ?: 0f,
+                        registrationDate = profile.registrationDate?.format(DateTimeFormatter.ISO_DATE_TIME) 
+                            ?: LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+                    )
+                }
             ),
             payments = emptyList(),
             orderDetails = cart.items.map { cartItem ->
@@ -77,6 +87,7 @@ class CreateOrderFromCartUseCase @Inject constructor(
             delivery = emptyList()
         )
 
+        Log.d("CreateOrder", "Order DTO created, attempting to save")
         return orderRepository.createOrder(orderDto)
     }
 } 

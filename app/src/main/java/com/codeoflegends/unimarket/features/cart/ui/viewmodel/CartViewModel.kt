@@ -93,17 +93,23 @@ class CartViewModel @Inject constructor(
 
     fun createOrder() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            createOrderFromCartUseCase(uiState.value.cart)
-                .onSuccess { order ->
-                    _uiState.update { it.copy(lastCreatedOrder = order) }
-                    MessageManager.showSuccess("Orden creada exitosamente")
-                    loadCart() // Reload cart to clear it after successful order creation
-                }
-                .onFailure { e ->
-                    MessageManager.showError("Error al crear la orden: ${e.message ?: "Error desconocido"}")
-                }
-            _uiState.update { it.copy(isLoading = false) }
+            try {
+                _uiState.update { it.copy(isLoading = true) }
+                val cart = getCartUseCase() // Obtener el carrito más reciente con el usuario
+                createOrderFromCartUseCase(cart)
+                    .onSuccess { order ->
+                        _uiState.update { it.copy(lastCreatedOrder = order) }
+                        MessageManager.showSuccess("Orden creada exitosamente")
+                        loadCart() // Reload cart to clear it after successful order creation
+                    }
+                    .onFailure { e ->
+                        MessageManager.showError("Error al crear la orden: ${e.message ?: "Error desconocido"}")
+                    }
+            } catch (e: Exception) {
+                MessageManager.showError("Error al crear la orden: ${e.message ?: "Error desconocido"}")
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 }

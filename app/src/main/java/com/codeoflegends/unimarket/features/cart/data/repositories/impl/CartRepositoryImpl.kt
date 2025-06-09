@@ -2,10 +2,12 @@ package com.codeoflegends.unimarket.features.cart.data.repositories.impl
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import com.codeoflegends.unimarket.features.cart.data.model.Cart
 import com.codeoflegends.unimarket.features.cart.data.model.CartItem
 import com.codeoflegends.unimarket.features.cart.data.model.CartVariant
 import com.codeoflegends.unimarket.features.cart.data.repositories.interfaces.CartRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IUserGetDataRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,7 +20,9 @@ import javax.inject.Singleton
 
 @Singleton
 class CartRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val userGetDataRepository: IUserGetDataRepository,
+    private val authRepository: AuthRepository
 ) : CartRepository {
     
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
@@ -29,7 +33,6 @@ class CartRepositoryImpl @Inject constructor(
     private val cartFlow = MutableStateFlow(Cart())
 
     init {
-        // Load initial cart state from SharedPreferences
         loadCartFromPrefs()
     }
 
@@ -49,7 +52,18 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCart(): Cart {
-        return cartFlow.value
+        val currentCart = cartFlow.value
+        if (!authRepository.isUserLoggedIn()) {
+            return currentCart
+        }
+
+        return try {
+            val userResult = userGetDataRepository.getUserData()
+            val user = userResult.getOrThrow().toDomain()
+            currentCart.copy(userCreated = user)
+        } catch (e: Exception) {
+            throw IllegalStateException("Error al obtener los datos del usuario: ${e.message}")
+        }
     }
 
     override suspend fun addItem(variant: CartVariant, quantity: Int): Result<Unit> = try {
