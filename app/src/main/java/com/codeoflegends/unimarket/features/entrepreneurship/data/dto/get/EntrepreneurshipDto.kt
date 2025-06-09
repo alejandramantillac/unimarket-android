@@ -1,6 +1,8 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get
 
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDto
+import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
 
 data class EntrepreneurshipDto(
@@ -16,8 +18,8 @@ data class EntrepreneurshipDto(
     val category: Int,
     val userFounder: UUID,
     val deletedAt: String?,
-    //val partners: List<UUID>,
-    //val products: List<UUID>,
+    val partners: List<EntrepreneurshipPartnerDto>,
+    val products: List<ProductDto>,
     //val collaborations: List<UUID>,
     //val orders: List<UUID>,
     val socialNetworks: List<Map<String, String>>,
@@ -28,6 +30,10 @@ data class EntrepreneurshipDto(
             return DirectusQuery()
                 .join("customization")
                 .join("tags.Tags_id")
+                .join("partners")
+                .join("partners.user")
+                .join("partners.user.profile")
+                .join("products")
         }
     }
 }

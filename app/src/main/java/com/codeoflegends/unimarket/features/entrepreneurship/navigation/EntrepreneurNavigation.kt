@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipBuyerDetailsScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipFormScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.EntrepreneurshipScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipMembersPage
@@ -59,6 +60,23 @@ fun NavGraphBuilder.entrepreneurNavigation(
     ) { backStackEntry ->
         val entrepreneurshipId = backStackEntry.arguments?.getString("id")
         //EditProfileScreen(viewModel = hiltViewModel(), entrepreneurshipId = entrepreneurshipId ?: "")
+    }
+
+
+    composable(
+        Routes.EntrepreneurshipView.route,
+        arguments = listOf(
+            navArgument("id") {
+                type = NavType.StringType
+            }
+        )
+    ) { backStackEntry ->
+        val entrepreneurshipId = backStackEntry.arguments?.getString("id")
+        entrepreneurshipId?.let {
+            EntrepreneurshipBuyerDetailsScreen(
+                entrepreneurshipId = UUID.fromString(it)
+            )
+        }
     }
 
     composable(

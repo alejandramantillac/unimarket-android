@@ -68,8 +68,7 @@ fun <T> InfiniteScrollList(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 16.dp, bottom = 8.dp),
+                        .padding(top = 8.dp, bottom = 20.dp),
                 ) {
                     it()
                 }
