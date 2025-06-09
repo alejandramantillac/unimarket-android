@@ -65,7 +65,7 @@ fun EntrepreneurshipScreen(
             Scaffold(
                 bottomBar = {
                     NavigationBar(
-                        currentRoute = state.currentRoute,
+                        currentRoute = " ",
                         onNavigate = { route -> viewModel.onNavigationItemSelected(route) }
                     )
                 }
@@ -75,7 +75,7 @@ fun EntrepreneurshipScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    when (state.currentRoute) {
+                    when ("") {
                         "home" -> EntrepreneurshipDetailPage(basicState = state)
                         "products" -> EntrepreneurshipProductsPage(basicState = state, manager = manager)
                         "people" -> EntrepreneurshipMembersPage(entrepreneurshipId = state.id)

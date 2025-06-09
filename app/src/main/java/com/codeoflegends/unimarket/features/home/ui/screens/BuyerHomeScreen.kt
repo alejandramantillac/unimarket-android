@@ -77,6 +77,16 @@ fun BuyerHomeScreen(
             text = "Crear Producto"
         )
 
+        MainButton(
+            onClick = {
+                manager.navController.navigate(
+                    Routes.EntrepreneurshipView.createRoute("00000000-0000-0000-0000-000000000007")
+                )
+            },
+            text = "View Entrepreneurship Details Silem",
+            fillMaxWidth = true
+        )
+
         // Lista de productos disponibles
         if (products.isNotEmpty()) {
             Text(

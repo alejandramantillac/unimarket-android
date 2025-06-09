@@ -29,9 +29,7 @@ class EntrepreneurshipBasicViewModel @Inject constructor(
     private val _actionState = MutableStateFlow<EntrepreneurshipBasicActionState>(EntrepreneurshipBasicActionState.Idle)
     val actionState: StateFlow<EntrepreneurshipBasicActionState> = _actionState.asStateFlow()
 
-    fun onNavigationItemSelected(route: String) {
-        _uiState.value = _uiState.value.copy(currentRoute = route)
-    }
+    fun onNavigationItemSelected(route: String) {}
 
     private fun validateAndGetUUID(entrepreneurshipId: String?): UUID? {
         if (entrepreneurshipId.isNullOrEmpty()) {
