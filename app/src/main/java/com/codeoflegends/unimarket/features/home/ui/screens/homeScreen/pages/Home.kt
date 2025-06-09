@@ -44,52 +44,5 @@ import com.codeoflegends.unimarket.features.product.data.model.Product
 
 @Composable
 fun Home(manager: NavigationManager, homeViewModel: HomeViewModel) {
-    val state by homeViewModel.uiState.collectAsState()
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            // Barra de búsqueda prominente
-            ProductSearchBar(
-                onClick = {
-                    manager.navController.navigate(Routes.HomeSearch.route)
-                }
-            )
-
-            // Carrusel de banners
-            if (state.banners.isNotEmpty()) {
-                BannerCarousel(banners = state.banners)
-            }
-
-            //Texto de bienvenida
-            Text(
-                text = "¡Bienvenido de vuelta!",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
-            )
-
-            ProductCategoriesSection()
-
-            ProductSection(
-                title = "Para vestir a la moda",
-                fixedFilters = listOf(DirectusQuery.Filter("category", "eq", "Moda")),
-                manager = manager,
-            )
-
-            EntrepreneurshipSection(
-                title = "Nuestros mejores aliados",
-                fixedFilters = listOf(),
-                manager = manager,
-            )
-        }
-    }
 }

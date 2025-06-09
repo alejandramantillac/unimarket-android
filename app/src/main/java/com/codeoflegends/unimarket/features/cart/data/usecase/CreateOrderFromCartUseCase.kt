@@ -28,7 +28,6 @@ class CreateOrderFromCartUseCase @Inject constructor(
             return Result.failure(IllegalStateException("User not authenticated"))
         }
 
-        // Create OrderDto for the API request
         val orderDto = OrderDto(
             id = UUID.randomUUID(),
             status = OrderStatusDto(
@@ -45,11 +44,11 @@ class CreateOrderFromCartUseCase @Inject constructor(
                 lastName = cart.userCreated.lastName,
                 email = cart.userCreated.email,
                 profile = UserProfileDto(
+                    id = cart.userCreated.id.toString(),
                     profilePicture = cart.userCreated.profile.profilePicture,
                     userRating = cart.userCreated.profile.userRating,
                     partnerRating = cart.userCreated.profile.partnerRating,
                     registrationDate = cart.userCreated.profile.registrationDate.format(DateTimeFormatter.ISO_DATE_TIME),
-                    id = cart.userCreated.id.toString()
                 )
             ),
             payments = emptyList(),
