@@ -86,21 +86,21 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateItemQuantity(itemId: UUID, quantity: Int): Result<Unit> {
+        if (quantity <= 0) {
+            return removeItem(itemId)
+        }
+
         return try {
-            if (quantity <= 0) {
-                removeItem(itemId)
-            } else {
-                val currentCart = cartFlow.value
-                val updatedItems = currentCart.items.map {
-                    if (it.id == itemId) {
-                        it.copy(quantity = quantity)
-                    } else {
-                        it
-                    }
+            val currentCart = cartFlow.value
+            val updatedItems = currentCart.items.map {
+                if (it.id == itemId) {
+                    it.copy(quantity = quantity)
+                } else {
+                    it
                 }
-                saveCartToPrefs(Cart(updatedItems))
-                Result.success(Unit)
             }
+            saveCartToPrefs(Cart(updatedItems))
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -9,6 +9,9 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
     // Home Routes
     data object Home : Routes("/")
 
+    // Cart Route
+    data object Cart : Routes("/cart")
+
     // Product Routes
     data object ManageProduct : Routes("/manage/product/{id}") {
         val base get() = "/manage/product/"

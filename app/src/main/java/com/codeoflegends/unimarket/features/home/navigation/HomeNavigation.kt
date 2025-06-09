@@ -11,7 +11,7 @@ import com.codeoflegends.unimarket.features.product.navigation.productNavigation
 fun NavGraphBuilder.homeNavigation(
     manager: NavigationManager
 ) {
-    secureComposable (
+    secureComposable(
         route = Routes.Home.route,
         manager = manager
     ) {
