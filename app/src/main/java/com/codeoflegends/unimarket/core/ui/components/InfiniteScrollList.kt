@@ -1,12 +1,17 @@
 package com.codeoflegends.unimarket.core.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,7 +33,8 @@ fun <T> InfiniteScrollList(
     items: List<T>,
     isLoading: Boolean,
     titleContent: @Composable (() -> Unit)? = null,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    orientation: Orientation = Orientation.Vertical
 ) {
     val listState = rememberLazyListState()
 
@@ -48,9 +54,10 @@ fun <T> InfiniteScrollList(
         }
     }
 
-    LazyColumn(
+    HandleOrientation(
+        orientation = orientation,
         state = listState,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
         headerContent?.let {
             item {
@@ -107,8 +114,8 @@ fun <T> InfiniteScrollList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            horizontal = 16.dp,
-                            vertical = if (index > 0) 12.dp else 0.dp
+                            horizontal = if(orientation == Orientation.Vertical) 16.dp else 4.dp,
+                            vertical = if (index > 0 && orientation == Orientation.Vertical) 12.dp else 0.dp
                         )
                 ) {
                     itemContent(item)
@@ -127,6 +134,32 @@ fun <T> InfiniteScrollList(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun HandleOrientation(
+    orientation: Orientation,
+    state: LazyListState,
+    modifier: Modifier = Modifier,
+    content: LazyListScope.() -> Unit
+) {
+    if (orientation == Orientation.Horizontal) {
+        LazyRow(
+            state = state,
+            modifier = modifier.fillMaxWidth(),
+        ) {
+            content()
+        }
+    }
+
+    if (orientation == Orientation.Vertical) {
+        LazyColumn(
+            state = state,
+            modifier = modifier.fillMaxHeight(),
+        ) {
+            content()
         }
     }
 }

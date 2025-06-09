@@ -20,4 +20,10 @@ interface ProductRepository {
     ): Result<List<Product>>
     suspend fun createReview(productId: UUID, rating: Int, comment: String): Result<Unit>
     suspend fun getProductReviews(productId: UUID, page: Int, limit: Int): Result<List<Review>>
+    suspend fun getAllProductsByQuery(
+        nameContains: String,
+        filters: List<DirectusQuery.Filter>,
+        limit: Int,
+        page: Int
+    ): Result<List<Product>>
 }

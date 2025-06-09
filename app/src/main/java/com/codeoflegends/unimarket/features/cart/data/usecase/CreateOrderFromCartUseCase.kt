@@ -48,7 +48,8 @@ class CreateOrderFromCartUseCase @Inject constructor(
                     profilePicture = cart.userCreated.profile.profilePicture,
                     userRating = cart.userCreated.profile.userRating,
                     partnerRating = cart.userCreated.profile.partnerRating,
-                    registrationDate = cart.userCreated.profile.registrationDate.format(DateTimeFormatter.ISO_DATE_TIME)
+                    registrationDate = cart.userCreated.profile.registrationDate.format(DateTimeFormatter.ISO_DATE_TIME),
+                    id = cart.userCreated.id.toString()
                 )
             ),
             payments = emptyList(),

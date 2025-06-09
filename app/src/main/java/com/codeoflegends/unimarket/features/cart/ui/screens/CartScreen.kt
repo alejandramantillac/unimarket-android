@@ -26,8 +26,7 @@ import java.util.*
 @Composable
 fun CartScreen(
     cartViewModel: CartViewModel,
-    onOrderCreated: (UUID) -> Unit,
-    onBackClick: () -> Unit
+    onOrderCreated: (UUID) -> Unit
 ) {
     val state by cartViewModel.uiState.collectAsState()
     val cart = state.cart
@@ -40,12 +39,6 @@ fun CartScreen(
     }
 
     MainLayout(
-        barOptions = AppBarOptions(
-            show = true,
-            title = "Carrito de Compras",
-            showBackButton = true,
-            onBackClick = onBackClick
-        ),
         pageLoading = state.isLoading
     ) {
         if (cart.items.isEmpty()) {

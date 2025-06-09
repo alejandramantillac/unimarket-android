@@ -8,6 +8,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
     // Home Routes
     data object Home : Routes("/")
+    data object HomeSearch : Routes("/home/search")
 
     // Product Routes
     data object ManageProduct : Routes("/manage/product/{id}") {
@@ -94,6 +95,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                 EntrepreneurshipForm.route -> EntrepreneurshipForm
                 EntrepreneurProfile.route -> EntrepreneurProfile
                 Collaborators.route -> Collaborators
+                HomeSearch.route -> HomeSearch
                 else -> {
                     // Handle dynamic routes
                     when {
