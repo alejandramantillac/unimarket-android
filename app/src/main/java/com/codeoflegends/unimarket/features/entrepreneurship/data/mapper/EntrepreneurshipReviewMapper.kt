@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.mapper
 
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.ReviewRatingDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipReview
@@ -42,6 +43,18 @@ object EntrepreneurshipReviewMapper {
         return ReviewRating(
             totalReviews = dto.count.id.toInt(),
             avgReview = dto.avg.rating
+        )
+    }
+
+    fun newEntrepreneurshipReviewDto(
+        entrepreneurship: UUID,
+        rating: Int,
+        comment: String
+    ): NewEntrepreneurshipReviewDto {
+        return NewEntrepreneurshipReviewDto(
+            entrepreneurship = entrepreneurship.toString(),
+            rating = rating,
+            comment = comment
         )
     }
 }

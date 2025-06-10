@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl
 
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.ReviewRatingDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipReviewMapper
@@ -29,9 +30,23 @@ class EntrepreneurshipReviewRepositoryDirectus @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun createEntrepreneurshipReview(review: EntrepreneurshipReview): Result<Unit> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun createEntrepreneurshipReview(
+        entrepreneurshipId: UUID,
+        rating: Int,
+        comment: String
+    ): Result<Unit> =
+        try {
+            entrepreneurshipReviewService.createEntrepreneurshipReview(
+                EntrepreneurshipReviewMapper.newEntrepreneurshipReviewDto(
+                    entrepreneurship = entrepreneurshipId,
+                    rating = rating,
+                    comment = comment
+                )
+            )
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
 
     override suspend fun updateEntrepreneurshipReview(review: EntrepreneurshipReview): Result<Unit> {
         TODO("Not yet implemented")

@@ -16,6 +16,7 @@ import com.codeoflegends.unimarket.core.ui.components.Comment
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.TagSection
 import com.codeoflegends.unimarket.core.ui.components.TagType
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.AddReviewButton
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDescription
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeader
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeaderData
@@ -92,6 +93,14 @@ fun EntrepreneurshipBuyerDetailsScreen(
                             text = "Las calificaciones y reseñas vienen de clientes que han comprado en este emprendimiento.",
                             color = Color.Gray,
                             fontSize = 14.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        AddReviewButton(
+                            onReviewSubmitted = { rating, comment ->
+                                reviewsViewModel.sendReview(entrepreneurshipId, rating, comment)
+                            }
                         )
                     }
                 },
