@@ -124,8 +124,8 @@ fun OrderListScreen(
                         rightInfo = order.date,
                         tag1 = order.status,
                         tag1Color = when (order.status) {
-                            "Pendiente" -> Color.Yellow
-                            "Completado" -> Color.Green
+                            "pendiente" -> Color.Yellow
+                            "confirmado" -> Color.Green
                             else -> Color.Gray
                         },
                         modifier = Modifier.clickable {

@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.cart.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.core.ui.state.MessageManager
@@ -94,18 +95,23 @@ class CartViewModel @Inject constructor(
     fun createOrder() {
         viewModelScope.launch {
             try {
+                Log.d("TEST_LOG", "Starting order creation in CartViewModel")
                 _uiState.update { it.copy(isLoading = true) }
                 val cart = getCartUseCase() // Obtener el carrito más reciente con el usuario
+                Log.d("TEST_LOG", "Cart obtained: ${cart.items.size} items, user: ${cart.userCreated?.id}")
                 createOrderFromCartUseCase(cart)
                     .onSuccess { order ->
+                        Log.d("TEST_LOG", "Order created successfully with ID: ${order.id}")
                         _uiState.update { it.copy(lastCreatedOrder = order) }
                         MessageManager.showSuccess("Orden creada exitosamente")
                         loadCart() // Reload cart to clear it after successful order creation
                     }
                     .onFailure { e ->
+                        Log.e("TEST_LOG", "Error creating order: ${e.message}", e)
                         MessageManager.showError("Error al crear la orden: ${e.message ?: "Error desconocido"}")
                     }
             } catch (e: Exception) {
+                Log.e("TEST_LOG", "Exception in createOrder: ${e.message}", e)
                 MessageManager.showError("Error al crear la orden: ${e.message ?: "Error desconocido"}")
             } finally {
                 _uiState.update { it.copy(isLoading = false) }

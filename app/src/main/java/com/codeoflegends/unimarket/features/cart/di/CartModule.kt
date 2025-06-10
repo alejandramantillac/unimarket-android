@@ -4,6 +4,8 @@ import com.codeoflegends.unimarket.features.cart.data.repositories.impl.CartRepo
 import com.codeoflegends.unimarket.features.cart.data.repositories.interfaces.CartRepository
 import com.codeoflegends.unimarket.features.cart.data.usecase.*
 import com.codeoflegends.unimarket.features.order.data.repositories.interfaces.OrderRepository
+import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderStatusesUseCase
+import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -55,8 +57,16 @@ abstract class CartModule {
         @Provides
         @Singleton
         fun provideCreateOrderFromCartUseCase(
-            orderRepository: OrderRepository
+            cartRepository: CartRepository,
+            orderRepository: OrderRepository,
+            productRepository: ProductRepository,
+            getOrderStatusesUseCase: GetOrderStatusesUseCase
         ): CreateOrderFromCartUseCase =
-            CreateOrderFromCartUseCase(orderRepository)
+            CreateOrderFromCartUseCase(
+                cartRepository,
+                orderRepository,
+                productRepository,
+                getOrderStatusesUseCase
+            )
     }
 } 
