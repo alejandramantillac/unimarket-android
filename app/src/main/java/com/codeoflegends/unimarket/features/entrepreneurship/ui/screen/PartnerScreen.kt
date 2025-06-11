@@ -3,12 +3,15 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,59 +28,88 @@ fun PartnerScreen(
     viewModel: PartnerViewModel = hiltViewModel(),
     manager: NavigationManager
 ) {
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    if (showAddDialog) {
+        AddPartnerDialog(
+            onDismiss = { showAddDialog = false },
+            onConfirm = { email, role ->
+                viewModel.addPartner(email, role)
+                showAddDialog = false
+            }
+        )
+    }
+
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(entrepreneurshipId) {
         viewModel.loadPartners(entrepreneurshipId)
     }
 
-    when (uiState) {
-        is PartnerUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true }
             ) {
-                CircularProgressIndicator()
+                Icon(Icons.Default.Add, contentDescription = "Agregar colaborador")
             }
         }
-        is PartnerUiState.Success -> {
-            val partners = (uiState as PartnerUiState.Success).partners
-            if (partners.isEmpty()) {
-                EmptyPartnerState()
-            } else {
-                PartnerList(partners)
-            }
-        }
-        is PartnerUiState.Error -> {
-            val error = (uiState as PartnerUiState.Error).message
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+    ) { padding ->
+        when (uiState) {
+            is PartnerUiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(text = error)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { viewModel.loadPartners(entrepreneurshipId) }
+                    CircularProgressIndicator()
+                }
+            }
+            is PartnerUiState.Success -> {
+                val partners = (uiState as PartnerUiState.Success).partners
+                if (partners.isEmpty()) {
+                    EmptyPartnerState(modifier = Modifier.padding(padding))
+                } else {
+                    PartnerList(partners, modifier = Modifier.padding(padding))
+                }
+            }
+            is PartnerUiState.Error -> {
+                val error = (uiState as PartnerUiState.Error).message
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Text("Reintentar")
+                        Text(text = error)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { viewModel.loadPartners(entrepreneurshipId) }
+                        ) {
+                            Text("Reintentar")
+                        }
                     }
                 }
             }
-        }
-        is PartnerUiState.DeletionSuccess -> {
-            // No necesitamos hacer nada aquí porque el ViewModel ya recarga la lista
+            is PartnerUiState.DeletionSuccess -> {
+                // No necesitamos hacer nada aquí porque el ViewModel ya recarga la lista
+            }
+            is PartnerUiState.AdditionSuccess -> {
+                // No necesitamos hacer nada aquí porque el ViewModel ya recarga la lista
+            }
         }
     }
 }
 
 @Composable
-private fun PartnerList(partners: List<Partner>) {
+private fun PartnerList(partners: List<Partner>, modifier: Modifier = Modifier) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -136,9 +168,9 @@ private fun PartnerItem(partner: Partner, viewModel: PartnerViewModel = hiltView
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "${partner.user.firstName} ${partner.user.lastName}",
@@ -158,9 +190,6 @@ private fun PartnerItem(partner: Partner, viewModel: PartnerViewModel = hiltView
                 )
             }
 
-            IconButton(onClick = { /* TODO: Implementar edición */ }) {
-                Icon(Icons.Default.Edit, contentDescription = "Editar")
-            }
 
             IconButton(
                 onClick = { showDeleteDialog = true }
@@ -176,9 +205,9 @@ private fun PartnerItem(partner: Partner, viewModel: PartnerViewModel = hiltView
 }
 
 @Composable
-private fun EmptyPartnerState() {
+private fun EmptyPartnerState(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -201,4 +230,80 @@ private fun EmptyPartnerState() {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
-} 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AddPartnerDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (email: String, role: String) -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var role by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var roleError by remember { mutableStateOf<String?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Agregar colaborador") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        emailError = null
+                    },
+                    label = { Text("Correo electrónico") },
+                    isError = emailError != null,
+                    supportingText = emailError?.let { { Text(it) } },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = role,
+                    onValueChange = {
+                        role = it
+                        roleError = null
+                    },
+                    label = { Text("Rol") },
+                    isError = roleError != null,
+                    supportingText = roleError?.let { { Text(it) } },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    var hasError = false
+                    if (email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        emailError = "Ingresa un correo electrónico válido"
+                        hasError = true
+                    }
+                    if (role.isBlank()) {
+                        roleError = "El rol es requerido"
+                        hasError = true
+                    }
+                    if (!hasError) {
+                        onConfirm(email, role)
+                    }
+                }
+            ) {
+                Text("Agregar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
