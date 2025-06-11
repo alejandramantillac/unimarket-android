@@ -16,7 +16,6 @@ import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Partner
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.PartnerUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.PartnerViewModel
-import com.codeoflegends.unimarket.features.auth.ui.components.RequirePermission
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,67 +25,36 @@ fun PartnerScreen(
     viewModel: PartnerViewModel = hiltViewModel(),
     manager: NavigationManager
 ) {
-    RequirePermission(
-        permission = "partner.read",
-        manager = manager,
-        fallback = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(entrepreneurshipId) {
+        viewModel.loadPartners(entrepreneurshipId)
+    }
+
+    when (uiState) {
+        is PartnerUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Lock,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.error
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "No tienes permisos",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "No tienes los permisos necesarios para ver los colaboradores",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                CircularProgressIndicator()
             }
         }
-    ) {
-        val uiState by viewModel.uiState.collectAsState()
-
-        LaunchedEffect(entrepreneurshipId) {
-            viewModel.loadPartners(entrepreneurshipId)
+        is PartnerUiState.Success -> {
+            val partners = (uiState as PartnerUiState.Success).partners
+            if (partners.isEmpty()) {
+                EmptyPartnerState()
+            } else {
+                PartnerList(partners)
+            }
         }
-
-        when (uiState) {
-            is PartnerUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is PartnerUiState.Success -> {
-                val partners = (uiState as PartnerUiState.Success).partners
-                if (partners.isEmpty()) {
-                    EmptyPartnerState()
-                } else {
-                    PartnerList(partners)
-                }
-            }
-            is PartnerUiState.Error -> {
-                val error = (uiState as PartnerUiState.Error).message
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = error)
-                }
+        is PartnerUiState.Error -> {
+            val error = (uiState as PartnerUiState.Error).message
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = error)
             }
         }
     }

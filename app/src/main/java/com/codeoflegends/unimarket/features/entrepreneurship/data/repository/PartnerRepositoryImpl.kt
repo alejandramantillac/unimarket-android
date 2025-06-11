@@ -11,7 +11,10 @@ class PartnerRepositoryImpl @Inject constructor(
     private val service: PartnerService
 ) : PartnerRepository {
     override suspend fun getPartnersByEntrepreneurship(entrepreneurshipId: UUID): List<Partner> {
-        return service.getPartnersByEntrepreneurship(entrepreneurshipId).data.map { it.toDomain() }
+        val response = service.getPartnersByEntrepreneurship(entrepreneurshipId)
+        android.util.Log.d("PartnerRepository", "Response data: ${response.data}")
+        android.util.Log.d("PartnerRepository", "First partner user field: ${response.data.firstOrNull()?.user}")
+        return response.data.map { it.toDomain() }
     }
 
     override suspend fun getPartnerById(id: UUID): Partner {

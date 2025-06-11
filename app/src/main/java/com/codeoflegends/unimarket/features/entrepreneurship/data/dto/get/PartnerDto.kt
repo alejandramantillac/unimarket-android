@@ -6,6 +6,6 @@ import java.util.UUID
 data class PartnerDto(
     val id: UUID,
     val role: String,
-    val user: UserDto,
+    val user: List<String>,
     val entrepreneurship: UUID
 ) 

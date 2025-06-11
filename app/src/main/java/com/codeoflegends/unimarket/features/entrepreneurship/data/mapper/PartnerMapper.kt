@@ -13,15 +13,15 @@ fun PartnerDto.toDomain(): Partner {
         id = id,
         role = role,
         user = User(
-            id = UUID.fromString(user.id),
-            firstName = user.firstName,
-            lastName = user.lastName,
-            email = user.email,
+            id = UUID.fromString(user.firstOrNull() ?: ""),
+            firstName = "",
+            lastName = "",
+            email = "",
             profile = UserProfile(
-                profilePicture = user.profile.profilePicture,
-                userRating = user.profile.userRating,
-                partnerRating = user.profile.partnerRating,
-                registrationDate = LocalDateTime.parse(user.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                profilePicture = "",
+                userRating = 0f,
+                partnerRating = 0f,
+                registrationDate = LocalDateTime.now()
             )
         ),
         entrepreneurshipId = entrepreneurship
@@ -32,18 +32,7 @@ fun Partner.toDto(): PartnerDto {
     return PartnerDto(
         id = id,
         role = role,
-        user = com.codeoflegends.unimarket.core.data.dto.UserDto(
-            id = user.id.toString(),
-            firstName = user.firstName,
-            lastName = user.lastName,
-            email = user.email,
-            profile = com.codeoflegends.unimarket.core.data.dto.UserProfileDto(
-                profilePicture = user.profile.profilePicture,
-                userRating = user.profile.userRating,
-                partnerRating = user.profile.partnerRating,
-                registrationDate = user.profile.registrationDate.format(DateTimeFormatter.ISO_DATE_TIME)
-            )
-        ),
+        user = listOf(user.id.toString()),
         entrepreneurship = entrepreneurshipId
     )
 } 

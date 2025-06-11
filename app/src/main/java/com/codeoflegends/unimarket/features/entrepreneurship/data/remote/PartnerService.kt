@@ -9,13 +9,13 @@ interface PartnerService {
     @GET("/items/Partner")
     suspend fun getPartnersByEntrepreneurship(
         @Query("filter[entrepreneurship][_eq]") entrepreneurshipId: UUID,
-        @Query("fields") fields: String = "*,user.*,role,entrepreneurship.*"
+        @Query("fields") fields: String = "*"
     ): DirectusDto<List<PartnerDto>>
 
     @GET("/items/Partner/{id}")
     suspend fun getPartnerById(
         @Path("id") id: UUID,
-        @Query("fields") fields: String = "*,user.*,role,entrepreneurship.*"
+        @Query("fields") fields: String = "*"
     ): DirectusDto<PartnerDto>
 
     @POST("/items/Partner")
