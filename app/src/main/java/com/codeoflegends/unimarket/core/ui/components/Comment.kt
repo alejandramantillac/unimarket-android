@@ -3,12 +3,14 @@ package com.codeoflegends.unimarket.core.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,15 +31,26 @@ data class CommentData(
 @Composable
 fun Comment(
     comment: CommentData,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOwnReview: Boolean = false,
+    onDelete: (() -> Unit)? = null
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
     
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+            containerColor = if (isOwnReview) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+        ),
+        border = if (isOwnReview) {
+            CardDefaults.outlinedCardBorder()
+        } else {
+            null
+        }
     ) {
         Column(
             modifier = Modifier
@@ -72,8 +85,21 @@ fun Comment(
                         Text(
                             text = comment.userName,
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = if (isOwnReview) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
                         )
+                        if (isOwnReview) {
+                            Text(
+                                text = "(Tu reseña)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                         /*
                         if (comment.isVerified) {
                             Icon(
@@ -88,8 +114,27 @@ fun Comment(
                     Text(
                         text = comment.date.format(dateFormatter),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = if (isOwnReview) {
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        }
                     )
+                }
+
+                // Botón de eliminar solo si es el propio review
+                if (isOwnReview && onDelete != null) {
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Eliminar reseña",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
 
@@ -103,7 +148,11 @@ fun Comment(
             Text(
                 text = comment.comment,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = if (isOwnReview) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
             )
         }
     }
