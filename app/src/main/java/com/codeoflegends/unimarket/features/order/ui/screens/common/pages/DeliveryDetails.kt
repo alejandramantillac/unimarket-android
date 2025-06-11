@@ -21,7 +21,8 @@ import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewM
 fun DeliveryDetails(
     delivery: Delivery,
     viewModel: OrderSummaryViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showButton: Boolean = true,
 ) {
     Card(
         modifier = modifier
@@ -95,12 +96,14 @@ fun DeliveryDetails(
             }
 
             // Botón: Marcar como entregado
-            Spacer(modifier = Modifier.height(16.dp))
-            MainButton(
-                text = "Marcar como entregado",
-                onClick = { viewModel.updateDeliveryStatus("129d26f4-6be3-47fc-a066-3c14722e5d20") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (showButton) {
+                Spacer(modifier = Modifier.height(16.dp))
+                MainButton(
+                    text = "Marcar como entregado",
+                    onClick = { viewModel.updateDeliveryStatus("129d26f4-6be3-47fc-a066-3c14722e5d20") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
