@@ -54,8 +54,22 @@ fun PartnerScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = error)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = error)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { viewModel.loadPartners(entrepreneurshipId) }
+                    ) {
+                        Text("Reintentar")
+                    }
+                }
             }
+        }
+        is PartnerUiState.DeletionSuccess -> {
+            // No necesitamos hacer nada aquí porque el ViewModel ya recarga la lista
         }
     }
 }
@@ -74,7 +88,32 @@ private fun PartnerList(partners: List<Partner>) {
 }
 
 @Composable
-private fun PartnerItem(partner: Partner) {
+private fun PartnerItem(partner: Partner, viewModel: PartnerViewModel = hiltViewModel()) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Confirmar eliminación") },
+            text = { Text("¿Estás seguro de que deseas eliminar a ${partner.user.firstName} ${partner.user.lastName} como colaborador?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deletePartner(partner.id)
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -121,6 +160,16 @@ private fun PartnerItem(partner: Partner) {
 
             IconButton(onClick = { /* TODO: Implementar edición */ }) {
                 Icon(Icons.Default.Edit, contentDescription = "Editar")
+            }
+
+            IconButton(
+                onClick = { showDeleteDialog = true }
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Eliminar",
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

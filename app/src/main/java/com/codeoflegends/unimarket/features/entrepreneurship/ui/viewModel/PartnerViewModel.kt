@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.core.ui.state.ErrorHandler
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Partner
 import com.codeoflegends.unimarket.features.entrepreneurship.domain.usecase.GetPartnersByEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.repository.PartnerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,16 +20,21 @@ sealed class PartnerUiState {
     object Loading : PartnerUiState()
     data class Success(val partners: List<Partner>) : PartnerUiState()
     data class Error(val message: String) : PartnerUiState()
+    object DeletionSuccess : PartnerUiState()
 }
 
 @HiltViewModel
 class PartnerViewModel @Inject constructor(
-    private val getPartnersByEntrepreneurshipUseCase: GetPartnersByEntrepreneurshipUseCase
+    private val getPartnersByEntrepreneurshipUseCase: GetPartnersByEntrepreneurshipUseCase,
+    private val partnerRepository: PartnerRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<PartnerUiState>(PartnerUiState.Loading)
     val uiState: StateFlow<PartnerUiState> = _uiState.asStateFlow()
 
+    private var currentEntrepreneurshipId: UUID? = null
+
     fun loadPartners(entrepreneurshipId: UUID) {
+        currentEntrepreneurshipId = entrepreneurshipId
         viewModelScope.launch {
             try {
                 _uiState.value = PartnerUiState.Loading
@@ -52,6 +58,29 @@ class PartnerViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("PartnerViewModel", "Error loading partners", e)
                 _uiState.value = PartnerUiState.Error("Error al cargar los colaboradores: ${e.message}")
+                ErrorHandler.handleError(e)
+            }
+        }
+    }
+
+    fun deletePartner(partnerId: UUID) {
+        viewModelScope.launch {
+            try {
+                _uiState.value = PartnerUiState.Loading
+                partnerRepository.deletePartner(partnerId)
+                _uiState.value = PartnerUiState.DeletionSuccess
+                // Recargar la lista después de eliminar
+                currentEntrepreneurshipId?.let { loadPartners(it) }
+            } catch (e: HttpException) {
+                val errorMessage = when (e.code()) {
+                    403 -> "No tienes permisos para eliminar colaboradores."
+                    401 -> "Tu sesión ha expirado. Por favor, vuelve a iniciar sesión."
+                    else -> "Error al eliminar el colaborador: ${e.message()}"
+                }
+                _uiState.value = PartnerUiState.Error(errorMessage)
+                ErrorHandler.handleError(e)
+            } catch (e: Exception) {
+                _uiState.value = PartnerUiState.Error("Error al eliminar el colaborador: ${e.message}")
                 ErrorHandler.handleError(e)
             }
         }

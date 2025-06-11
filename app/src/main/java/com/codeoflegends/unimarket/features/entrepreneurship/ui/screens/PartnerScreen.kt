@@ -62,20 +62,43 @@ fun PartnerScreen(
         ) {
             when (uiState) {
                 is PartnerUiState.Loading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
                 is PartnerUiState.Success -> {
                     val partners = (uiState as PartnerUiState.Success).partners
                     if (partners.isEmpty()) {
                         EmptyPartnerState()
                     } else {
-                        PartnerList(partners = partners)
+                        PartnerList(partners)
                     }
                 }
                 is PartnerUiState.Error -> {
-                    ErrorState(message = (uiState as PartnerUiState.Error).message)
+                    val error = (uiState as PartnerUiState.Error).message
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = error)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = { viewModel.loadPartners(entrepreneurshipId) }
+                            ) {
+                                Text("Reintentar")
+                            }
+                        }
+                    }
+                }
+                is PartnerUiState.DeletionSuccess -> {
+                    // No necesitamos hacer nada aquí porque el ViewModel ya recarga la lista
                 }
             }
         }
@@ -170,35 +193,6 @@ private fun EmptyPartnerState() {
         )
         Text(
             text = "Agrega colaboradores a tu emprendimiento",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-@Composable
-private fun ErrorState(message: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            Icons.Default.Error,
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = MaterialTheme.colorScheme.error
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Error",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.error
-        )
-        Text(
-            text = message,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
