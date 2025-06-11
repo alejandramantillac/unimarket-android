@@ -36,7 +36,7 @@ class ProductViewModel @Inject constructor(
     )
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
 
-    private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Idle)
+    private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Loading)
     val actionState: StateFlow<ProductActionState> = _actionState.asStateFlow()
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
@@ -56,6 +56,7 @@ class ProductViewModel @Inject constructor(
     fun loadProducts() {
         viewModelScope.launch {
             try {
+                _actionState.value = ProductActionState.Loading
                 val productList = getAllProductsUseCase()
                 _products.value = productList
                 _actionState.value = ProductActionState.Idle
@@ -97,8 +98,11 @@ class ProductViewModel @Inject constructor(
                 _actionState.value = ProductActionState.Idle
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading product: ${e.message}")
+                _uiState.value = _uiState.value.copy(
+                    selectedProduct = null
+                )
                 _actionState.value =
-                    ProductActionState.Error("Error al cargar el producto: ${e.message}")
+                    ProductActionState.Error("No se encontró el producto")
             }
         }
     }

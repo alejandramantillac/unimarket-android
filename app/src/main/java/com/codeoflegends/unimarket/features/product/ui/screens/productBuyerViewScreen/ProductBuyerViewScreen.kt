@@ -101,10 +101,13 @@ fun ProductBuyerViewScreen(
                 actionState is ProductActionState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-                product == null -> {
-                    Text("No se encontró el producto", modifier = Modifier.align(Alignment.Center))
+                actionState is ProductActionState.Error -> {
+                    Text(
+                        text = (actionState as ProductActionState.Error).message,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
-                else -> {
+                product != null -> {
                     Column(modifier = Modifier.fillMaxSize()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         TabSelector(
@@ -145,6 +148,10 @@ fun ProductBuyerViewScreen(
                             onTabSelected = { selectedTab = it }
                         )
                     }
+                }
+                else -> {
+                    // Estado inicial o carga en progreso
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
         }

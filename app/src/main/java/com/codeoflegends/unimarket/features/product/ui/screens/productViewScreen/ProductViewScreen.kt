@@ -138,13 +138,13 @@ fun ProductViewScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                state.selectedProduct == null -> {
+                actionState is ProductActionState.Error -> {
                     Text(
-                        text = "No se encontró el producto",
+                        text = (actionState as ProductActionState.Error).message,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                else -> {
+                state.selectedProduct != null -> {
                     Column(modifier = Modifier.fillMaxSize()) {
                         // Mostrar ProductHeader solo si hay producto
                         state.selectedProduct?.let { product ->
@@ -167,6 +167,12 @@ fun ProductViewScreen(
                             onTabSelected = { viewModel.onTabSelected(it) }
                         )
                     }
+                }
+                else -> {
+                    // Estado inicial o carga en progreso
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }

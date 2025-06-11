@@ -104,6 +104,13 @@ class EntrepreneurshipProductsViewModel @Inject constructor(
         )
     }
 
+    fun reloadProducts() {
+        resetQueryParameters()
+        if (::entrepreneurshipId.isInitialized) {
+            loadMoreProducts(entrepreneurshipId)
+        }
+    }
+
     override fun onSearchQueryChanged(query: String) {
         resetQueryParameters()
         loadMoreProducts(entrepreneurshipId)
