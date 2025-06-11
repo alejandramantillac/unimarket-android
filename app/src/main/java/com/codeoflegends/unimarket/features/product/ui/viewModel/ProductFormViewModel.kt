@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
+import com.codeoflegends.unimarket.features.product.data.model.NewProduct
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.product.data.model.ProductSpecification
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
@@ -46,10 +47,6 @@ class ProductFormViewModel @Inject constructor(
             formOptions = ProductFormOptions(
                 businessOptions = emptyList(),
                 categoryOptions = defaultCategoryOptions
-            ),
-            formData = ProductFormData(
-                // Set default business in create mode
-                selectedBusiness = defaultBusinessOptions.firstOrNull()
             )
         )
     )
@@ -64,6 +61,14 @@ class ProductFormViewModel @Inject constructor(
 
     private fun loadInitialData() {
         loadProductCategories()
+    }
+
+    private lateinit var entrepreneurshipId: UUID
+
+    fun loadEntrepreneurshipId(entrepreneurshipId: String?) {
+        if (!entrepreneurshipId.isNullOrEmpty()) {
+            this.entrepreneurshipId = UUID.fromString(entrepreneurshipId)
+        }
     }
 
     /**
@@ -124,7 +129,7 @@ class ProductFormViewModel @Inject constructor(
                         variants = product.variants,
                         specifications = product.specifications,
                         // Don't set selectedBusiness for edit mode
-                        selectedBusiness = null
+                        // selectedBusiness = null
                     ),
                     uiState = _uiState.value.uiState.copy(
                         isEdit = true,
@@ -186,15 +191,6 @@ class ProductFormViewModel @Inject constructor(
         validateForm()
     }
 
-    fun onBusinessSelected(businessName: String) {
-        val selectedBusiness =
-            _uiState.value.formOptions.businessOptions.find { it.name == businessName }
-        _uiState.value = _uiState.value.copy(
-            formData = _uiState.value.formData.copy(selectedBusiness = selectedBusiness)
-        )
-        validateForm()
-    }
-
     fun onPriceChanged(price: String) {
         _uiState.value = _uiState.value.copy(
             formData = _uiState.value.formData.copy(price = price)
@@ -251,7 +247,7 @@ class ProductFormViewModel @Inject constructor(
     /**
      * Builds a Product entity from form data
      */
-    private fun buildProductFromForm(formData: ProductFormData, isEdit: Boolean): Product? {
+    private fun buildProductFromForm(formData: ProductFormData, isEdit: Boolean): NewProduct? {
         return if (isEdit) {
             // If editing, use the original product's entrepreneurship
             val originalProduct = _uiState.value.selectedProduct
@@ -259,10 +255,10 @@ class ProductFormViewModel @Inject constructor(
                 _actionState.value = ProductActionState.Error("Producto original no encontrado")
                 return null
             }
-            
-            Product(
+
+            NewProduct(
                 id = formData.id,
-                entrepreneurship = originalProduct.entrepreneurship, // Keep original entrepreneurship
+                entrepreneurship = originalProduct.entrepreneurship.id!!, // Keep original entrepreneurship
                 category = formData.selectedCategory!!,
                 name = formData.name,
                 description = formData.description,
@@ -273,16 +269,9 @@ class ProductFormViewModel @Inject constructor(
                 specifications = formData.specifications
             )
         } else {
-            // If creating, use the selected business
-            if (formData.selectedBusiness == null) {
-                _actionState.value =
-                    ProductActionState.Error("Por favor selecciona un emprendimiento")
-                return null
-            }
-            
-            Product(
+            NewProduct(
                 id = formData.id,
-                entrepreneurship = formData.selectedBusiness,
+                entrepreneurship = entrepreneurshipId,
                 category = formData.selectedCategory!!,
                 name = formData.name,
                 description = formData.description,
@@ -317,9 +306,6 @@ class ProductFormViewModel @Inject constructor(
         // Reset the form state but keep options
         _uiState.value = ProductUiState(
             formOptions = currentOptions,
-            formData = ProductFormData(
-                selectedBusiness = defaultBusinessOptions.firstOrNull()
-            )
         )
         _actionState.value = ProductActionState.Success
     }

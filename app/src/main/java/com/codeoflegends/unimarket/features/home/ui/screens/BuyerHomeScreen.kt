@@ -113,7 +113,6 @@ fun BuyerHomeScreen(
                     val isShopper = authState.authorities.contains("Shopper", ignoreCase = true)
                     ProductItem(
                         product = product,
-                        onEditClick = {}, // No acción para editar si es shopper
                         onViewClick = {
                             Log.d("BuyerHomeScreen", "Authorities: ${authState.authorities}, isBuyer: $isShopper")
                             manager.navController.currentBackStackEntry?.savedStateHandle?.set("lastIsBuyer", isShopper)

@@ -8,6 +8,7 @@ import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProduc
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
+import com.codeoflegends.unimarket.features.product.data.model.NewProduct
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
 import java.time.LocalDateTime
@@ -84,7 +85,7 @@ object ProductMapper {
         )
     }
 
-    fun toNewProductDto(product: Product): NewProductDto {
+    fun toNewProductDto(product: NewProduct): NewProductDto {
         return NewProductDto(
             category = product.category.name,
             name = product.name,
@@ -93,7 +94,7 @@ object ProductMapper {
             stockAlert = product.stockAlert,
             published = product.published,
             entrepreneurship = EntrepreneurshipCreateDto(
-                id = product.entrepreneurship.id.toString(),
+                id = product.entrepreneurship.toString(),
             ),
             variants = product.variants.map { VariantMapper.toNewVariantDto(it) },
             specifications = product.specifications.map { SpecificationMapper.toNewSpecificationDto(it) }
@@ -104,7 +105,7 @@ object ProductMapper {
         return dtos.map { listDtoToProduct(it) }
     }
 
-    fun toUpdateProductDto(product: Product): UpdateProductDto {
+    fun toUpdateProductDto(product: NewProduct): UpdateProductDto {
         return UpdateProductDto(
             category = product.category.name,
             name = product.name,

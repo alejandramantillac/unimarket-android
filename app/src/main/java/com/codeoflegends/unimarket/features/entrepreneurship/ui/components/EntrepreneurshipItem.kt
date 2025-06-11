@@ -32,7 +32,8 @@ fun EntrepreneurshipItem(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             // Primera fila: Imagen y detalles principales
             Row(
@@ -74,25 +75,22 @@ fun EntrepreneurshipItem(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Rating y reseñas
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        RatingStars(4.5f)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "(${entrepreneurship.reviews.count()} reseñas)",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+                modifier = Modifier.padding(top = 8.dp),
+            ) {
+                RatingStars(4.5f)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "(${entrepreneurship.reviews.count()} reseñas)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
             // Segunda fila: Estadísticas
             Row(
