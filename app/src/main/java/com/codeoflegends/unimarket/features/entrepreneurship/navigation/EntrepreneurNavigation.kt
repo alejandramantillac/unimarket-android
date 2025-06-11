@@ -10,7 +10,7 @@ import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipBuyerDetailsScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipFormScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipSellerScreen
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipMembersPage
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipMembersPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipProfileScreen
 //import com.codeoflegends.unimarket.features.profile.ui.screens.EditProfileScreen
 import java.util.UUID

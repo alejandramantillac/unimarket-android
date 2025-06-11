@@ -53,7 +53,7 @@ fun CollaboratorItem(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = collaborator.name,
+                        text = "${collaborator.user.firstName} ${collaborator.user.lastName}",
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         maxLines = 1,
@@ -65,7 +65,7 @@ fun CollaboratorItem(
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = collaborator.email,
+                        text = collaborator.user.email,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
