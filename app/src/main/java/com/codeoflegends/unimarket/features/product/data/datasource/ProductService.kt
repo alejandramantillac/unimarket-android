@@ -9,6 +9,7 @@ import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductReviewDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -38,10 +39,9 @@ interface ProductService {
         @Body product: UpdateProductDto
     )
 
-    @PATCH("/items/Product/{productId}")
+    @DELETE("/items/Product/{productId}")
     suspend fun deleteProduct(
         @Path("productId") productId: String,
-        @Body product: DeleteDto
     )
 
     @POST("/items/Review")

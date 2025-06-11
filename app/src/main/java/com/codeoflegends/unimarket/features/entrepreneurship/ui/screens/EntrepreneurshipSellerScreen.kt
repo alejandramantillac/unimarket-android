@@ -25,7 +25,7 @@ import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.NavigationBar
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.NavigationItem
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipDetailPage
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipMembersPage
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipMembersPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipProductsPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerViewModel
@@ -144,7 +144,9 @@ fun EntrepreneurshipSellerScreen(
                             entrepreneurshipViewModel = viewModel,
                             manager = manager
                         )
-                        "people" -> EntrepreneurshipMembersPage(entrepreneurshipId = state.id)
+                        "people" -> EntrepreneurshipMembersPage(
+                            entrepreneurshipId = state.id
+                        )
                         "orders" -> OrderListScreen(manager = manager, basicState = state)
                         //"metrics" -> EntrepreneurshipStatisticsPage(basicState = state)
                     }

@@ -1,6 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Person
@@ -8,8 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Collaborator
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,22 +42,23 @@ fun CollaboratorItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Surface(
-                    modifier = Modifier
-                        .size(40.dp),
-                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.size(40.dp),
+                    shape = CircleShape,
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                 ) {
-                    Icon(
-                        Icons.Outlined.Person,
-                        contentDescription = null,
-                        modifier = Modifier.padding(8.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                    AsyncImage(
+                        model = collaborator.user.profile.profilePicture,
+                        contentDescription = "Foto de perfil de ${collaborator.user.firstName}",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = collaborator.name,
+                        text = "${collaborator.user.firstName} ${collaborator.user.lastName}",
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
                         maxLines = 1,
@@ -65,7 +70,7 @@ fun CollaboratorItem(
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
                     Text(
-                        text = collaborator.email,
+                        text = collaborator.user.email,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )

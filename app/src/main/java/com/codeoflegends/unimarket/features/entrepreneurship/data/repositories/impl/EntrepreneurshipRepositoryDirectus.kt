@@ -1,12 +1,17 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl
 
 import android.util.Log
+import com.codeoflegends.unimarket.core.data.model.User
+import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.DirectusCollaboratorDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipListDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.CollaboratorMapper
 import com.codeoflegends.unimarket.features.entrepreneurship.data.mapper.EntrepreneurshipMapper
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Collaborator
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCreate
@@ -108,6 +113,22 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
         )
     } catch (e: Exception) {
         Log.e("ProductRepositoryDirectus", "Error fetching entrepreneurships by filters: ", e)
+        Result.failure(e)
+    }
+
+    override suspend fun getAllEntrepreneurshipCollaborators(
+        entrepreneurshipId: UUID
+    ): Result<List<Collaborator>> = try {
+        Result.success(
+            entrepreneurshipService.getEntrepreneurshipCollaborators(
+                entrepreneurshipId.toString(),
+                DirectusCollaboratorDto.query().build()
+            ).data.partners.map { collaboratorDto ->
+                CollaboratorMapper.mapToCollaborator(collaboratorDto)
+            }
+        )
+    } catch (e: Exception) {
+        Log.e("EntrepreneurshipRepositoryDirectus", "Error fetching collaborators: ", e)
         Result.failure(e)
     }
 }

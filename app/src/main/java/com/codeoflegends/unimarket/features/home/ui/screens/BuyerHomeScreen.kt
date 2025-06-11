@@ -20,6 +20,7 @@ import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
 import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
 import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
+import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
 
 @Composable
 fun BuyerHomeScreen(
@@ -28,6 +29,7 @@ fun BuyerHomeScreen(
 ) {
     val authState by manager.authViewModel.authState.collectAsState()
     val products by productViewModel.products.collectAsState()
+    val actionState by productViewModel.actionState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -96,51 +98,80 @@ fun BuyerHomeScreen(
         )
 
         // Lista de productos disponibles
-        if (products.isNotEmpty()) {
-            Text(
-                text = "Productos disponibles",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.align(Alignment.Start)
-            )
+        Text(
+            text = "Productos disponibles",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.align(Alignment.Start)
+        )
 
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(products) { product ->
-                    val isShopper = authState.authorities.contains("Shopper", ignoreCase = true)
-                    ProductItem(
-                        product = product,
-                        onViewClick = {
-                            Log.d("BuyerHomeScreen", "Authorities: ${authState.authorities}, isBuyer: $isShopper")
-                            manager.navController.currentBackStackEntry?.savedStateHandle?.set("lastIsBuyer", isShopper)
-                            if (isShopper) {
-                                manager.navController.navigate(
-                                    Routes.ProductBuyerView.createRoute(product.id!!.toString())
-                                )
-                            } else {
-                                manager.navController.navigate(
-                                    Routes.ProductView.createRoute(product.id!!.toString())
-                                )
-                            }
-                        },
-                        isShopper = isShopper
+        // Mostrar estado de carga o productos
+        when (actionState) {
+            is ProductActionState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+            is ProductActionState.Error -> {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = (actionState as ProductActionState.Error).message,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No hay productos disponibles",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            else -> {
+                if (products.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(products) { product ->
+                            val isShopper = authState.authorities.contains("Shopper", ignoreCase = true)
+                            ProductItem(
+                                product = product,
+                                onViewClick = {
+                                    Log.d("BuyerHomeScreen", "Authorities: ${authState.authorities}, isBuyer: $isShopper")
+                                    manager.navController.currentBackStackEntry?.savedStateHandle?.set("lastIsBuyer", isShopper)
+                                    if (isShopper) {
+                                        manager.navController.navigate(
+                                            Routes.ProductBuyerView.createRoute(product.id!!.toString())
+                                        )
+                                    } else {
+                                        manager.navController.navigate(
+                                            Routes.ProductView.createRoute(product.id!!.toString())
+                                        )
+                                    }
+                                },
+                                isShopper = isShopper
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No hay productos disponibles",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
             }
         }
 

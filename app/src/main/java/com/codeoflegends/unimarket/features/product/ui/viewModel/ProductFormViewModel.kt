@@ -52,7 +52,7 @@ class ProductFormViewModel @Inject constructor(
     )
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
 
-    private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Idle)
+    private val _actionState = MutableStateFlow<ProductActionState>(ProductActionState.Loading)
     val actionState: StateFlow<ProductActionState> = _actionState.asStateFlow()
 
     init {
@@ -285,13 +285,11 @@ class ProductFormViewModel @Inject constructor(
     }
 
     fun deleteProduct() {
-        val productId = _uiState.value.formData.id ?: return
-
         _actionState.value = ProductActionState.Loading
 
         viewModelScope.launch {
             try {
-                deleteProductUseCase(productId)
+                deleteProductUseCase(entrepreneurshipId)
                 _actionState.value = ProductActionState.Success
             } catch (e: Exception) {
                 _actionState.value = ProductActionState.Error(e.message ?: "Error desconocido")
