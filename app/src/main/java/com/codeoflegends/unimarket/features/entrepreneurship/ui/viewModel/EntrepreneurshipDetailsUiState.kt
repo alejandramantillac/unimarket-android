@@ -46,6 +46,7 @@ data class EntrepreneurshipPartnersUiState(
 
 data class EntrepreneurshipReviewsUiState(
     val reviews: List<CommentData> = emptyList(),
+    val ownReview: CommentData? = null,
     val page: Int = 0,
     val limit: Int = 5,
     val hasMoreItems: Boolean = false,

@@ -18,22 +18,35 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.codeoflegends.unimarket.core.ui.components.Comment
+import com.codeoflegends.unimarket.core.ui.components.CommentData
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
+import org.w3c.dom.Comment
 
 @Composable
 fun AddReviewButton(
-    onReviewSubmitted: (rating: Int, comment: String) -> Unit = { _, _ -> }
+    onReviewSubmitted: (rating: Int, comment: String) -> Unit = { _, _ -> },
+    onDeleteReview: (() -> Unit)? = null,
+    ownReview: CommentData? = null,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var rating by remember { mutableStateOf(0) }
     var comment by remember { mutableStateOf("") }
 
-    MainButton(
-        text = "Agregar reseña",
-        onClick = { showDialog = true },
-        leftIcon = Icons.Default.Add
-    )
+    if (ownReview != null) {
+        Comment(
+            comment = ownReview,
+            isOwnReview = true,
+            onDelete = onDeleteReview
+        )
+    } else {
+        MainButton(
+            text = "Agregar reseña",
+            onClick = { showDialog = true },
+            leftIcon = Icons.Default.Add,
+        )
+    }
 
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
@@ -122,4 +135,4 @@ fun AddReviewButton(
             }
         }
     }
-} 
+}

@@ -4,9 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.core.ui.components.CommentData
+import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.ReviewRating
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipRatingUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetAllEntrepreneurshipReviewsUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.CreateEntrepreneurshipReviewUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetOwnEntrepreneurshipReviewUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.DeleteEntrepreneurshipReviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,17 +32,27 @@ sealed class EntrepreneurshipSendReviewActionState {
     object Success : EntrepreneurshipSendReviewActionState()
 }
 
+sealed class EntrepreneurshipDeleteReviewActionState {
+    object Idle : EntrepreneurshipDeleteReviewActionState()
+    data class Error(val message: String) : EntrepreneurshipDeleteReviewActionState()
+    object Loading : EntrepreneurshipDeleteReviewActionState()
+    object Success : EntrepreneurshipDeleteReviewActionState()
+}
+
 data class EntrepreneurshipUserReviewUiState(
     val rating: Int = 0,
     val comment: String = "",
-    val hasReviewed: Boolean = false
+    val review: ReviewRating? = null
 )
 
 @HiltViewModel
 class EntrepreneurshipReviewsViewModel @Inject constructor(
     private val getAllEntrepreneurshipReviewsUseCase: GetAllEntrepreneurshipReviewsUseCase,
+    private val getOwnEntrepreneurshipReviewUseCase: GetOwnEntrepreneurshipReviewUseCase,
     private val getEntrepreneurshipRatingUseCase: GetEntrepreneurshipRatingUseCase,
     private val createEntrepreneurshipReviewUseCase: CreateEntrepreneurshipReviewUseCase,
+    private val deleteEntrepreneurshipReviewUseCase: DeleteEntrepreneurshipReviewUseCase,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     // UI states
     private val _reviewsUiState = MutableStateFlow(EntrepreneurshipReviewsUiState())
@@ -54,6 +68,9 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
     private val _sendReviewActionState = MutableStateFlow<EntrepreneurshipSendReviewActionState>(EntrepreneurshipSendReviewActionState.Idle)
     val sendReviewActionState: StateFlow<EntrepreneurshipSendReviewActionState> = _sendReviewActionState.asStateFlow()
 
+    private val _deleteReviewActionState = MutableStateFlow<EntrepreneurshipDeleteReviewActionState>(EntrepreneurshipDeleteReviewActionState.Idle)
+    val deleteReviewActionState: StateFlow<EntrepreneurshipDeleteReviewActionState> = _deleteReviewActionState.asStateFlow()
+
     fun loadReviewDetails(entrepreneurshipId: UUID){
         viewModelScope.launch {
             val reviewRating = getEntrepreneurshipRatingUseCase(entrepreneurshipId)
@@ -61,6 +78,23 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
                 averageRating = reviewRating.avgReview,
                 totalReviews = reviewRating.totalReviews
             )
+
+            val ownReview = getOwnEntrepreneurshipReviewUseCase(
+                entrepreneurshipId = entrepreneurshipId,
+                authorId = authRepository.getCurrentUserId()!!
+            )
+            if (ownReview != null) {
+                _reviewsUiState.value = _reviewsUiState.value.copy(
+                    ownReview = CommentData(
+                        userId = ownReview.id,
+                        userName = ownReview.userCreated.firstName + " " + ownReview.userCreated.lastName,
+                        userImageUrl = ownReview.userCreated.profile.profilePicture,
+                        rating = ownReview.rating,
+                        comment = ownReview.comment,
+                        date = ownReview.dateCreated
+                    )
+                )
+            }
         }
     }
 
@@ -78,19 +112,22 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
                 if (reviews.isEmpty()) {
                     _reviewsUiState.value = _reviewsUiState.value.copy(hasMoreItems = false)
                 } else {
+                    val currentUserId = authRepository.getCurrentUserId()
+                    val filteredReviews = reviews
+                        .filter { review -> review.userCreated.id != currentUserId }
+                        .map { review ->
+                            CommentData(
+                                userId = review.id,
+                                userName = review.userCreated.firstName + " " + review.userCreated.lastName,
+                                userImageUrl = review.userCreated.profile.profilePicture,
+                                rating = review.rating,
+                                comment = review.comment,
+                                date = review.dateCreated
+                            )
+                        }
+
                     _reviewsUiState.value = _reviewsUiState.value.copy(
-                        reviews = _reviewsUiState.value.reviews.plus(
-                            reviews.map { review ->
-                                CommentData(
-                                    userId = review.id,
-                                    userName = review.userCreated.firstName + " " + review.userCreated.lastName,
-                                    userImageUrl = review.userCreated.profile.profilePicture,
-                                    rating = review.rating,
-                                    comment = review.comment,
-                                    date = review.dateCreated
-                                )
-                            }
-                        ),
+                        reviews = _reviewsUiState.value.reviews.plus(filteredReviews),
                         page = _reviewsUiState.value.page + 1
                     )
                     Log.i("EntrepreneurshipDetailsViewModel", "Page: ${_reviewsUiState.value.page}")
@@ -114,12 +151,60 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
                     rating = rating,
                     comment = comment
                 )
-                _sendReviewActionState.value = EntrepreneurshipSendReviewActionState.Success
                 Log.i("EntrepreneurshipReviewsViewModel", "Review sent successfully")
+                
+                // Recargar los detalles después de crear la reseña exitosamente
+                loadReviewDetails(entrepreneurshipId)
+                
+                // Limpiar la lista de reviews para que se recargue sin el ownReview
+                _reviewsUiState.value = _reviewsUiState.value.copy(
+                    reviews = emptyList(),
+                    page = 0,
+                    hasMoreItems = true
+                )
+                
+                _sendReviewActionState.value = EntrepreneurshipSendReviewActionState.Success
+                
+                // Resetear el estado después de un breve delay
+                kotlinx.coroutines.delay(1000)
+                _sendReviewActionState.value = EntrepreneurshipSendReviewActionState.Idle
+                
             } catch (e: Exception) {
                 Log.e("EntrepreneurshipReviewsViewModel", "Error sending review: ${e.message}", e)
                 _sendReviewActionState.value = EntrepreneurshipSendReviewActionState.Error("Error al enviar la reseña: ${e.message}")
             }
         }
     }
+
+    fun resetSendReviewState() {
+        _sendReviewActionState.value = EntrepreneurshipSendReviewActionState.Idle
+    }
+
+    fun deleteOwnReview(entrepreneurshipId: UUID) {
+        _deleteReviewActionState.value = EntrepreneurshipDeleteReviewActionState.Loading
+        
+        viewModelScope.launch {
+            try {
+                val ownReview = _reviewsUiState.value.ownReview
+                if (ownReview != null) {
+                    deleteEntrepreneurshipReviewUseCase(ownReview.userId.toString())
+                    
+                    // Limpiar el ownReview del estado
+                    _reviewsUiState.value = _reviewsUiState.value.copy(
+                        ownReview = null
+                    )
+                    
+                    // Recargar los detalles para actualizar el rating
+                    loadReviewDetails(entrepreneurshipId)
+                    
+                    _deleteReviewActionState.value = EntrepreneurshipDeleteReviewActionState.Success
+                } else {
+                    _deleteReviewActionState.value = EntrepreneurshipDeleteReviewActionState.Error("No hay reseña para eliminar")
+                }
+            } catch (e: Exception) {
+                _deleteReviewActionState.value = EntrepreneurshipDeleteReviewActionState.Error("Error al eliminar la reseña: ${e.message}")
+            }
+        }
+    }
 }
+

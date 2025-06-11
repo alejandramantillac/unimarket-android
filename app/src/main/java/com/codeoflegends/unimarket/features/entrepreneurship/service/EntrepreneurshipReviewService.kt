@@ -5,8 +5,10 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.New
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.ReviewRatingDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
 interface EntrepreneurshipReviewService {
@@ -23,5 +25,10 @@ interface EntrepreneurshipReviewService {
     @POST("/items/EntrepreneurshipReview")
     suspend fun createEntrepreneurshipReview(
         @Body entrepreneurshipReview: NewEntrepreneurshipReviewDto
+    )
+
+    @DELETE("/items/EntrepreneurshipReview/{reviewId}")
+    suspend fun deleteEntrepreneurshipReview(
+        @Path("reviewId") reviewId: String
     )
 }
