@@ -26,7 +26,6 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.Entre
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicDetailsActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBuyerDetailsViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDeleteReviewActionState
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewsActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSendReviewActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewsViewModel

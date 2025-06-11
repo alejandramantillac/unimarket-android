@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
@@ -7,42 +8,54 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue  // Añadir esta importación
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.Comment
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.LoadingOverlay
 import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.core.ui.components.TagType
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipBanner
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDetails
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDetailsActionState
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipDetailsViewModel
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewActionState
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDescription
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeader
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeaderData
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipRating
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewsActionState
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewsViewModel
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerActionState
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerViewModel
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
+import java.util.*
 
 @Composable
 fun EntrepreneurshipDetailPage(
-    viewModel: EntrepreneurshipDetailsViewModel = hiltViewModel(),
-    basicState: EntrepreneurshipBasicUiState
+    entrepreneurshipViewModel: EntrepreneurshipSellerViewModel,
+    reviewsViewModel: EntrepreneurshipReviewsViewModel = hiltViewModel(),
 ) {
-    val actionState by viewModel.actionState.collectAsState()
-    val reviewState by viewModel.reviewState.collectAsState()
-    val state by viewModel.uiState.collectAsState()
+    // UI State
+    val entrepreneurshipState by entrepreneurshipViewModel.entrepreneurshipUiState.collectAsState()
+    val reviewState by reviewsViewModel.reviewsUiState.collectAsState()
 
-    LaunchedEffect(basicState.id) {
-        viewModel.loadEntrepreneurshipDetails(basicState.id)
-    }
+    // Action State
+    val actionState by entrepreneurshipViewModel.actionState.collectAsState()
+    val reviewActionState by reviewsViewModel.reviewsActionState.collectAsState()
 
-    // TODO: Considerar el caso cuando un tag no se tenga Mapeado
-    val entrepreneurshipTags = state.tags.mapNotNull { tag ->
+    val entrepreneurshipTags = entrepreneurshipState.tags.mapNotNull { tag ->
         TagType.entries.find { it.displayName.lowercase() == tag.name.lowercase() }
     }
 
-    if (actionState is EntrepreneurshipDetailsActionState.Loading) {
+    LaunchedEffect(entrepreneurshipState.id) {
+        if (entrepreneurshipState.id != UUID.randomUUID()) {
+            reviewsViewModel.loadReviewDetails(entrepreneurshipState.id)
+        }
+    }
+
+    if (actionState is EntrepreneurshipSellerActionState.Loading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -51,48 +64,59 @@ fun EntrepreneurshipDetailPage(
         }
     } else {
         InfiniteScrollList(
-            items = state.reviews,
-            onLoadMore = { viewModel.loadMoreReviews(basicState.id) },
-            isLoading = reviewState is EntrepreneurshipReviewActionState.Loading,
+            items = reviewState.reviews,
+            onLoadMore = { reviewsViewModel.loadMoreReviews(entrepreneurshipState.id) },
+            isLoading = reviewActionState is EntrepreneurshipReviewsActionState.Loading,
             itemContent = { review ->
                 Comment(comment = review)
             },
             headerContent = {
-                Column {
-                    EntrepreneurshipBanner(
-                        name = basicState.name,
-                        profileUrl = basicState.customization.profileImg,
-                        bannerUrl = basicState.customization.bannerImg,
-                        slogan = state.slogan
-                    )
-
-                    Row(Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-                        RatingStars(rating = state.averageRating)
-                        Text(
-                            text = "(${state.totalReviews} Reseñas)",
-                            style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(start = 4.dp)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    EntrepreneurshipHeader(
+                        headerData = EntrepreneurshipHeaderData(
+                            bannerUrl = entrepreneurshipState.customization.bannerImg,
+                            logoUrl = entrepreneurshipState.customization.profileImg,
+                            name = entrepreneurshipState.name,
+                            slogan = entrepreneurshipState.slogan
                         )
-                    }
-
-                    EntrepreneurshipDetails(
-                        description = state.description,
-                        entrepreneurshipTags = entrepreneurshipTags
                     )
+
+                    EntrepreneurshipRating(
+                        rating = reviewState.averageRating,
+                        reviewsCount = reviewState.totalReviews
+                    )
+
+                    EntrepreneurshipDescription(entrepreneurshipState.description)
                 }
             },
             titleContent = {
                 Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(top = 24.dp, start = 24.dp, end = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
                         text = "Valoraciones y reseñas",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "Las calificaciones y reseñas vienen de clientes que han comprado en tu emprendimiento.",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleSmall
+                        color = Color.Gray,
+                        fontSize = 14.sp
                     )
+                }
+            },
+            emptyContent = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No hay datos disponibles")
                 }
             },
         )
