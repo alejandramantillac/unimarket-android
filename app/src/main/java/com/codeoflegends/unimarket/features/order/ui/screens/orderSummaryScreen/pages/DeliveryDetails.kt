@@ -11,11 +11,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.features.order.data.model.Delivery
+import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewModel
 
 @Composable
-fun DeliveryDetails(delivery: Delivery, modifier: Modifier = Modifier) {
+fun DeliveryDetails(
+    delivery: Delivery,
+    viewModel: OrderSummaryViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -91,7 +97,7 @@ fun DeliveryDetails(delivery: Delivery, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
             MainButton(
                 text = "Marcar como entregado",
-                onClick = { /* Acción al marcar como entregado */ },
+                onClick = { viewModel.updateDeliveryStatus("129d26f4-6be3-47fc-a066-3c14722e5d20") },
                 modifier = Modifier.fillMaxWidth()
             )
         }

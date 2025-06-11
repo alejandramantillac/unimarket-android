@@ -5,7 +5,6 @@ import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderListDto
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
-import com.codeoflegends.unimarket.features.order.data.model.OrderList
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.VariantImage

@@ -43,5 +43,15 @@ class OrderRepositoryDirectus @Inject constructor(
     } catch (e: Exception) {
         Result.failure(e)
     }
+
+    override suspend fun updateOrder(order: Order): Result<Unit> = try {
+        val orderDto = OrderMapper.toUpdateOrderDto(order)
+        Log.d("OrderRepositoryDirectus", "Updating order: $orderDto")
+        orderService.updateOrder(order.id.toString(), orderDto)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("OrderRepositoryDirectus", "Error updating order: ${e.message}")
+        Result.failure(e)
+    }
 }
 
