@@ -104,33 +104,25 @@ private fun CollaboratorsList(
     collaborators: List<Collaborator>,
     onDeleteClick: (Collaborator) -> Unit
 ) {
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.small
+            .padding(top = 56.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+        Text(
+            text = "Equipo de trabajo",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "Equipo de trabajo",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(collaborators) { collaborator ->
-                    CollaboratorItem(
-                        collaborator = collaborator,
-                        onDeleteClick = { onDeleteClick(collaborator) }
-                    )
-                }
+            items(collaborators) { collaborator ->
+                CollaboratorItem(
+                    collaborator = collaborator,
+                    onDeleteClick = { onDeleteClick(collaborator) }
+                )
             }
         }
     }
