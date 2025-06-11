@@ -7,11 +7,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue  // Añadir esta importación
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.Comment
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.LoadingOverlay
@@ -27,7 +28,8 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.Entrep
 @Composable
 fun EntrepreneurshipDetailPage(
     viewModel: EntrepreneurshipDetailsViewModel = hiltViewModel(),
-    basicState: EntrepreneurshipBasicUiState
+    basicState: EntrepreneurshipBasicUiState,
+    manager: NavigationManager
 ) {
     val actionState by viewModel.actionState.collectAsState()
     val reviewState by viewModel.reviewState.collectAsState()
@@ -94,7 +96,7 @@ fun EntrepreneurshipDetailPage(
                         style = androidx.compose.material3.MaterialTheme.typography.titleSmall
                     )
                 }
-            },
+            }
         )
     }
 }

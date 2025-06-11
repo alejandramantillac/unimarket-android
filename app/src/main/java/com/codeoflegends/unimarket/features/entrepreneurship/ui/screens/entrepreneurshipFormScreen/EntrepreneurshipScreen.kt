@@ -7,16 +7,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.NavigationBar
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screen.PartnerScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipDetailPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipMembersPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipProductsPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicViewModel
 import com.codeoflegends.unimarket.features.order.ui.screens.orderListScreen.OrderListScreen
+import java.util.UUID
 
 @Composable
 fun EntrepreneurshipScreen(
@@ -51,7 +54,7 @@ fun EntrepreneurshipScreen(
         barOptions = AppBarOptions(
             show = true,
             showBackButton = true,
-            onBackClick = { manager?.navController?.popBackStack() }
+            onBackClick = { manager.navController.popBackStack() }
         )
     ) {
         if (actionState is EntrepreneurshipBasicActionState.Loading) {
@@ -66,7 +69,16 @@ fun EntrepreneurshipScreen(
                 bottomBar = {
                     NavigationBar(
                         currentRoute = state.currentRoute,
-                        onNavigate = { route -> viewModel.onNavigationItemSelected(route) }
+                        onNavigate = { route -> 
+                            when (route) {
+                                "people" -> {
+                                    entrepreneurshipId?.let {
+                                        manager.navController.navigate(Routes.Collaborators.createRoute(it))
+                                    }
+                                }
+                                else -> viewModel.onNavigationItemSelected(route)
+                            }
+                        }
                     )
                 }
             ) { paddingValues ->
@@ -76,10 +88,19 @@ fun EntrepreneurshipScreen(
                         .padding(paddingValues)
                 ) {
                     when (state.currentRoute) {
-                        "home" -> EntrepreneurshipDetailPage(basicState = state)
-                        "products" -> EntrepreneurshipProductsPage(basicState = state, manager = manager)
+                        "home" -> EntrepreneurshipDetailPage(
+                            basicState = state,
+                            manager = manager
+                        )
+                        "products" -> EntrepreneurshipProductsPage(
+                            basicState = state,
+                            manager = manager
+                        )
+                        "orders" -> OrderListScreen(
+                            basicState = state,
+                            manager = manager
+                        )
                         "people" -> EntrepreneurshipMembersPage(entrepreneurshipId = state.id)
-                        "orders" -> OrderListScreen(manager = manager, basicState = state)
                         //"metrics" -> EntrepreneurshipStatisticsPage(basicState = state)
                     }
                 }
