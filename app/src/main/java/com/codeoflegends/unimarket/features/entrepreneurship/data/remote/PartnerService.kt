@@ -8,15 +8,14 @@ import java.util.UUID
 interface PartnerService {
     @GET("/items/Partner")
     suspend fun getPartnersByEntrepreneurship(
-        @Query("filter[entrepreneurship_id][_eq]") entrepreneurshipId: UUID,
-        @Query("fields") fields: String = "*,user_profile.*",
-        @Query("access_token") accessToken: String? = null
+        @Query("filter[entrepreneurship][_eq]") entrepreneurshipId: UUID,
+        @Query("fields") fields: String = "*,user.*,role,entrepreneurship.*"
     ): DirectusDto<List<PartnerDto>>
 
     @GET("/items/Partner/{id}")
     suspend fun getPartnerById(
         @Path("id") id: UUID,
-        @Query("fields") fields: String = "*,user_profile.*"
+        @Query("fields") fields: String = "*,user.*,role,entrepreneurship.*"
     ): DirectusDto<PartnerDto>
 
     @POST("/items/Partner")

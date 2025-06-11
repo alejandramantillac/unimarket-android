@@ -65,7 +65,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
         data object EntrepreneurProfile : Routes("/entrepreneur")
 
-        data object Collaborators : Routes("/entrepreneurship/{id}/collaborators") {
+        data object Collaborators : Routes("/entrepreneurship/{id}/collaborators", "partner.read") {
             val base get() = "/entrepreneurship/"
             fun createRoute(id: String): String {
                 return "/entrepreneurship/$id/collaborators"

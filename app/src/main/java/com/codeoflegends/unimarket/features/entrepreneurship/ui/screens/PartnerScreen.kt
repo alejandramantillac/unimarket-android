@@ -124,7 +124,7 @@ private fun PartnerItem(partner: Partner) {
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = partner.name,
+                    text = partner.user.firstName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -135,7 +135,7 @@ private fun PartnerItem(partner: Partner) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = partner.email,
+                    text = partner.user.email,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
