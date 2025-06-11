@@ -115,7 +115,7 @@ fun <T> InfiniteScrollList(
                         .fillMaxWidth()
                         .padding(
                             horizontal = if(orientation == Orientation.Vertical) 16.dp else 4.dp,
-                            vertical = if (index > 0 && orientation == Orientation.Vertical) 12.dp else 0.dp
+                            vertical = if (orientation == Orientation.Vertical) 4.dp else 0.dp
                         )
                 ) {
                     itemContent(item)

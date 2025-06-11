@@ -1,8 +1,7 @@
-package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages
+package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.Comment
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
-import com.codeoflegends.unimarket.core.ui.components.LoadingOverlay
-import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.core.ui.components.TagType
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDescription
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeader
@@ -29,7 +26,6 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.Entrep
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewsViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerViewModel
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipViewModel
 import java.util.*
 
 @Composable

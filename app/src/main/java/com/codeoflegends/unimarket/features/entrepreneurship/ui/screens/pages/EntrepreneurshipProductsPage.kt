@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages
+package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,9 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.features.product.ui.components.ProductItem
-import com.codeoflegends.unimarket.features.product.ui.viewModel.ProductViewModel
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipGeneralProductsActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipProductsViewModel
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,14 +21,15 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.Entrep
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerViewModel
 
 @Composable
 fun EntrepreneurshipProductsPage(
+    entrepreneurshipViewModel: EntrepreneurshipSellerViewModel,
     viewModel: EntrepreneurshipProductsViewModel = hiltViewModel(),
     manager: NavigationManager,
-    basicState: EntrepreneurshipBasicUiState
 ) {
-    val actionState by viewModel.actionState.collectAsState()
+    val entrepreneurshipUiState by entrepreneurshipViewModel.entrepreneurshipUiState.collectAsState()
     val queryActionState by viewModel.queryActionState.collectAsState()
 
     val filterState by viewModel.filterState.collectAsState()
@@ -39,8 +38,8 @@ fun EntrepreneurshipProductsPage(
     val focusManager = LocalFocusManager.current
     var tempSearchQuery by remember { mutableStateOf(filterState.searchQuery) }
 
-    LaunchedEffect(basicState.id) {
-        viewModel.initialize(basicState.id)
+    LaunchedEffect(entrepreneurshipUiState.id) {
+        viewModel.initialize(entrepreneurshipUiState.id)
     }
 
     Box(
@@ -56,16 +55,11 @@ fun EntrepreneurshipProductsPage(
     ) {
         InfiniteScrollList(
             items = state.products,
-            onLoadMore = { viewModel.loadMoreProducts(basicState.id) },
+            onLoadMore = { viewModel.loadMoreProducts(entrepreneurshipUiState.id) },
             isLoading = queryActionState is EntrepreneurshipQueryProductsActionState.Loading,
             itemContent = { product ->
                 ProductItem(
                     product = product,
-                    onEditClick = {
-                        manager.navController.navigate(
-                            Routes.ManageProduct.createRoute(product.id!!.toString())
-                        )
-                    },
                     onViewClick = {
                         manager.navController.navigate(
                             Routes.ProductView.createRoute(product.id!!.toString())
@@ -110,7 +104,9 @@ fun EntrepreneurshipProductsPage(
 
         FloatingActionButton(
             onClick = {
-                manager.navController.navigate(Routes.ManageProduct.createRoute("new"))
+                manager.navController.navigate(
+                    Routes.CreateProduct.createRoute(entrepreneurshipUiState.id.toString())
+                )
             },
             modifier = Modifier
                 .padding(16.dp)

@@ -21,6 +21,13 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    data object CreateProduct : Routes("/create/product/{entrepreneurshipId}") {
+        val base get() = "/create/product/"
+        fun createRoute(entrepreneurshipId: String): String {
+            return "/create/product/$entrepreneurshipId"
+        }
+    }
+
     data object ProductView : Routes("/product/{id}") {
         val base get() = "/product/"
         fun createRoute(id: String): String {
@@ -90,6 +97,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                 ForgotPassword.route -> ForgotPassword
                 Home.route -> Home
                 ManageProduct.route -> ManageProduct
+                CreateProduct.route -> CreateProduct
                 ProductView.route -> ProductView
                 ProductBuyerView.route -> ProductBuyerView
                 RoleSelection.route -> RoleSelection
@@ -103,6 +111,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                     // Handle dynamic routes
                     when {
                         route.startsWith("/manage/product/") -> ManageProduct
+                        route.startsWith("/create/product/") -> CreateProduct
                         route.startsWith("/product/") -> ProductView
                         route.startsWith("/product_buyer/") -> ProductBuyerView
                         route.startsWith("/entrepreneurship/") && route.endsWith("/collaborators") -> Collaborators
