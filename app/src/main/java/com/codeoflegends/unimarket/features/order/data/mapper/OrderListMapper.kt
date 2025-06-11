@@ -3,6 +3,7 @@ package com.codeoflegends.unimarket.features.order.data.mapper
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderListDto
+import com.codeoflegends.unimarket.features.order.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
@@ -55,7 +56,14 @@ object OrderListMapper {
                     )
                 )
             },
-            delivery = emptyList()
+            delivery = emptyList(),
+            entrepreneurship = Entrepreneurship(
+                dto.entrepreneurship.id,
+                dto.entrepreneurship.name,
+                dto.entrepreneurship.slogan,
+                dto.entrepreneurship.email,
+                dto.entrepreneurship.phone,
+            )
         )
     }
 }

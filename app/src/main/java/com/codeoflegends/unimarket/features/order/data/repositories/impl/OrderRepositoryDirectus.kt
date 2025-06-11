@@ -15,7 +15,22 @@ import javax.inject.Singleton
 @Singleton
 class OrderRepositoryDirectus @Inject constructor(
     private val orderService: OrderService
-) : OrderRepository {
+) : OrderRepository{
+
+    override suspend fun getAllOrdersByBuyer(buyerId: UUID): Result<List<Order>> = try {
+        val ordersDto = orderService.getAllOrders(
+            OrderListDto.query().build()
+        ).data
+
+        val filteredOrders = ordersDto.filter { it.userCreated.id == buyerId.toString() }
+            .map { OrderListMapper.fromDto(it) }
+
+        Result.success(filteredOrders)
+    } catch (e: Exception) {
+        Log.e("OrderRepositoryDirectus", "Error fetching orders by buyer: ${e.message}")
+        Result.failure(e)
+    }
+
     override suspend fun getAllOrders(entrepreneurship: UUID): Result<List<Order>> = try {
         val ordersDto = orderService.getAllOrders(
             OrderListDto.query(entrepreneurship.toString()).build()

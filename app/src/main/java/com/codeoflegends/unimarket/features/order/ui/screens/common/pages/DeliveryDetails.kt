@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.MainButton
@@ -38,7 +39,7 @@ fun DeliveryDetails(
             // Título: Dirección de entrega
             Text(
                 text = "Dirección de entrega",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
             )
             Divider(color = Color.LightGray, thickness = 1.dp)
 

@@ -15,6 +15,11 @@ import retrofit2.http.QueryMap
 interface OrderService {
 
     @GET("/items/Order")
+    suspend fun getAllOrdersByBuyer(
+        @QueryMap query: Map<String, String>
+    ): DirectusDto<List<OrderListDto>>
+
+    @GET("/items/Order")
     suspend fun getAllOrders(
         @QueryMap query: Map<String, String>
     ): DirectusDto<List<OrderListDto>>

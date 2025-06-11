@@ -4,6 +4,7 @@ import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDto
 import com.codeoflegends.unimarket.features.order.data.dto.update.UpdateOrderDto
+import com.codeoflegends.unimarket.features.order.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import java.time.LocalDateTime
@@ -37,7 +38,14 @@ object OrderMapper {
             ),
             payments = dto.payments.map { PaymentsMapper.mapFromDto(it) },
             orderDetails = dto.orderDetails.map { OrderDetailsMapper.mapFromDto(it) },
-            delivery = dto.delivery.map { DeliveryMapper.mapFromDto(it) }
+            delivery = dto.delivery.map { DeliveryMapper.mapFromDto(it) },
+            entrepreneurship = Entrepreneurship(
+                dto.entrepreneurship.id,
+                dto.entrepreneurship.name,
+                dto.entrepreneurship.slogan,
+                dto.entrepreneurship.email,
+                dto.entrepreneurship.phone,
+            )
         )
     }
 

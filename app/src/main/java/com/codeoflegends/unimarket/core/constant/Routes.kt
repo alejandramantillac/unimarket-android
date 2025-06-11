@@ -37,6 +37,19 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    // Order Routes for buyers
+
+    data object ManageHistory : Routes("/manage/history") {
+        val base get() = "/manage/history/"
+    }
+
+    data object OrderHistory : Routes("/order/history/{id}"){
+        val base get() = "/order/history/"
+        fun createRoute(id: String): String {
+            return "/order/history/$id"
+        }
+    }
+
         // Role Selection Route
         data object RoleSelection : Routes("/role_selection")
 

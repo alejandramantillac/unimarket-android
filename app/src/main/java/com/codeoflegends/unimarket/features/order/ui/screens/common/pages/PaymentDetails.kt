@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages
+package com.codeoflegends.unimarket.features.order.ui.screens.common.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
