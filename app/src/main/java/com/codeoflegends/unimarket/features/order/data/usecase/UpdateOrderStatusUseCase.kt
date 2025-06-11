@@ -8,7 +8,7 @@ class UpdateOrderStatusUseCase @Inject constructor(
     private val repository: OrderRepository
 ) {
     suspend operator fun invoke(orderId: UUID, newStatus: String) {
-        //repository.updateOrderStatus(orderId, newStatus).getOrThrow()
+        repository.updateOrderStatus(orderId, newStatus).getOrThrow()
     }
 }
 

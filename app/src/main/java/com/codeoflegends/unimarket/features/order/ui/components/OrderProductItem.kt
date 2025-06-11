@@ -33,7 +33,7 @@ fun OrderProductItem(
     ) {
         // Imagen del producto
         ProductImage(
-            imageUrl = product.productVariant.variantImages.firstOrNull()?.imageUrl,
+            imageUrl = product.productVariant.variantImages.firstOrNull()?.imageUrl ?: "",
             modifier = Modifier
                 .size(64.dp)
                 .padding(end = 8.dp)

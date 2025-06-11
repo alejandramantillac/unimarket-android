@@ -9,6 +9,9 @@ import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.ProductFormScreen
 import com.codeoflegends.unimarket.features.product.ui.screens.productViewScreen.ProductViewScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.codeoflegends.unimarket.features.product.ui.screens.productBuyerViewScreen.ProductBuyerViewScreen
+import com.codeoflegends.unimarket.features.cart.ui.screens.CartScreen
+import com.codeoflegends.unimarket.features.cart.ui.viewmodel.CartViewModel
 
 fun NavGraphBuilder.productNavigation(
     manager: NavigationManager
@@ -23,7 +26,22 @@ fun NavGraphBuilder.productNavigation(
         val productId = backStackEntry.arguments?.getString("id")
         ProductFormScreen(productId = productId, manager = manager)
     }
-    
+
+    composable(Routes.CreateProduct.route,
+        arguments = listOf(
+            navArgument("entrepreneurshipId") {
+                type = NavType.StringType
+            }
+        )
+    ) { backStackEntry ->
+        val entrepreneurshipId = backStackEntry.arguments?.getString("entrepreneurshipId")
+        ProductFormScreen(
+            productId = null, 
+            entrepreneurshipId = entrepreneurshipId,
+            manager = manager
+        )
+    }
+
     composable(
         route = Routes.ProductView.route,
         arguments = listOf(navArgument("id") { type = NavType.StringType })
@@ -32,6 +50,30 @@ fun NavGraphBuilder.productNavigation(
         ProductViewScreen(
             productId = productId,
             manager = manager
+        )
+    }
+
+    composable(
+        route = Routes.ProductBuyerView.route,
+        arguments = listOf(
+            navArgument("id") { type = NavType.StringType }
+        )
+    ) { backStackEntry ->
+        val productId = backStackEntry.arguments?.getString("id")
+        ProductBuyerViewScreen(
+            productId = productId,
+            manager = manager
+        )
+    }
+
+    composable(route = Routes.Cart.route) {
+        val cartViewModel: CartViewModel = hiltViewModel()
+        CartScreen(
+            cartViewModel = cartViewModel,
+            onOrderCreated = { orderId ->
+                manager.navController.navigate(Routes.OrderSummary.createRoute(orderId.toString()))
+            },
+            onBackClick = { manager.navController.popBackStack() }
         )
     }
 }

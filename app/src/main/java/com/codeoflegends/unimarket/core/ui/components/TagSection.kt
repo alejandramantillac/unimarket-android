@@ -24,7 +24,7 @@ fun TagSection(
     val hasMoreTags = tags.size > 3
 
     FlowRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         mainAxisSpacing = 4.dp,
         crossAxisSpacing = 4.dp,
         mainAxisAlignment = MainAxisAlignment.Start,

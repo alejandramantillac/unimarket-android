@@ -19,16 +19,6 @@ object ProductValidation {
     fun createFormState(formData: ProductFormData, isEdit: Boolean): FormState {
         return FormState(
             fields = buildMap {
-                // Only validate selectedBusiness in create mode
-                if (!isEdit)
-                    put(
-                        "business",
-                        FormField(
-                            formData.selectedBusiness,
-                            listOf(NotNullValidator("Selecciona un emprendimiento"))
-                        )
-                    )
-
                 put(
                     "category",
                     FormField(
@@ -80,17 +70,9 @@ object ProductValidation {
     }
 
     /**
-     * Validates if the business selection is valid
-     */
-    fun validateBusinessSelection(formData: ProductFormData, isEdit: Boolean): Boolean {
-        return isEdit || formData.selectedBusiness != null
-    }
-
-    /**
      * Performs full validation of the product form
      */
     fun validateForm(formData: ProductFormData, isEdit: Boolean): Boolean {
-        return createFormState(formData, isEdit).validateAll() &&
-               validateBusinessSelection(formData, isEdit)
+        return createFormState(formData, isEdit).validateAll()
     }
 }

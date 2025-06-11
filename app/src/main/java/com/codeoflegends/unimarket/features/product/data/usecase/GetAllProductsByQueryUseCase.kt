@@ -24,4 +24,18 @@ class GetAllProductsByQueryUseCase @Inject constructor(
             page = page
         ).getOrThrow()
     }
+
+    suspend operator fun invoke(
+        nameContains: String = "",
+        filters: List<DirectusQuery.Filter>,
+        limit: Int,
+        page: Int
+    ): List<Product> {
+        return repository.getAllProductsByQuery(
+            nameContains = nameContains,
+            filters = filters,
+            limit = limit,
+            page = page
+        ).getOrThrow()
+    }
 }

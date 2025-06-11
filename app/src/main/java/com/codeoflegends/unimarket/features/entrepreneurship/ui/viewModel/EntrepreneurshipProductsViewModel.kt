@@ -34,7 +34,7 @@ class EntrepreneurshipProductsViewModel @Inject constructor(
     private val getAllProductsByQueryUseCase: GetAllProductsByQueryUseCase,
     ): FilterViewModel() {
 
-    private var entrepreneurshipId: UUID? = null
+    private lateinit var entrepreneurshipId: UUID
 
     init {
         setFilters(
@@ -105,15 +105,13 @@ class EntrepreneurshipProductsViewModel @Inject constructor(
     }
 
     override fun onSearchQueryChanged(query: String) {
-        val currentId = entrepreneurshipId ?: return
         resetQueryParameters()
-        loadMoreProducts(currentId)
+        loadMoreProducts(entrepreneurshipId)
     }
 
     override fun onFilterChanged(filterId: String) {
-        val currentId = entrepreneurshipId ?: return
         resetQueryParameters()
-        loadMoreProducts(currentId)
+        loadMoreProducts(entrepreneurshipId)
     }
 
     override fun onAdvancedFiltersToggled() {
