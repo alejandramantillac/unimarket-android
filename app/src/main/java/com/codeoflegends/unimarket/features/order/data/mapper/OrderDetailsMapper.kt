@@ -3,6 +3,7 @@ package com.codeoflegends.unimarket.features.order.data.mapper
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDetailDto
 import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 
 object OrderDetailsMapper {
 
@@ -15,7 +16,12 @@ object OrderDetailsMapper {
                 id = detailDto.productVariant.id,
                 name = detailDto.productVariant.name,
                 stock = detailDto.productVariant.stock,
-                variantImages = detailDto.productVariant.variantImages.map { it.imageUrl }
+                variantImages = detailDto.productVariant.variantImages.map { 
+                    VariantImage(
+                        id = it.id,
+                        imageUrl = it.imageUrl
+                    )
+                }
             )
         )
     }

@@ -3,6 +3,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.di
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.impl.EntrepreneurshipReviewRepositoryDirectus
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.EntrepreneurshipReviewRepository
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipRatingUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.CreateEntrepreneurshipReviewUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.DeleteEntrepreneurshipReviewUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview.GetAllEntrepreneurshipReviewsUseCase
 import dagger.Binds
@@ -23,12 +24,11 @@ abstract class EntrepreneurshipReviewModule {
     ): EntrepreneurshipReviewRepository
 
     companion object {
-        /*
         @Provides
         @Singleton
         fun provideCreateEntrepreneurshipReviewUseCase(repository: EntrepreneurshipReviewRepository): CreateEntrepreneurshipReviewUseCase =
             CreateEntrepreneurshipReviewUseCase(repository)
-         */
+
         @Provides
         @Singleton
         fun provideDeleteEntrepreneurshipReviewUseCase(repository: EntrepreneurshipReviewRepository): DeleteEntrepreneurshipReviewUseCase =

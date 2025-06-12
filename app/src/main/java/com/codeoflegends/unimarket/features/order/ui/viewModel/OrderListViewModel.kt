@@ -29,8 +29,8 @@ class OrderListViewModel @Inject constructor(
     init {
         setFilters(
             listOf(
-                FilterOption(id = "pendiente", label = "Pendiente", field = "status", operator = "eq", value = "Pendiente"),
-                FilterOption(id = "confirmado", label = "confirmado", field = "status", operator = "eq", value = "confirmado"),
+                FilterOption(id = "pendiente", label = "Pendiente", field = "status", operator = "eq", value = "pendiente"),
+                FilterOption(id = "confirmado", label = "Confirmado", field = "status", operator = "eq", value = "confirmado"),
             )
         )
     }

@@ -1,9 +1,12 @@
 package com.codeoflegends.unimarket.features.order.di
 
 import com.codeoflegends.unimarket.features.order.data.repositories.impl.OrderRepositoryDirectus
+import com.codeoflegends.unimarket.features.order.data.repositories.impl.OrderStatusRepositoryDirectus
 import com.codeoflegends.unimarket.features.order.data.repositories.interfaces.OrderRepository
+import com.codeoflegends.unimarket.features.order.data.repositories.interfaces.OrderStatusRepository
 import com.codeoflegends.unimarket.features.order.data.usecase.GetAllOrdersUseCase
 import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderUseCase
+import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderStatusesUseCase
 import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
@@ -19,20 +22,30 @@ import javax.inject.Singleton
 abstract class OrderModule {
     @Binds
     @Singleton
-    abstract fun bindoOrderRepository(
+    abstract fun bindOrderRepository(
         orderRepositoryImpl: OrderRepositoryDirectus
     ): OrderRepository
 
-    companion object {
+    @Binds
+    @Singleton
+    abstract fun bindOrderStatusRepository(
+        orderStatusRepositoryImpl: OrderStatusRepositoryDirectus
+    ): OrderStatusRepository
 
+    companion object {
         @Provides
         @Singleton
-        fun provideGetPOrderUseCase(repository: OrderRepository): GetOrderUseCase =
+        fun provideGetOrderUseCase(repository: OrderRepository): GetOrderUseCase =
             GetOrderUseCase(repository)
 
         @Provides
         @Singleton
         fun provideGetAllOrdersUseCase(repository: OrderRepository): GetAllOrdersUseCase =
             GetAllOrdersUseCase(repository)
+
+        @Provides
+        @Singleton
+        fun provideGetOrderStatusesUseCase(repository: OrderStatusRepository): GetOrderStatusesUseCase =
+            GetOrderStatusesUseCase(repository)
     }
 }

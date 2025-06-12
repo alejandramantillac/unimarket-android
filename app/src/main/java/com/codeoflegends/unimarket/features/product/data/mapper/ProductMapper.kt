@@ -6,9 +6,12 @@ import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDt
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
-import com.codeoflegends.unimarket.features.product.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
+import com.codeoflegends.unimarket.features.product.data.model.NewProduct
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.util.UUID
+import java.time.LocalDateTime
 
 /**
  * Mapper class responsible for converting between data layer DTOs and domain models
@@ -27,9 +30,22 @@ object ProductMapper {
             price = dto.price,
             stockAlert = dto.stockAlert,
             published = dto.published,
+            discount = dto.discount,
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
-                name = dto.entrepreneurship.name
+                name = dto.entrepreneurship.name,
+                slogan = "",
+                description = "",
+                creationDate = LocalDateTime.now(),
+                customization = EntrepreneurshipCustomization(
+                    profileImg = "",
+                    bannerImg = "",
+                    color1 = "",
+                    color2 = ""
+                ),
+                email = "",
+                phone = "",
+                category = 0
             ),
             imageUrl = dto.image
         )
@@ -45,18 +61,31 @@ object ProductMapper {
             name = dto.name,
             description = dto.description,
             price = dto.price,
+            discount = dto.discount,
             stockAlert = dto.stockAlert,
             published = dto.published,
             entrepreneurship = Entrepreneurship(
                 id = UUID.fromString(dto.entrepreneurship.id),
-                name = dto.entrepreneurship.name
+                name = dto.entrepreneurship.name,
+                slogan = "",
+                description = "",
+                creationDate = LocalDateTime.now(),
+                customization = EntrepreneurshipCustomization(
+                    profileImg = "",
+                    bannerImg = "",
+                    color1 = "",
+                    color2 = ""
+                ),
+                email = "",
+                phone = "",
+                category = 0
             ),
             variants = dto.variants.map { VariantMapper.mapFromDto(it) },
             specifications = dto.specifications.map { SpecificationMapper.mapFromDto(it) },
         )
     }
 
-    fun toNewProductDto(product: Product): NewProductDto {
+    fun toNewProductDto(product: NewProduct): NewProductDto {
         return NewProductDto(
             category = product.category.name,
             name = product.name,
@@ -65,7 +94,7 @@ object ProductMapper {
             stockAlert = product.stockAlert,
             published = product.published,
             entrepreneurship = EntrepreneurshipCreateDto(
-                id = product.entrepreneurship.id.toString(),
+                id = product.entrepreneurship.toString(),
             ),
             variants = product.variants.map { VariantMapper.toNewVariantDto(it) },
             specifications = product.specifications.map { SpecificationMapper.toNewSpecificationDto(it) }
@@ -76,7 +105,7 @@ object ProductMapper {
         return dtos.map { listDtoToProduct(it) }
     }
 
-    fun toUpdateProductDto(product: Product): UpdateProductDto {
+    fun toUpdateProductDto(product: NewProduct): UpdateProductDto {
         return UpdateProductDto(
             category = product.category.name,
             name = product.name,

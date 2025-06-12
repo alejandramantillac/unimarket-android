@@ -1,6 +1,8 @@
 package com.codeoflegends.unimarket.features.order.data.datasource
 
 import com.codeoflegends.unimarket.core.dto.DirectusDto
+import com.codeoflegends.unimarket.features.order.data.dto.create.CreateOrderDto
+import com.codeoflegends.unimarket.features.order.data.dto.create.CreatedOrderDto
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDto
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderListDto
 import com.codeoflegends.unimarket.features.order.data.dto.update.UpdateDeliveryDto
@@ -9,6 +11,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
@@ -35,4 +38,9 @@ interface OrderService {
         @Path("orderId") orderId: String,
         @Body order: UpdateOrderDto
     ): Response<DirectusDto<OrderDto>>
+
+    @POST("/items/Order")
+    suspend fun createOrder(
+        @Body order: CreateOrderDto
+    ): DirectusDto<CreatedOrderDto>
 }

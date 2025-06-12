@@ -4,6 +4,7 @@ import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.dto.DirectusDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipListDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.update.UpdateEntrepreneurshipDto
 import retrofit2.http.Body
@@ -42,4 +43,9 @@ interface EntrepreneurshipService {
     suspend fun getMyEntrepreneurships(
         @QueryMap query: Map<String, String>
     ): DirectusDto<List<EntrepreneurshipDto>>
+
+    @GET("/items/Entrepreneurship")
+    suspend fun getEntrepreneurships(
+        @QueryMap query: Map<String, String>
+    ): DirectusDto<List<EntrepreneurshipListDto>>
 }

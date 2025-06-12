@@ -3,9 +3,11 @@ package com.codeoflegends.unimarket.features.product.data.datasource
 import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.dto.DirectusDto
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
+import com.codeoflegends.unimarket.features.product.data.dto.create.NewReviewDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDetailDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
+import com.codeoflegends.unimarket.features.product.data.dto.get.ProductReviewDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -41,4 +43,14 @@ interface ProductService {
         @Path("productId") productId: String,
         @Body product: DeleteDto
     )
+
+    @POST("/items/Review")
+    suspend fun createReview(
+        @Body review: NewReviewDto
+    )
+
+    @GET("/items/Review")
+    suspend fun getProductReviews(
+        @QueryMap query: Map<String, String>
+    ): DirectusDto<List<ProductReviewDto>>
 }

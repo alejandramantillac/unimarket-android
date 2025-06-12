@@ -26,12 +26,7 @@ data class UserUiState(
         firstName = "",
         lastName = "",
         email = "",
-        profile = UserProfile(
-            profilePicture = "",
-            userRating = 0f,
-            partnerRating = 0f,
-            registrationDate = LocalDateTime.now()
-        )
+        profile = UserProfile()
     ),
     val entrepreneurships: List<Entrepreneurship> = emptyList(),
 )
@@ -68,17 +63,23 @@ class UserProfileViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     user = User(
                         id = UUID.fromString(userDto.id),
-                        firstName = userDto.firstName,
-                        lastName = userDto.lastName,
-                        email = userDto.email,
-                        profile = UserProfile(
-                            profilePicture = userDto.profile.profilePicture,
-                            userRating = userDto.profile.userRating,
-                            partnerRating = userDto.profile.partnerRating,
-                            registrationDate = LocalDateTime.parse(userDto.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME),
+                        firstName = userDto.firstName.orEmpty(),
+                        lastName = userDto.lastName.orEmpty(),
+                        email = userDto.email.orEmpty(),
+                        profile = userDto.profile?.let { profileDto ->
+                            UserProfile(
+                                profilePicture = profileDto.profilePicture.orEmpty(),
+                                userRating = profileDto.userRating ?: 0f,
+                                partnerRating = profileDto.partnerRating ?: 0f,
+                                registrationDate = try {
+                                    LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                                } catch (e: Exception) {
+                                    LocalDateTime.now()
+                                }
                             )
-                        )
+                        } ?: UserProfile()
                     )
+                )
                 _actionState.value = UserProfileActionState.Idle
             } catch (e: Exception) {
                 Log.e("UserProfileViewModel", "Error loading user data", e)

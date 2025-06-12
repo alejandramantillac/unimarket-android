@@ -12,14 +12,30 @@ data class EntrepreneurshipReviewDto(
     val comment: String
 ) {
     companion object {
-        fun query(page: Int, limit: Int): DirectusQuery {
-            return DirectusQuery()
+        fun query(
+            page: Int,
+            limit: Int,
+            entrepreneurshipId: UUID? = null,
+            authorId: UUID? = null
+        ): DirectusQuery {
+            val directusQuery = DirectusQuery()
                 .join("user_created")
                 .join("user_created.profile")
                 .paginate(
                     limit = limit,
                     page = page,
                 )
+
+            if (entrepreneurshipId != null) {
+                directusQuery.filter("entrepreneurship", "eq", entrepreneurshipId.toString())
+            }
+
+            if (authorId != null) {
+                directusQuery.filter("user_created", "eq", authorId.toString())
+            }
+
+            return directusQuery
         }
     }
 }
+

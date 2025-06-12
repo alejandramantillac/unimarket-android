@@ -5,8 +5,8 @@ import java.util.UUID
 
 data class User(
     val id: UUID,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val profile: UserProfile
+    val firstName: String = "",
+    val lastName: String = "",
+    val email: String = "",
+    val profile: UserProfile = UserProfile()
 )

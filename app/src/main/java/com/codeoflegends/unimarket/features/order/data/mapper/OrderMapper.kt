@@ -2,11 +2,19 @@ package com.codeoflegends.unimarket.features.order.data.mapper
 
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
+import com.codeoflegends.unimarket.features.order.data.dto.create.CreatedOrderDto
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDto
 import com.codeoflegends.unimarket.features.order.data.dto.update.UpdateOrderDto
+import com.codeoflegends.unimarket.features.order.data.model.Delivery
 import com.codeoflegends.unimarket.features.order.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.order.data.model.Order
+import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
+import com.codeoflegends.unimarket.features.order.data.model.Payment
+import com.codeoflegends.unimarket.features.order.data.model.PaymentEvidence
+import com.codeoflegends.unimarket.features.order.data.model.PaymentMethod
+import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
+import com.codeoflegends.unimarket.features.product.data.model.VariantImage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -45,6 +53,35 @@ object OrderMapper {
                 dto.entrepreneurship.slogan,
                 dto.entrepreneurship.email,
                 dto.entrepreneurship.phone,
+            )
+        )
+    }
+    fun orderDtoToOrder(dto: CreatedOrderDto ): Order{
+        return Order(
+            id = dto.id,
+            status = OrderStatus (
+                id = dto.status,
+                name = "temp"
+            ),
+            date =  dto.date,
+            subtotal = dto.subtotal,
+            discount = dto.discount,
+            total = dto.total,
+            userCreated = User(
+                id = UUID.fromString(dto.user_created.toString()),
+                firstName = "",
+                lastName = "",
+                email = "",
+            ),
+            payments = emptyList(),
+            orderDetails = emptyList(),
+            delivery = emptyList(),
+            entrepreneurship = Entrepreneurship(
+                id = dto.entrepreneurship.toString(),
+                name = "",
+                slogan = "",
+                email = "",
+                phone = ""
             )
         )
     }
