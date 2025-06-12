@@ -1,7 +1,7 @@
 package com.codeoflegends.unimarket.features.entrepreneurship.di
 
 import com.codeoflegends.unimarket.core.annotation.MainRetrofit
-import com.codeoflegends.unimarket.features.entrepreneurship.service.CollaboratorApi
+import com.codeoflegends.unimarket.features.entrepreneurship.data.remote.CollaboratorApi
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipCategoryService
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipReviewService
 import com.codeoflegends.unimarket.features.entrepreneurship.service.EntrepreneurshipService

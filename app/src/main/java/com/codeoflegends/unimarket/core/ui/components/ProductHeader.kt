@@ -46,19 +46,10 @@ fun ProductHeader(
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            if (selectedImage != null) {
-                ProductImage(
-                    imageUrl = selectedImage!!.imageUrl,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                // Placeholder cuando no hay imagen
-                Text(
-                    text = "Sin imagen",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            ProductImage(
+                imageUrl = selectedImage!!.imageUrl,
+                modifier = Modifier.fillMaxSize()
+            )
         }
         // Miniaturas
         if (images.size > 1) {

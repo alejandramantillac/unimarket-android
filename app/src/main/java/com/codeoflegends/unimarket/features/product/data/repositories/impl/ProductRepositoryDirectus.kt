@@ -54,7 +54,9 @@ class ProductRepositoryDirectus @Inject constructor(
         val isoTimestamp = Instant.now().atOffset(ZoneOffset.UTC)
             .format(DateTimeFormatter.ISO_INSTANT)
 
-        productService.deleteProduct(productId.toString())
+        productService.deleteProduct(productId.toString(), DeleteDto(
+            deletedAt = isoTimestamp
+        ))
         Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(e)

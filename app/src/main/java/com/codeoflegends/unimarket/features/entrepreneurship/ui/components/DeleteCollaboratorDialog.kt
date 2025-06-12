@@ -16,7 +16,7 @@ fun DeleteCollaboratorDialog(
         onDismissRequest = onDismiss,
         title = { Text("Confirmar eliminación") },
         text = { 
-            Text("¿Estás seguro que deseas eliminar a ${collaborator.user.firstName} ${collaborator.user.lastName} como colaborador?")
+            Text("¿Estás seguro que deseas eliminar a ${collaborator.name} como colaborador?")
         },
         confirmButton = {
             TextButton(
