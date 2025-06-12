@@ -18,5 +18,6 @@ data class Order (
     val payments: List<Payment>,
     val orderDetails: List<OrderDetail>,
     val delivery: List<Delivery>,
+    val entrepreneurship: Entrepreneurship
 )
 

@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages
+package com.codeoflegends.unimarket.features.order.ui.screens.common.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -18,11 +18,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.model.Payment
+import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewModel
 
 @Composable
-fun PaymentDetails(order: Order, payment: Payment, modifier: Modifier = Modifier) {
+fun PaymentDetails(
+    order: Order,
+    payment: Payment,
+    modifier: Modifier = Modifier,
+    viewModel: OrderSummaryViewModel = hiltViewModel(),
+    showButton: Boolean = true,
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -125,12 +133,14 @@ fun PaymentDetails(order: Order, payment: Payment, modifier: Modifier = Modifier
             }
 
             // Botón de confirmar pago
-            Spacer(modifier = Modifier.height(16.dp))
-            MainButton(
-                text = "Confirmar Pago Recibido",
-                onClick = { /* Acción al confirmar pago */ },
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (showButton) {
+                Spacer(modifier = Modifier.height(16.dp))
+                MainButton(
+                    text = "Confirmar Pago Recibido",
+                    onClick = { viewModel.updateOrderStatus("") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

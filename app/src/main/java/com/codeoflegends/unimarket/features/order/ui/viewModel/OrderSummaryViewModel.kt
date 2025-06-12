@@ -1,12 +1,12 @@
 package com.codeoflegends.unimarket.features.order.ui.viewModel
 
 import android.util.Log
-import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codeoflegends.unimarket.features.order.data.model.Order
+import com.codeoflegends.unimarket.features.order.data.dto.get.DeliveryStatusDto
+import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderUseCase
-import com.codeoflegends.unimarket.features.order.data.usecase.UpdateOrderStatusUseCase
+import com.codeoflegends.unimarket.features.order.data.usecase.UpdateOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +25,7 @@ sealed class OrderSummaryActionState {
 @HiltViewModel
 class OrderSummaryViewModel @Inject constructor(
     private val getOrderUseCase: GetOrderUseCase,
-    private val updateOrderStatusUseCase: UpdateOrderStatusUseCase // Falta por implementar
+    private val updateOrderUseCase: UpdateOrderUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OrderSummaryUiState())
@@ -68,6 +68,49 @@ class OrderSummaryViewModel @Inject constructor(
                 _actionState.value = OrderSummaryActionState.Success
             }catch (e: Exception) {
                 _actionState.value = OrderSummaryActionState.Error("Error al cargar el emprendimiento: ${e.message}")
+            }
+        }
+    }
+
+    fun updateOrderStatus(newStatus: String) {
+        val currentOrder = _uiState.value.order ?: return
+
+        viewModelScope.launch {
+            _actionState.value = OrderSummaryActionState.Loading
+            try {
+                val updatedOrderStatus = OrderStatus(
+                    id = currentOrder.status.id,
+                    name = newStatus
+                )
+                val updatedOrder = currentOrder.copy(status = updatedOrderStatus)
+                updateOrderUseCase(updatedOrder)
+                _uiState.value = _uiState.value.copy(order = updatedOrder)
+                _actionState.value = OrderSummaryActionState.Success
+            } catch (e: Exception) {
+                _actionState.value = OrderSummaryActionState.Error("Error al actualizar el estado de la orden: ${e.message}")
+            }
+        }
+    }
+
+    fun updateDeliveryStatus(newStatusId: String) {
+        val currentOrder = _uiState.value.order ?: return
+        val currentDelivery = currentOrder.delivery.firstOrNull() ?: return
+
+        viewModelScope.launch {
+            _actionState.value = OrderSummaryActionState.Loading
+            try {
+                val updatedDeliveryStatus = DeliveryStatusDto(
+                    id = UUID.fromString(newStatusId),
+                    name = "Entregado"
+                )
+                val updatedDelivery = currentDelivery.copy(status = updatedDeliveryStatus)
+                val updatedOrder = currentOrder.copy(delivery = listOf(updatedDelivery))
+                updateOrderUseCase(updatedOrder)
+                _uiState.value = _uiState.value.copy(order = updatedOrder)
+                _actionState.value = OrderSummaryActionState.Success
+                Log.d(TAG, "Estado del delivery actualizado correctamente: $updatedDeliveryStatus")
+            } catch (e: Exception) {
+                _actionState.value = OrderSummaryActionState.Error("Error al actualizar el estado del delivery: ${e.message}")
             }
         }
     }

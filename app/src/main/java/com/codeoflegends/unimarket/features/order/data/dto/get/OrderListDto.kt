@@ -13,11 +13,13 @@ class OrderListDto (
     val discount: Int,
     val total: Int,
     val userCreated: UserDto,
-    val orderDetails: List<OrderDetailDto> = emptyList()
+    val orderDetails: List<OrderDetailDto> = emptyList(),
+    val entrepreneurship: EntrepreneurshipDto,
 ){
     companion object {
-        fun query(entrepreneurship: String): DirectusQuery {
-            return DirectusQuery()
+        fun query(entrepreneurship: String? = null): DirectusQuery {
+
+            val query = DirectusQuery()
                 .join("user_created")
                 .join("status")
                 .join("user_created")
@@ -30,7 +32,16 @@ class OrderListDto (
                 .join("order_details.product_variant")
                 .join("order_details.product_variant.product")
                 .join("order_details.product_variant.variant_images")
-                .filter("entrepreneurship", "eq", entrepreneurship)
+                .join("delivery")
+                .join("delivery.status")
+                .join("delivery.partner.user_profile")
+                .join("delivery.partner.user_profile.profile")
+                .join("entrepreneurship")
+
+            entrepreneurship?.let{
+                query.filter("entrepreneurship", "eq", it)
+            }
+            return query
         }
     }
 }

@@ -1,14 +1,15 @@
 package com.codeoflegends.unimarket.features.order.data.usecase
 
+import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.repositories.interfaces.OrderRepository
-import java.util.UUID
 import javax.inject.Inject
 
-class UpdateOrderStatusUseCase @Inject constructor(
+class UpdateOrderUseCase @Inject constructor(
     private val repository: OrderRepository
 ) {
-    suspend operator fun invoke(orderId: UUID, newStatus: String) {
-        repository.updateOrderStatus(orderId, newStatus).getOrThrow()
+    suspend operator fun invoke(order: Order): Order {
+        repository.updateOrder(order).getOrThrow()
+        return order
     }
 }
 

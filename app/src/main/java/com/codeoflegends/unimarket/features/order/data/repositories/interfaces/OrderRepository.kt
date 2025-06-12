@@ -10,6 +10,8 @@ interface OrderRepository {
     suspend fun getAllOrders(entrepreneurship: UUID): Result<List<Order>>
 
     suspend fun createOrder(orderDto: CreateOrderDto): Result<Order>
-    
-    suspend fun updateOrderStatus(orderId: UUID, newStatus: String): Result<Order>
+
+    suspend fun getAllOrdersByBuyer(buyerId: UUID): Result<List<Order>>
+
+    suspend fun updateOrder(order: Order): Result<Unit>
 }

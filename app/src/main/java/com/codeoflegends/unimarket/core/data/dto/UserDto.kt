@@ -9,11 +9,11 @@ import java.util.UUID
 
 data class UserDto(
     val id: String,
-    val firstName: String = "",
-    val lastName: String = "",
-    val email: String = "",
-    val profile: UserProfileDto? = null
-) {
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val profile: UserProfileDto
+){
     companion object {
         fun query(): DirectusQuery {
             return DirectusQuery()
@@ -27,7 +27,7 @@ data class UserDto(
             firstName = firstName.orEmpty(),
             lastName = lastName.orEmpty(),
             email = email.orEmpty(),
-            profile = profile?.let {
+            profile = profile.let {
                 UserProfile(
                     profilePicture = it.profilePicture.orEmpty(),
                     userRating = it.userRating ?: 0f,
@@ -38,7 +38,7 @@ data class UserDto(
                         LocalDateTime.now()
                     }
                 )
-            } ?: UserProfile()
+            }
         )
     }
 }

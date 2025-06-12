@@ -1,48 +1,51 @@
-package com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen
+package com.codeoflegends.unimarket.features.order.ui.screens.buyerOrderSummaryScreen
 
 import DeliveryDetails
-import android.util.Log
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.components.TabSelector
 import com.codeoflegends.unimarket.features.order.ui.components.OrderProductList
-import com.codeoflegends.unimarket.features.order.ui.screens.common.pages.ClientDetails
+import com.codeoflegends.unimarket.features.order.ui.screens.common.pages.EntrepreneurshipDetails
 import com.codeoflegends.unimarket.features.order.ui.screens.common.pages.PaymentDetails
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.codeoflegends.unimarket.core.navigation.NavigationManager
-import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewModel
+import com.codeoflegends.unimarket.features.order.ui.viewModel.BuyerOrderSummaryViewModel
 
 @Composable
-fun OrderSummaryScreen(
+fun BuyerOrderSummaryScreen(
     orderId: String?,
-    viewModel: OrderSummaryViewModel = hiltViewModel(),
-    manager: NavigationManager? = null
+    viewModel: BuyerOrderSummaryViewModel = hiltViewModel(),
 ) {
 
-    Log.d("OrderSummaryScreen", "ID de la orden recibida: $orderId")
-    // Cargar la orden desde el ViewModel
     LaunchedEffect(orderId) {
         viewModel.loadOrder(orderId)
     }
 
-    // Observar el estado de la UI
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.id == null) {
-        // Mostrar mensaje si la orden no existe
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Orden no encontrada",
+                text = "Pedido no encontrado",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
             )
         }
@@ -58,15 +61,15 @@ fun OrderSummaryScreen(
                 uiState.payment?.let { payment ->
                     uiState.order?.let { order ->
                         PaymentDetails(payment = payment, order = order)
-                    } ?: Text("Información de la orden no disponible")
+                    } ?: Text("Información del pedido no disponible")
                 } ?: Text("Información de pago no disponible")
             }
         ),
         Tab(
-            title = "Cliente",
+            title = "Vendedor",
             content = {
-                uiState.client?.let {
-                    ClientDetails(client = it)
+                uiState.entrepreneurship?.let {
+                    EntrepreneurshipDetails(entrepreneurship = it)
                 } ?: Text("Información del cliente no disponible")
             }
         ),
@@ -79,6 +82,8 @@ fun OrderSummaryScreen(
             }
         )
     )
+
+
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         // Título del pedido

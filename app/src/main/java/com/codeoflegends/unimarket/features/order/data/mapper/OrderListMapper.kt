@@ -3,9 +3,9 @@ package com.codeoflegends.unimarket.features.order.data.mapper
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderListDto
+import com.codeoflegends.unimarket.features.order.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.model.OrderDetail
-import com.codeoflegends.unimarket.features.order.data.model.OrderList
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.model.VariantImage
@@ -30,14 +30,12 @@ object OrderListMapper {
                 firstName = dto.userCreated.firstName,
                 lastName = dto.userCreated.lastName,
                 email = dto.userCreated.email,
-                profile = dto.userCreated.profile?.let { profileDto ->
-                    UserProfile(
-                        profilePicture = profileDto.profilePicture,
-                        userRating = profileDto.userRating,
-                        partnerRating = profileDto.partnerRating,
-                        registrationDate = LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
-                    )
-                } ?: UserProfile("", 0f, 0f, LocalDateTime.now())
+                profile = UserProfile(
+                    profilePicture = dto.userCreated.profile.profilePicture,
+                    userRating = dto.userCreated.profile.userRating,
+                    partnerRating = dto.userCreated.profile.partnerRating,
+                    registrationDate = LocalDateTime.parse(dto.userCreated.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                )
             ),
             payments = emptyList(),
             orderDetails = dto.orderDetails.map { detailDto ->
@@ -58,7 +56,14 @@ object OrderListMapper {
                     )
                 )
             },
-            delivery = emptyList()
+            delivery = emptyList(),
+            entrepreneurship = Entrepreneurship(
+                dto.entrepreneurship.id,
+                dto.entrepreneurship.name,
+                dto.entrepreneurship.slogan,
+                dto.entrepreneurship.email,
+                dto.entrepreneurship.phone,
+            )
         )
     }
 }
