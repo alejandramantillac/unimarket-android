@@ -41,11 +41,11 @@ object EntrepreneurshipMapper {
                         lastName = partnerDto.user[0].lastName,
                         email = partnerDto.user[0].email,
                         profile = UserProfile(
-                            profilePicture = partnerDto.user[0].profile.profilePicture,
-                            userRating = partnerDto.user[0].profile.userRating,
-                            partnerRating = partnerDto.user[0].profile.partnerRating,
+                            profilePicture = partnerDto.user[0].profile?.profilePicture ?: "",
+                            userRating = partnerDto.user[0].profile?.userRating ?: 0.0F,
+                            partnerRating = partnerDto.user[0].profile?.partnerRating ?: 0.0F,
                             registrationDate = LocalDateTime.parse(
-                                partnerDto.user[0].profile.registrationDate,
+                                partnerDto.user[0].profile?.registrationDate ?: LocalDateTime.now().toString(),
                                 DateTimeFormatter.ISO_DATE_TIME
                             )
                         )
