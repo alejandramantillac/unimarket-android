@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages
+package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages
 
 
 import androidx.compose.foundation.layout.*
@@ -151,7 +151,7 @@ private fun CollaboratorsList(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(collaborators) { collaborator ->
-                    CollaboratorItem(
+                    com.codeoflegends.unimarket.features.entrepreneurship.ui.components.CollaboratorItem(
                         collaborator = collaborator,
                         onDeleteClick = { onDeleteClick(collaborator) }
                     )

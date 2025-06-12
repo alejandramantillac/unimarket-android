@@ -13,6 +13,23 @@ data class Product(
     val price: Double,
     val stockAlert: Int,
     val published: Boolean,
+    val discount: Double = 0.0,
+    val variants: List<ProductVariant> = emptyList(),
+    val specifications: List<ProductSpecification> = emptyList(),
+    val reviews: List<Review> = emptyList()
+)
+
+data class NewProduct(
+    val id: UUID? = null,
+    val entrepreneurship: UUID,
+    val imageUrl: String? = null,
+    val category: ProductCategory,
+    val name: String,
+    val description: String,
+    val price: Double,
+    val stockAlert: Int,
+    val published: Boolean,
+    val discount: Double = 0.0,
     val variants: List<ProductVariant> = emptyList(),
     val specifications: List<ProductSpecification> = emptyList(),
     val reviews: List<Review> = emptyList()

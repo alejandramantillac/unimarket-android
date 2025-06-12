@@ -21,6 +21,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import java.util.UUID
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.IUserGetDataRepository
+import com.codeoflegends.unimarket.features.product.data.model.NewProduct
 import com.codeoflegends.unimarket.features.product.data.model.Review
 
 @Singleton
@@ -30,7 +31,7 @@ class ProductRepositoryDirectus @Inject constructor(
     private val userGetDataRepository: IUserGetDataRepository
 ) : ProductRepository {
 
-    override suspend fun createProduct(product: Product): Result<Unit> = try {
+    override suspend fun createProduct(product: NewProduct): Result<Unit> = try {
         val productDto = ProductMapper.toNewProductDto(product)
         productService.createProduct(productDto)
         Result.success(Unit)
@@ -39,7 +40,7 @@ class ProductRepositoryDirectus @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun updateProduct(product: Product): Result<Unit> = try {
+    override suspend fun updateProduct(product: NewProduct): Result<Unit> = try {
         val productDto = ProductMapper.toUpdateProductDto(product)
         Log.d("ProductRepositoryDirectus", "Updating product: $productDto")
         productService.updateProduct(product.id.toString(), productDto)
@@ -145,6 +146,28 @@ class ProductRepositoryDirectus @Inject constructor(
         Result.success(reviews)
     } catch (e: Exception) {
         Log.e("ProductRepositoryDirectus", "Error fetching product reviews: ${'$'}{e.message}", e)
+        Result.failure(e)
+    }
+
+    override suspend fun getAllProductsByQuery(
+        nameContains: String,
+        filters: List<DirectusQuery.Filter>,
+        limit: Int,
+        page: Int
+    ): Result<List<Product>> = try {
+        val productsDto = productService.getAllProducts(
+            ProductListDto.queryByFilters(
+                nameContains = nameContains,
+                filters = filters,
+                limit = limit,
+                page = page
+            ).build()
+        ).data
+        Log.d("ProductRepositoryDirectus", "Fetched products by filters: ${productsDto.size} items")
+        val products = ProductMapper.listDtoToProductList(productsDto)
+        Result.success(products)
+    } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error fetching products by filters: ", e)
         Result.failure(e)
     }
 }

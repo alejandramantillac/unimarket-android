@@ -36,7 +36,7 @@ class CreateOrderFromCartUseCase @Inject constructor(
                 .getOrThrow()
                 .find { it.name == "pendiente" }
                 ?.id ?: throw Exception("pendiente status not found")
-
+                
             // Get first product to get entrepreneurship ID
             val firstProductId = cart.items.firstOrNull()?.variant?.productId
                 ?: throw Exception("Cart is empty")

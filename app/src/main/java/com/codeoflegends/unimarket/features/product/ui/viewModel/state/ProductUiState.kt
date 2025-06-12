@@ -24,7 +24,7 @@ data class ProductFormData(
     
     // References to business objects
     val selectedCategory: ProductCategory? = null,
-    val selectedBusiness: Entrepreneurship? = null, // Used only in create mode
+    val entrepreneurshipId: UUID? = null, // Used only in create mode
     
     // Collections that define the product
     val variants: List<ProductVariant> = emptyList(),

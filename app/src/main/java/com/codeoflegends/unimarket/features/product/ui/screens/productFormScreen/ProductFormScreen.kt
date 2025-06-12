@@ -16,8 +16,10 @@ import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen
 import com.codeoflegends.unimarket.features.product.ui.screens.productFormScreen.pages.ProductSpecifications
 import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.features.product.ui.viewModel.validation.ProductValidation
 import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 
 /**
@@ -26,6 +28,7 @@ import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 @Composable
 fun ProductFormScreen(
     productId: String? = null,
+    entrepreneurshipId: String? = null,
     viewModel: ProductFormViewModel = hiltViewModel(),
     manager: NavigationManager
 ) {
@@ -38,6 +41,10 @@ fun ProductFormScreen(
     // Load the product if we're in edit mode
     LaunchedEffect(productId) {
         viewModel.loadProduct(productId)
+    }
+
+    LaunchedEffect(entrepreneurshipId) {
+        viewModel.loadEntrepreneurshipId(entrepreneurshipId)
     }
 
     // Get the form validity from the validation system
@@ -71,56 +78,63 @@ fun ProductFormScreen(
         return
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = if (isEdit) "Editar Producto" else "Crear Producto",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
+    MainLayout(
+        barOptions = AppBarOptions(
+            show = true,
+            showBackButton = true,
+            onBackClick = { manager?.navController?.popBackStack() },
         )
-        
-        Box(
-            modifier = Modifier
-                .weight(0.7f)
-                .fillMaxWidth()
-        ) {
-            TabSelector(
-                tabs = listOf(
-                    Tab("Básico") { ProductBasic(viewModel) },
-                    Tab("Variantes") { ProductVariants(viewModel) },
-                    Tab("Detalles") { ProductSpecifications(viewModel) }),
-                selectedTabIndex = selectedTab,
-                onTabSelected = { viewModel.onTabSelected(it) },
-            )
-        }
-
+    ) {
         Column(
             modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .padding(top = 72.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         ) {
-            MainButton(
-                text = if (isEdit) "Guardar Cambios" else "Crear Producto",
-                onClick = { viewModel.saveProduct() },
-                enabled = canSaveProduct
+            Text(
+                text = if (isEdit) "Editar Producto" else "Crear Producto",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            SecondaryButton(
-                text = if (isEdit) "Eliminar Producto" else "Cancelar",
-                onClick = { 
-                    if (isEdit) {
-                        viewModel.deleteProduct()
-                    } else {
-                        manager.navController.popBackStack()
+
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                TabSelector(
+                    tabs = listOf(
+                        Tab("Básico") { ProductBasic(viewModel) },
+                        Tab("Variantes") { ProductVariants(viewModel) },
+                        Tab("Detalles") { ProductSpecifications(viewModel) }),
+                    selectedTabIndex = selectedTab,
+                    onTabSelected = { viewModel.onTabSelected(it) }
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                MainButton(
+                    text = if (isEdit) "Guardar Cambios" else "Crear Producto",
+                    onClick = { viewModel.saveProduct() },
+                    enabled = canSaveProduct
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SecondaryButton(
+                    text = if (isEdit) "Eliminar Producto" else "Cancelar",
+                    onClick = {
+                        if (isEdit) {
+                            viewModel.deleteProduct()
+                        } else {
+                            manager?.navController?.popBackStack()
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
+
 }

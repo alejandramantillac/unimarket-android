@@ -85,6 +85,16 @@ fun BuyerHomeScreen(
             text = "Crear Producto"
         )
 
+        MainButton(
+            onClick = {
+                manager.navController.navigate(
+                    Routes.EntrepreneurshipView.createRoute("00000000-0000-0000-0000-000000000007")
+                )
+            },
+            text = "View Entrepreneurship Details Silem",
+            fillMaxWidth = true
+        )
+
         // Lista de productos disponibles
         if (products.isNotEmpty()) {
             Text(
@@ -103,7 +113,6 @@ fun BuyerHomeScreen(
                     val isShopper = authState.authorities.contains("Shopper", ignoreCase = true)
                     ProductItem(
                         product = product,
-                        onEditClick = {}, // No acción para editar si es shopper
                         onViewClick = {
                             Log.d("BuyerHomeScreen", "Authorities: ${authState.authorities}, isBuyer: $isShopper")
                             manager.navController.currentBackStackEntry?.savedStateHandle?.set("lastIsBuyer", isShopper)

@@ -12,6 +12,7 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.Create
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneurshipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.DeleteEntrepreneurshipUseCase
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurship
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetAllEntrepreneurshipByQuery
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
 
 @Module
@@ -50,5 +51,10 @@ abstract class EntrepreneurshipModule {
         @Singleton
         fun provideGetAllEntrepreneurshipsUseCase(repository: IEntrepreneurshipRepository): GetAllEntrepreneurship =
             GetAllEntrepreneurship(repository)
+
+        @Provides
+        @Singleton
+        fun provideGetAllEntrepreneurshipsByQueryUseCase(repository: IEntrepreneurshipRepository): GetAllEntrepreneurshipByQuery =
+            GetAllEntrepreneurshipByQuery(repository)
     }
 }

@@ -26,7 +26,6 @@ import com.codeoflegends.unimarket.features.product.data.model.Product
 @Composable
 fun ProductItem(
     product: Product,
-    onEditClick: () -> Unit,
     onViewClick: () -> Unit,
     isShopper: Boolean = false
 ) {
@@ -34,7 +33,7 @@ fun ProductItem(
         modifier = Modifier
             .fillMaxWidth()
             .then(
-                if (isShopper) Modifier.clickable { onViewClick() } else Modifier
+                if (!isShopper) Modifier.clickable { onViewClick() } else Modifier
             ),
         elevation = CardDefaults.cardElevation(2.dp),
         shape = RoundedCornerShape(12.dp)
@@ -82,34 +81,6 @@ fun ProductItem(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
-            }
-
-            if (!isShopper) {
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    IconButton(
-                        onClick = onViewClick,
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            Icons.Rounded.Description,
-                            contentDescription = "Ver detalles",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(
-                        onClick = onEditClick,
-                        modifier = Modifier.size(36.dp)
-                    ) {
-                        Icon(
-                            Icons.Rounded.EditNote,
-                            contentDescription = "Editar producto",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
             }
         }
     }

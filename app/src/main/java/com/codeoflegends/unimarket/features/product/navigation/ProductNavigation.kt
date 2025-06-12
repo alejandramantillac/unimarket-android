@@ -26,7 +26,22 @@ fun NavGraphBuilder.productNavigation(
         val productId = backStackEntry.arguments?.getString("id")
         ProductFormScreen(productId = productId, manager = manager)
     }
-    
+
+    composable(Routes.CreateProduct.route,
+        arguments = listOf(
+            navArgument("entrepreneurshipId") {
+                type = NavType.StringType
+            }
+        )
+    ) { backStackEntry ->
+        val entrepreneurshipId = backStackEntry.arguments?.getString("entrepreneurshipId")
+        ProductFormScreen(
+            productId = null, 
+            entrepreneurshipId = entrepreneurshipId,
+            manager = manager
+        )
+    }
+
     composable(
         route = Routes.ProductView.route,
         arguments = listOf(navArgument("id") { type = NavType.StringType })

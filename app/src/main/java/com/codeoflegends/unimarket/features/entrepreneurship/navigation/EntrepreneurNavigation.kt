@@ -7,9 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screen.PartnerScreen
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipBuyerDetailsScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipFormScreen
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.EntrepreneurshipScreen
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.entrepreneurshipFormScreen.pages.EntrepreneurshipMembersPage
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.EntrepreneurshipSellerScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipProfileScreen
 //import com.codeoflegends.unimarket.features.profile.ui.screens.EditProfileScreen
 import java.util.UUID
@@ -45,7 +46,10 @@ fun NavGraphBuilder.entrepreneurNavigation(
         )
     ) { backStackEntry ->
         val entrepreneurshipId = backStackEntry.arguments?.getString("id")
-        EntrepreneurshipScreen(entrepreneurshipId = entrepreneurshipId, manager = manager)
+        EntrepreneurshipSellerScreen(
+            entrepreneurshipId = UUID.fromString(entrepreneurshipId),
+            manager = manager
+        )
     }
 
 
@@ -61,6 +65,23 @@ fun NavGraphBuilder.entrepreneurNavigation(
         //EditProfileScreen(viewModel = hiltViewModel(), entrepreneurshipId = entrepreneurshipId ?: "")
     }
 
+
+    composable(
+        Routes.EntrepreneurshipView.route,
+        arguments = listOf(
+            navArgument("id") {
+                type = NavType.StringType
+            }
+        )
+    ) { backStackEntry ->
+        val entrepreneurshipId = backStackEntry.arguments?.getString("id")
+        entrepreneurshipId?.let {
+            EntrepreneurshipBuyerDetailsScreen(
+                entrepreneurshipId = UUID.fromString(it)
+            )
+        }
+    }
+
     composable(
         Routes.Collaborators.route,
         arguments = listOf(
@@ -71,9 +92,9 @@ fun NavGraphBuilder.entrepreneurNavigation(
     ) { backStackEntry ->
         val entrepreneurshipId = backStackEntry.arguments?.getString("id")
         entrepreneurshipId?.let {
-            EntrepreneurshipMembersPage(
-                viewModel = hiltViewModel(),
-                entrepreneurshipId = UUID.fromString(it)
+            PartnerScreen(
+                entrepreneurshipId = UUID.fromString(it),
+                manager = manager
             )
         }
     }
