@@ -8,6 +8,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
     // Home Routes
     data object Home : Routes("/")
+    data object Settings : Routes("/settings")
     data object HomeSearch : Routes("/home/search")
 
     // Cart Route
@@ -55,6 +56,19 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    // Order Routes for buyers
+
+    data object ManageHistory : Routes("/manage/history") {
+        val base get() = "/manage/history/"
+    }
+
+    data object OrderHistory : Routes("/order/history/{id}"){
+        val base get() = "/order/history/"
+        fun createRoute(id: String): String {
+            return "/order/history/$id"
+        }
+    }
+
         // Role Selection Route
         data object RoleSelection : Routes("/role_selection")
 
@@ -83,7 +97,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
         data object EntrepreneurProfile : Routes("/entrepreneur")
 
-        data object Collaborators : Routes("/entrepreneurship/{id}/collaborators") {
+        data object Collaborators : Routes("/entrepreneurship/{id}/collaborators", "partner.read") {
             val base get() = "/entrepreneurship/"
             fun createRoute(id: String): String {
                 return "/entrepreneurship/$id/collaborators"

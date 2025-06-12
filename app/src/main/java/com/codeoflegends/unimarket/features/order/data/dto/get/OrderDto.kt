@@ -17,6 +17,7 @@ class OrderDto (
     val payments: List<PaymentDto>,
     val orderDetails: List<OrderDetailDto>,
     val delivery: List<DeliveryDto>,
+    val entrepreneurship: EntrepreneurshipDto
 ){
     companion object {
         fun query(): DirectusQuery {
@@ -35,6 +36,8 @@ class OrderDto (
                 .join("delivery.status")
                 .join("delivery.partner.user_profile")
                 .join("delivery.partner.user_profile.profile")
+                .join("entrepreneurship")
+
 
             Log.d("hola", query.build().toString())
 

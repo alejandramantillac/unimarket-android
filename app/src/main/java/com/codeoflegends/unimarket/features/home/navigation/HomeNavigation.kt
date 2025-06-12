@@ -6,6 +6,7 @@ import com.codeoflegends.unimarket.core.extension.secureComposable
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.home.ui.screens.homeScreen.HomeScreen
 import com.codeoflegends.unimarket.features.home.ui.components.ProductSearchScreen
+import com.codeoflegends.unimarket.features.home.ui.screens.SettingsScreen
 import com.codeoflegends.unimarket.features.product.navigation.productNavigation
 
 fun NavGraphBuilder.homeNavigation(
@@ -23,6 +24,13 @@ fun NavGraphBuilder.homeNavigation(
         manager = manager
     ) {
         ProductSearchScreen(manager)
+    }
+
+    secureComposable (
+        route = Routes.Settings.route,
+        manager = manager
+    ) {
+        SettingsScreen(manager)
     }
 
     productNavigation(manager)

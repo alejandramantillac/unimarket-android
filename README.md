@@ -7,8 +7,7 @@
 3. [Roles y Funcionalidades](#-roles-y-funcionalidades)
 4. [Estado de Implementación](#-estado-de-implementación)
 5. [Arquitectura y Tecnologías](#-arquitectura-y-tecnologías)
-6. [Próximos Pasos](#-próximos-pasos)
-7. [Notas de Desarrollo](#-notas-de-desarrollo)
+6. [Notas de Desarrollo](#-notas-de-desarrollo)
 
 ## 🎯 Acerca de UniMarket
 
@@ -86,33 +85,22 @@ El rol de Comprador es el rol por defecto asignado a todas las nuevas cuentas. L
 - Seguimiento de estado de pedidos (Pendiente, Completado)
 - Visualización de historial de pedidos
 
-### Funcionalidades Pendientes
-
-#### Emprendedor
-
-❌ **Análisis y Reportes**
-
-- Estadísticas de ventas
-- Reportes de productos más vendidos
-- Métricas de rendimiento
-- Dashboard de análisis
-
 #### Cliente
 
-**❌ Exploración Básica**
+✅ **Exploración Básica**
 
 - Pantalla de inicio con lista de productos
 - Visualización de productos disponibles
 - Navegación básica entre productos
 
-❌ **Exploración Avanzada**
+✅ **Exploración Avanzada**
 
-- Catálogo completo de productos
-- Búsqueda y filtrado avanzado
+- Catálogo completo de productos de un emprendimiento
+- Búsqueda y filtrado avanzado (por ofertas o categoría)
 - Visualización detallada de emprendimientos
 - Sistema de categorías
 
-❌ **Compras**
+✅ **Compras**
 
 - Carrito de compras
 - Proceso de checkout
@@ -131,22 +119,16 @@ El rol de Comprador es el rol por defecto asignado a todas las nuevas cuentas. L
 - **Inyección de Dependencias**: Hilt
 - **Backend**: Directus
 
-## 🚀 Próximos Pasos
-
-1. Implementar sistema de carrito de compras y checkout
-2. Desarrollar sistema de análisis y reportes para emprendedores
-3. Implementar sistema de pagos y envíos
-4. Desarrollar sistema de búsqueda y filtrado avanzado
-5. Implementar sistema de reseñas y calificaciones para compradores
-
 ## 📝 Notas de Desarrollo
 
 ### Estado Actual
 
 - Sistema de autenticación y gestión de roles completamente implementado
-- Navegación y rutas configuradas para todas las funcionalidades
+- Navegación y rutas configuradas para las funcionalidades
 - Gestión de productos con soporte para variantes y especificaciones
 - Sistema de pedidos con seguimiento de estado
+- Sistema de carrito de compras y checkout implementado
+- Búsqueda y filtrado de productos implementado
 - Interfaz de usuario moderna y responsive
 
 ### Consideraciones Técnicas
@@ -156,3 +138,5 @@ El rol de Comprador es el rol por defecto asignado a todas las nuevas cuentas. L
 - Validación de formularios
 - Gestión de caché para datos frecuentes
 - Soporte para múltiples roles y permisos
+- Sistema de filtrado y búsqueda optimizado
+- Gestión de carrito de compras con persistencia local

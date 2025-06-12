@@ -13,12 +13,11 @@ import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.core.ui.components.Tab
 import com.codeoflegends.unimarket.core.ui.components.TabSelector
 import com.codeoflegends.unimarket.features.order.ui.components.OrderProductList
-import com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages.ClientDetails
-import com.codeoflegends.unimarket.features.order.ui.screens.orderSummaryScreen.pages.PaymentDetails
+import com.codeoflegends.unimarket.features.order.ui.screens.common.pages.ClientDetails
+import com.codeoflegends.unimarket.features.order.ui.screens.common.pages.PaymentDetails
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewModel
-import java.util.UUID
 
 @Composable
 fun OrderSummaryScreen(

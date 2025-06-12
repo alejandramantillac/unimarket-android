@@ -4,7 +4,6 @@ import com.codeoflegends.unimarket.features.product.data.dto.get.VariantDto
 import com.codeoflegends.unimarket.features.product.data.model.ProductVariant
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewVariantDto
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewVariantImageDto
-import com.codeoflegends.unimarket.features.product.data.dto.get.VariantImageDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateVariantDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateVariantImageDto
 import com.codeoflegends.unimarket.features.product.data.model.VariantImage

@@ -26,12 +26,7 @@ data class UserUiState(
         firstName = "",
         lastName = "",
         email = "",
-        profile = UserProfile(
-            profilePicture = "",
-            userRating = 0f,
-            partnerRating = 0f,
-            registrationDate = LocalDateTime.now()
-        )
+        profile = UserProfile()
     ),
     val entrepreneurships: List<Entrepreneurship> = emptyList(),
 )
@@ -68,17 +63,21 @@ class UserProfileViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(
                     user = User(
                         id = UUID.fromString(userDto.id),
-                        firstName = userDto.firstName,
-                        lastName = userDto.lastName,
-                        email = userDto.email,
+                        firstName = userDto.firstName.orEmpty(),
+                        lastName = userDto.lastName.orEmpty(),
+                        email = userDto.email.orEmpty(),
                         profile = userDto.profile?.let { profileDto ->
                             UserProfile(
-                                profilePicture = profileDto.profilePicture,
-                                userRating = profileDto.userRating,
-                                partnerRating = profileDto.partnerRating,
-                                registrationDate = LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                                profilePicture = profileDto.profilePicture.orEmpty(),
+                                userRating = profileDto.userRating ?: 0f,
+                                partnerRating = profileDto.partnerRating ?: 0f,
+                                registrationDate = try {
+                                    LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                                } catch (e: Exception) {
+                                    LocalDateTime.now()
+                                }
                             )
-                        } ?: UserProfile("", 0f, 0f, LocalDateTime.now())
+                        } ?: UserProfile()
                     )
                 )
                 _actionState.value = UserProfileActionState.Idle

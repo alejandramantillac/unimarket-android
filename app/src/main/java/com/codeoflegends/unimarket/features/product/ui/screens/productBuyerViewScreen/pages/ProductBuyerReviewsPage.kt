@@ -50,8 +50,8 @@ fun ProductBuyerReviewsPage(reviews: List<Review>, onRateClick: () -> Unit) {
                     items(reviews) { review ->
                         val commentData = CommentData(
                             userId = review.userProfileId,
-                            userName = "Usuario", // TODO: Obtener el nombre del usuario
-                            userImageUrl = "",
+                            userName = "User Testing", // TODO: Obtener el nombre del usuario
+                            userImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSYFuA8WBBIAvQWabLBD4tskBReFvrl4THCQ&s",
                             rating = review.rating.toFloat(),
                             comment = review.comment,
                             date = review.creationDate

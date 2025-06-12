@@ -30,7 +30,7 @@ fun ProductFormScreen(
     productId: String? = null,
     entrepreneurshipId: String? = null,
     viewModel: ProductFormViewModel = hiltViewModel(),
-    manager: NavigationManager? = null
+    manager: NavigationManager
 ) {
     val state by viewModel.uiState.collectAsState()
     val formData = state.formData
@@ -56,7 +56,7 @@ fun ProductFormScreen(
         when (actionState) {
             is ProductActionState.Success -> {
                 ToastHandler.showSuccess("Operación exitosa!!", dismissTimeout = 3f)
-                manager?.navController?.popBackStack()
+                manager.navController.popBackStack()
             }
             is ProductActionState.Error -> {
                 ToastHandler.handleError(
