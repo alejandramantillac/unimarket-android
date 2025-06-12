@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.order.data.mapper
 
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
+import com.codeoflegends.unimarket.features.order.data.dto.create.CreatedOrderDto
 import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDto
 import com.codeoflegends.unimarket.features.order.data.model.Delivery
 import com.codeoflegends.unimarket.features.order.data.model.Order
@@ -84,6 +85,29 @@ object OrderMapper {
                     status = deliveryDto.status
                 )
             }
+        )
+    }
+
+    fun orderDtoToOrder(dto: CreatedOrderDto ): Order{
+        return Order(
+            id = dto.id,
+            status = OrderStatus (
+                id = dto.status,
+                name = "temp"
+            ),
+            date =  dto.date,
+            subtotal = dto.subtotal,
+            discount = dto.discount,
+            total = dto.total,
+            userCreated = User(
+                id = UUID.fromString(dto.user_created.toString()),
+                firstName = "",
+                lastName = "",
+                email = "",
+            ),
+            payments = emptyList(),
+            orderDetails = emptyList(),
+            delivery = emptyList()
         )
     }
 }

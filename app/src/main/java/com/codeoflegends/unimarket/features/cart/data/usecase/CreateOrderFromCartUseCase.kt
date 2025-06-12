@@ -1,82 +1,86 @@
 package com.codeoflegends.unimarket.features.cart.data.usecase
 
-import com.codeoflegends.unimarket.core.data.dto.UserDto
-import com.codeoflegends.unimarket.core.data.dto.UserProfileDto
+import android.util.Log
 import com.codeoflegends.unimarket.features.cart.data.model.Cart
-import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDetailDto
-import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDto
-import com.codeoflegends.unimarket.features.order.data.dto.get.OrderStatusDto
-import com.codeoflegends.unimarket.features.order.data.dto.get.ProductDto
-import com.codeoflegends.unimarket.features.order.data.dto.get.ProductVariantDto
+import com.codeoflegends.unimarket.features.cart.data.repositories.interfaces.CartRepository
+import com.codeoflegends.unimarket.features.order.data.dto.create.CreateOrderDetailDto
+import com.codeoflegends.unimarket.features.order.data.dto.create.CreateOrderDto
+import com.codeoflegends.unimarket.features.order.data.dto.create.StatusDto
 import com.codeoflegends.unimarket.features.order.data.model.Order
 import com.codeoflegends.unimarket.features.order.data.repositories.interfaces.OrderRepository
-import com.codeoflegends.unimarket.features.product.data.dto.get.VariantImageDto
+import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderStatusesUseCase
+import com.codeoflegends.unimarket.features.product.data.repositories.interfaces.ProductRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class CreateOrderFromCartUseCase @Inject constructor(
-    private val orderRepository: OrderRepository
+    private val cartRepository: CartRepository,
+    private val orderRepository: OrderRepository,
+    private val productRepository: ProductRepository,
+    private val getOrderStatusesUseCase: GetOrderStatusesUseCase
 ) {
     suspend operator fun invoke(cart: Cart): Result<Order> {
-        if (cart.items.isEmpty()) {
-            return Result.failure(IllegalStateException("Cart is empty"))
-        }
+        return try {
+            if (cart.items.isEmpty()) {
+                throw Exception("Cart is empty")
+            }
 
-        if (cart.userCreated == null) {
-            return Result.failure(IllegalStateException("User not authenticated"))
-        }
+            if (cart.userCreated == null) {
+                throw Exception("User not authenticated")
+            }
 
-        val orderDto = OrderDto(
-            id = UUID.randomUUID(),
-            status = OrderStatusDto(
-                id = UUID.fromString("d5128a08-9c70-4c45-b9c5-2ce1d8c5681e"), // PENDING status ID
-                name = "PENDING"
-            ),
-            date = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
-            subtotal = cart.subtotal.toInt(),
-            discount = 0,
-            total = cart.subtotal.toInt(),
-            userCreated = UserDto(
-                id = cart.userCreated.id.toString(),
-                firstName = cart.userCreated.firstName,
-                lastName = cart.userCreated.lastName,
-                email = cart.userCreated.email,
-                profile = UserProfileDto(
-                    id = cart.userCreated.id.toString(),
-                    profilePicture = cart.userCreated.profile.profilePicture,
-                    userRating = cart.userCreated.profile.userRating,
-                    partnerRating = cart.userCreated.profile.partnerRating,
-                    registrationDate = cart.userCreated.profile.registrationDate.format(DateTimeFormatter.ISO_DATE_TIME),
-                )
-            ),
-            payments = emptyList(),
-            orderDetails = cart.items.map { cartItem ->
-                OrderDetailDto(
-                    id = UUID.randomUUID(),
-                    amount = cartItem.quantity,
-                    unitPrice = cartItem.variant.price.toInt(),
-                    productVariant = ProductVariantDto(
-                        id = cartItem.variant.id,
-                        name = cartItem.variant.name,
-                        stock = cartItem.variant.stock,
-                        variantImages = cartItem.variant.variantImages.map { 
-                            VariantImageDto(
-                                id = it.id ?: UUID.randomUUID(),
-                                imageUrl = it.imageUrl
-                            )
-                        },
-                        product = ProductDto(
-                            id = cartItem.variant.productId,
-                            name = cartItem.variant.productName
-                        )
+            // Get PENDING status ID
+            val pendingStatusId = getOrderStatusesUseCase()
+                .getOrThrow()
+                .find { it.name == "pendiente" }
+                ?.id ?: throw Exception("pendiente status not found")
+                
+            // Get first product to get entrepreneurship ID
+            val firstProductId = cart.items.firstOrNull()?.variant?.productId
+                ?: throw Exception("Cart is empty")
+            
+            val product = productRepository.getProduct(firstProductId)
+                .getOrThrow()
+            
+            val entrepreneurshipId = product.entrepreneurship.id
+                ?: throw Exception("Product's entrepreneurship has no ID")
+
+            val subtotalDouble = cart.items.sumOf { item ->
+                item.variant.price * item.quantity
+            }
+            
+            val subtotalInt = (subtotalDouble * 100).roundToInt()
+            
+            val orderDto = CreateOrderDto(
+                status = pendingStatusId.toString(),
+                subtotal = subtotalInt,
+                discount = 0,
+                total = subtotalInt,
+                user_created = cart.userCreated.id,
+                entrepreneurship = entrepreneurshipId,
+                order_details = cart.items.map { item ->
+                    CreateOrderDetailDto(
+                        amount = item.quantity,
+                        unit_price = (item.variant.price * 100).roundToInt(),
+                        product_variant = item.variant.id
                     )
-                )
-            },
-            delivery = emptyList()
-        )
+                }
+            )
 
-        return orderRepository.createOrder(orderDto)
+            Log.d("CreateOrder", "Creating order with data:")
+            Log.d("CreateOrder", "Status: $pendingStatusId")
+            Log.d("CreateOrder", "Subtotal: ${orderDto.subtotal}")
+            Log.d("CreateOrder", "Total: ${orderDto.total}")
+            Log.d("CreateOrder", "User: ${orderDto.user_created}")
+            Log.d("CreateOrder", "Entrepreneurship: $entrepreneurshipId")
+            Log.d("CreateOrder", "Details count: ${orderDto.order_details.size}")
+
+            orderRepository.createOrder(orderDto)
+        } catch (e: Exception) {
+            Log.e("CreateOrder", "Error creating order", e)
+            Result.failure(e)
+        }
     }
 } 

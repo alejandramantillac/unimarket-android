@@ -31,15 +31,10 @@ class OrderDto (
                 .join("order_details.product_variant")
                 .join("order_details.product_variant.product")
                 .join("order_details.product_variant.variant_images")
-                .join("delivery")
-                .join("delivery.status")
-                .join("delivery.partner.user_profile")
-                .join("delivery.partner.user_profile.profile")
 
             Log.d("hola", query.build().toString())
 
             return query
-
         }
     }
 }
