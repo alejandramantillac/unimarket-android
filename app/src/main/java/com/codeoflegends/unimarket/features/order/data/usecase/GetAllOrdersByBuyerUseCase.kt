@@ -10,7 +10,7 @@ class GetAllOrdersByBuyerUseCase @Inject constructor(
     private val repository: OrderRepository,
 ) {
     suspend operator fun invoke(): List<Order> {
-        val defaultBuyer = UUID.fromString("00000000-0000-0000-0000-000000000007")
+        val defaultBuyer = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
         return repository.getAllOrdersByBuyer(defaultBuyer).getOrThrow()
     }
 }

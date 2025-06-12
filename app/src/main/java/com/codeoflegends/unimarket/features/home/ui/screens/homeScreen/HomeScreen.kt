@@ -1,8 +1,11 @@
 package com.codeoflegends.unimarket.features.home.ui.screens.homeScreen
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -16,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
+import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.components.SecondaryButton
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
@@ -46,65 +50,89 @@ fun HomeScreen(
             Scaffold(
                 modifier = Modifier.padding(top = 20.dp),
             ) { paddingValues ->
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
-                ) {
-                    val state by viewModel.uiState.collectAsState()
-
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
+                ){
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        val state by viewModel.uiState.collectAsState()
+
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
                         ) {
-                            // Barra de búsqueda prominente
-                            ProductSearchBar(
-                                onClick = {
-                                    manager.navController.navigate(Routes.HomeSearch.route)
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                // Barra de búsqueda prominente
+                                ProductSearchBar(
+                                    onClick = {
+                                        manager.navController.navigate(Routes.HomeSearch.route)
+                                    }
+                                )
+
+                                // Carrusel de banners
+                                if (state.banners.isNotEmpty()) {
+                                    BannerCarousel(banners = state.banners)
                                 }
-                            )
 
-                            // Carrusel de banners
-                            if (state.banners.isNotEmpty()) {
-                                BannerCarousel(banners = state.banners)
+                                //Texto de bienvenida
+                                Text(
+                                    text = "¡Bienvenido de vuelta!",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+                                )
+
+                                ProductCategoriesSection()
+
+                                ProductSection(
+                                    title = "Para vestir a la moda",
+                                    fixedFilters = listOf(DirectusQuery.Filter("category", "eq", "Moda")),
+                                    manager = manager,
+                                )
+
+                                EntrepreneurshipSection(
+                                    title = "Nuestros mejores aliados",
+                                    fixedFilters = listOf(),
+                                    manager = manager,
+                                )
                             }
-
-                            //Texto de bienvenida
-                            Text(
-                                text = "¡Bienvenido de vuelta!",
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
-                            )
-
-                            ProductCategoriesSection()
-
-                            // Botón para navegar al carrito
-                            SecondaryButton(
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .width(290.dp)
+                            .padding(30.dp)
+                            .align(Alignment.BottomCenter),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            MainButton(
                                 text = "Ver mi carrito",
                                 onClick = {
                                     manager.navController.navigate(Routes.Cart.route)
                                 },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.width(150.dp).height(40.dp)
                             )
-
-                            ProductSection(
-                                title = "Para vestir a la moda",
-                                fixedFilters = listOf(DirectusQuery.Filter("category", "eq", "Moda")),
-                                manager = manager,
-                            )
-
-                            EntrepreneurshipSection(
-                                title = "Nuestros mejores aliados",
-                                fixedFilters = listOf(),
-                                manager = manager,
+                            MainButton(
+                                text = "",
+                                leftIcon = Icons.Default.Settings,
+                                onClick = {
+                                    manager.navController.navigate(Routes.Settings.route)
+                                },
+                                modifier = Modifier.width(60.dp).height(40.dp)
                             )
                         }
                     }

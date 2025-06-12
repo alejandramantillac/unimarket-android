@@ -8,6 +8,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
     // Home Routes
     data object Home : Routes("/")
+    data object Settings : Routes("/settings")
     data object HomeSearch : Routes("/home/search")
 
     // Cart Route
