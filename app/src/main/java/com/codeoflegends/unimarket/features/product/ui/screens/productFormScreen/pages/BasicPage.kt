@@ -38,17 +38,7 @@ fun ProductBasic(viewModel: ProductFormViewModel = hiltViewModel()) {
                 .padding(bottom = 80.dp), // Espacio extra al final para evitar que el último elemento se oculte
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Only show business selection in create mode, not in edit mode
-            if (!isEdit) {
-                DropdownMenuBox(
-                    label = "Emprendimiento",
-                    options = formOptions.businessOptions.map { it.name },
-                    selectedOption = formData.selectedBusiness?.name,
-                    onOptionSelected = { viewModel.onBusinessSelected(it) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-            
+
             DropdownMenuBox(
                 label = "Categoría",
                 options = formOptions.categoryOptions.map { it.name },

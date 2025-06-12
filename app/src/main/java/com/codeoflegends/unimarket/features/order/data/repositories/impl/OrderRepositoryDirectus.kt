@@ -16,32 +16,35 @@ import javax.inject.Singleton
 class OrderRepositoryDirectus @Inject constructor(
     private val orderService: OrderService
 ) : OrderRepository {
-    override suspend fun getAllOrders(entrepreneurship: UUID): Result<List<Order>> = try {
-        val ordersDto = orderService.getAllOrders(
-            OrderListDto.query(entrepreneurship.toString()).build()
-        ).data
-
-        val orders = ordersDto.map { OrderListMapper.fromDto(it) }
-        Result.success(orders)
-    } catch (e: Exception) {
-        Log.e("OrderRepositoryDirectus", "Error fetching orders: ${e.message}")
-        Result.failure(e)
+    override suspend fun getAllOrders(entrepreneurship: UUID): Result<List<Order>> {
+        return try {
+            val response = orderService.getAllOrders(OrderListDto.query(entrepreneurship.toString()).build())
+            Result.success(response.data.map { OrderListMapper.fromDto(it) })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    override suspend fun getOrder(orderId: UUID): Result<Order> = try {
-        val orderDto = orderService.getOrder(
-            orderId.toString(),
-            OrderDto.query().build()
-        ).data
-
-        val order = OrderMapper.orderDtoToOrder(orderDto)
-        if (order != null) {
-            Result.success(order)
-        } else {
-            Result.failure(Exception("El mapeo de OrderDto a Order devolvió nulo"))
+    override suspend fun getOrder(orderId: UUID): Result<Order> {
+        return try {
+            val response = orderService.getOrder(orderId.toString())
+            Result.success(OrderMapper.orderDtoToOrder(response.data))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-    } catch (e: Exception) {
-        Result.failure(e)
+    }
+
+    override suspend fun createOrder(orderDto: OrderDto): Result<Order> {
+        return try {
+            val response = orderService.createOrder(orderDto)
+            Result.success(OrderMapper.orderDtoToOrder(response.data))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateOrderStatus(orderId: UUID, newStatus: String): Result<Order> {
+        TODO("Not yet implemented")
     }
 }
 

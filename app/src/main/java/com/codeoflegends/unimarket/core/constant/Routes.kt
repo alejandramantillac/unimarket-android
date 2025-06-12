@@ -8,6 +8,10 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
     // Home Routes
     data object Home : Routes("/")
+    data object HomeSearch : Routes("/home/search")
+
+    // Cart Route
+    data object Cart : Routes("/cart")
 
     // Product Routes
     data object ManageProduct : Routes("/manage/product/{id}") {
@@ -17,10 +21,24 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
         }
     }
 
+    data object CreateProduct : Routes("/create/product/{entrepreneurshipId}") {
+        val base get() = "/create/product/"
+        fun createRoute(entrepreneurshipId: String): String {
+            return "/create/product/$entrepreneurshipId"
+        }
+    }
+
     data object ProductView : Routes("/product/{id}") {
         val base get() = "/product/"
         fun createRoute(id: String): String {
             return "/product/$id"
+        }
+    }
+
+    data object ProductBuyerView : Routes("/product_buyer/{id}") {
+        val base get() = "/product_buyer/"
+        fun createRoute(id: String): String {
+            return "/product_buyer/$id"
         }
     }
 
@@ -79,18 +97,23 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                 ForgotPassword.route -> ForgotPassword
                 Home.route -> Home
                 ManageProduct.route -> ManageProduct
+                CreateProduct.route -> CreateProduct
                 ProductView.route -> ProductView
+                ProductBuyerView.route -> ProductBuyerView
                 RoleSelection.route -> RoleSelection
                 ManageEntrepreneurship.route -> ManageEntrepreneurship
                 EntrepreneurshipView.route -> EntrepreneurshipView
                 EntrepreneurshipForm.route -> EntrepreneurshipForm
                 EntrepreneurProfile.route -> EntrepreneurProfile
                 Collaborators.route -> Collaborators
+                HomeSearch.route -> HomeSearch
                 else -> {
                     // Handle dynamic routes
                     when {
                         route.startsWith("/manage/product/") -> ManageProduct
+                        route.startsWith("/create/product/") -> CreateProduct
                         route.startsWith("/product/") -> ProductView
+                        route.startsWith("/product_buyer/") -> ProductBuyerView
                         route.startsWith("/entrepreneurship/") && route.endsWith("/collaborators") -> Collaborators
                         else -> null
                     }

@@ -2,6 +2,7 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.mapper
 
 import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
+import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.ReviewRatingDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipReview
@@ -21,12 +22,14 @@ object EntrepreneurshipReviewMapper {
                 firstName = dto.userCreated.firstName,
                 lastName = dto.userCreated.lastName,
                 email = dto.userCreated.email,
-                profile = UserProfile(
-                    profilePicture = dto.userCreated.profile.profilePicture,
-                    userRating = dto.userCreated.profile.userRating,
-                    partnerRating = dto.userCreated.profile.partnerRating,
-                    registrationDate = LocalDateTime.parse(dto.userCreated.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
-                )
+                profile = dto.userCreated.profile?.let { profileDto ->
+                    UserProfile(
+                        profilePicture = profileDto.profilePicture,
+                        userRating = profileDto.userRating,
+                        partnerRating = profileDto.partnerRating,
+                        registrationDate = LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                    )
+                } ?: UserProfile("", 0f, 0f, LocalDateTime.now())
             ),
             dateCreated = LocalDateTime.parse(dto.dateCreated, DateTimeFormatter.ISO_DATE_TIME),
             rating = dto.rating,
@@ -40,6 +43,18 @@ object EntrepreneurshipReviewMapper {
         return ReviewRating(
             totalReviews = dto.count.id.toInt(),
             avgReview = dto.avg.rating
+        )
+    }
+
+    fun newEntrepreneurshipReviewDto(
+        entrepreneurship: UUID,
+        rating: Int,
+        comment: String
+    ): NewEntrepreneurshipReviewDto {
+        return NewEntrepreneurshipReviewDto(
+            entrepreneurship = entrepreneurship.toString(),
+            rating = rating,
+            comment = comment
         )
     }
 }

@@ -109,7 +109,7 @@ fun PartnerScreen(
 @Composable
 private fun PartnerList(partners: List<Partner>, modifier: Modifier = Modifier) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().padding(top = 56.dp),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

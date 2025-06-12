@@ -5,6 +5,7 @@ import com.codeoflegends.unimarket.features.auth.data.repositories.impl.RoleRepo
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.RoleRepository
 import com.codeoflegends.unimarket.features.auth.data.service.AuthService
 import com.codeoflegends.unimarket.features.auth.data.service.JwtDecoder
+import com.codeoflegends.unimarket.core.annotation.MainRetrofit
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

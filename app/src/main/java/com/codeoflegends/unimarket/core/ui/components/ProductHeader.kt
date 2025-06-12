@@ -22,6 +22,7 @@ fun ProductHeader(
     product: Product?,
     variantImages: List<VariantImage> = emptyList(),
     reviewCount: Int = 0,
+    averageRating: Float = 0f,
     modifier: Modifier = Modifier
 ) {
     if (product == null) return
@@ -30,7 +31,6 @@ fun ProductHeader(
         (main + variantImages).distinct().filter { it.imageUrl.isNotEmpty() }
     }
     var selectedImage by remember { mutableStateOf(images.firstOrNull()) }
-    val rating = product.reviews.takeIf { it.isNotEmpty() }?.map { it.rating }?.average()?.toFloat() ?: 0f
 
     Column(
         modifier = modifier
@@ -90,13 +90,13 @@ fun ProductHeader(
         // Rating y reseñas
         Row(verticalAlignment = Alignment.CenterVertically) {
             RatingStars(
-                rating = rating,
+                rating = averageRating,
                 showRating = false,
                 modifier = Modifier.height(20.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = String.format("%.1f", rating) + " (${reviewCount} reseñas)",
+                text = String.format("%.1f", averageRating) + " (${reviewCount} reseñas)",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
