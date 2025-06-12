@@ -22,8 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerViewModel
-import androidx.navigation.compose.currentBackStackEntryAsState
-import java.util.*
 
 @Composable
 fun EntrepreneurshipProductsPage(
@@ -41,16 +39,7 @@ fun EntrepreneurshipProductsPage(
     var tempSearchQuery by remember { mutableStateOf(filterState.searchQuery) }
 
     LaunchedEffect(entrepreneurshipUiState.id) {
-        if (entrepreneurshipUiState.id != UUID.randomUUID()) {
-            viewModel.initialize(entrepreneurshipUiState.id)
-        }
-    }
-
-    // Recargar productos cuando el usuario regresa a esta pantalla
-    LaunchedEffect(Unit) {
-        if (entrepreneurshipUiState.id != UUID.randomUUID()) {
-            viewModel.reloadProducts()
-        }
+        viewModel.initialize(entrepreneurshipUiState.id)
     }
 
     Box(

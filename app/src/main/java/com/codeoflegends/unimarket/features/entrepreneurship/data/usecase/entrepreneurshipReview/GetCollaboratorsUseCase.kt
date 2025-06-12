@@ -1,4 +1,4 @@
-package com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.collaborator
+package com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.entrepreneurshipReview
 
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Collaborator
 import com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.interfaces.CollaboratorRepository

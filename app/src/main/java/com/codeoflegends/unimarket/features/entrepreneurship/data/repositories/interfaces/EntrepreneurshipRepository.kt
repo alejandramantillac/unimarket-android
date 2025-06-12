@@ -2,7 +2,6 @@ package com.codeoflegends.unimarket.features.entrepreneurship.data.repositories.
 
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipListDto
-import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Collaborator
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCreate
@@ -21,5 +20,4 @@ interface IEntrepreneurshipRepository {
         limit: Int,
         page: Int
     ): Result<List<EntrepreneurshipListDto>>
-    suspend fun getAllEntrepreneurshipCollaborators(entrepreneurshipId: UUID): Result<List<Collaborator>>
 }

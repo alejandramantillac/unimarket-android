@@ -3,7 +3,6 @@ package com.codeoflegends.unimarket.features.entrepreneurship.service
 import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.dto.DirectusDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.create.NewEntrepreneurshipDto
-import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.DirectusCollaboratorDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipListDto
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
@@ -22,12 +21,6 @@ interface EntrepreneurshipService {
         @Path("entrepreneurshipId") entrepreneurshipId: String,
         @QueryMap query: Map<String, String>
     ): DirectusDto<EntrepreneurshipDto>
-
-    @GET("/items/Entrepreneurship/{entrepreneurshipId}")
-    suspend fun getEntrepreneurshipCollaborators(
-        @Path("entrepreneurshipId") entrepreneurshipId: String,
-        @QueryMap query: Map<String, String>
-    ): DirectusDto<DirectusCollaboratorDto>
 
     @POST("/items/Entrepreneurship")
     suspend fun createEntrepreneurship(
