@@ -1,11 +1,25 @@
 package com.codeoflegends.unimarket.features.auth.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,23 +31,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.codeoflegends.unimarket.core.navigation.NavigationManager
+import com.codeoflegends.unimarket.R
 import com.codeoflegends.unimarket.core.constant.Routes
 import com.codeoflegends.unimarket.core.extension.CollectAsEventEffect
 import com.codeoflegends.unimarket.core.extension.navigateIfAuthorized
-import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
-import com.codeoflegends.unimarket.core.ui.components.MainButton
-import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.ClickableTextLink
+import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.components.MessageSnackbar
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.res.painterResource
-import com.codeoflegends.unimarket.R
+import com.codeoflegends.unimarket.core.ui.components.SimpleTextField
+import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthResult
 import com.codeoflegends.unimarket.features.auth.ui.components.PasswordTextField
 
 @Composable
@@ -69,74 +86,183 @@ fun LoginScreen(
         }
     }
 
-    MainLayout(pageLoading=isLoading) {
+    MainLayout(pageLoading = isLoading) {
         Box(
             modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            MaterialTheme.colorScheme.surface,
+                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f)
+                        )
+                    )
+                )
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp),
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo_unimarket_playstore),
-                    contentDescription = "Logo Unimarket",
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                // Logo Section
+                Box(
                     modifier = Modifier
-                        .size(130.dp)
-                        .padding(bottom = 24.dp)
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                                )
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    androidx.compose.foundation.Image(
+                        painter = painterResource(id = R.drawable.logo_unimarket_playstore),
+                        contentDescription = "Logo Unimarket",
+                        modifier = Modifier.size(70.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Welcome Text
+                Text(
+                    text = "¡Bienvenido!",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    textAlign = TextAlign.Center
                 )
 
-                Text(
-                    text = "¡Bienvenido a Unimarket!",
-                    style = MaterialTheme.typography.headlineMedium,
-                )
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
                     text = "Inicia sesión para continuar con tus compras",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 32.dp)
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    ),
+                    textAlign = TextAlign.Center
                 )
 
-                SimpleTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = "Correo"
-                )
+                Spacer(modifier = Modifier.height(24.dp))
 
-                PasswordTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                )
-
-                ClickableTextLink(
-                    text = "¿Olvidaste tu contraseña?",
-                    onClick = { manager.navController.navigate(Routes.ForgotPassword.route) },
-                    alignment = Alignment.CenterEnd
-                )
-
-                MainButton(
-                    text = "Iniciar Sesión",
-                    onClick = { manager.authViewModel.login(email, password) }
-                )
-
-                ClickableTextLink(
-                    text = "¿No tienes una cuenta? Regístrate",
-                    onClick = { manager.navController.navigate(Routes.Register.route) }
-                )
-                
-                if (showMessage) {
-                    MessageSnackbar(
-                        message = message,
-                        isError = isError,
-                        actionLabel = null,
-                        onDismiss = { showMessage = false }
+                // Login Card
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 8.dp
                     )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Email Field with Icon
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            SimpleTextField(
+                                value = email,
+                                onValueChange = { email = it },
+                                label = "Correo electrónico",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Password Field
+                        PasswordTextField(
+                            value = password,
+                            onValueChange = { password = it },
+                            label = "Contraseña"
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Forgot Password Link
+                        ClickableTextLink(
+                            text = "¿Olvidaste tu contraseña?",
+                            onClick = { manager.navController.navigate(Routes.ForgotPassword.route) },
+                            alignment = Alignment.CenterEnd,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        // Login Button
+                        MainButton(
+                            text = "Iniciar Sesión",
+                            onClick = { manager.authViewModel.login(email, password) },
+                            modifier = Modifier.fillMaxWidth(),
+                            height = 50
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Divider
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(1.dp)
+                                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                            )
+                            Text(
+                                text = "o",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(1.dp)
+                                    .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Register Link
+                        ClickableTextLink(
+                            text = "¿No tienes una cuenta? Regístrate",
+                            onClick = { manager.navController.navigate(Routes.Register.route) },
+                            alignment = Alignment.Center
+                        )
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
+        }
+
+        // Message Snackbar
+        if (showMessage) {
+            MessageSnackbar(
+                message = message,
+                isError = isError,
+                actionLabel = null,
+                onDismiss = { showMessage = false }
+            )
         }
     }
 }
