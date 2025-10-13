@@ -1,5 +1,6 @@
 package com.codeoflegends.unimarket.features.home.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,6 +41,7 @@ class HomeViewModel @Inject constructor(
             getBannersUseCase().let { banners ->
                 _uiState.value = _uiState.value.copy(banners = banners)
                 _actionState.value = HomeActionState.Success
+                Log.d("HomeViewModel", banners.toString())
             }
         }
     }

@@ -50,43 +50,75 @@ fun EntrepreneurshipCard(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceBright),
+                    .height(120.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                 onClick = onClick
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
+                    // Banner de fondo
                     AsyncImage(
                         model = product.customization.banner_img,
                         contentDescription = product.name,
                         modifier = Modifier
-                            .size(140.dp),
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(16.dp)),
                         contentScale = ContentScale.Crop
                     )
-                    Column(
+                    
+                    // Overlay para mejorar legibilidad
+                    Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(8.dp),
-                        verticalArrangement = Arrangement.SpaceBetween,
-                        horizontalAlignment = Alignment.Start
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    listOf(
+                                        Color.Black.copy(alpha = 0.3f),
+                                        Color.Black.copy(alpha = 0.1f)
+                                    )
+                                )
+                            )
+                    )
+                    
+                    // Contenido principal
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-
-                        Column {
+                        // Imagen del emprendimiento (izquierda)
+                        AsyncImage(
+                            model = product.customization.profile_img,
+                            contentDescription = product.name,
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(12.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        
+                        // Nombre del emprendimiento (derecha)
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Center
+                        ) {
                             Text(
                                 text = product.name,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
+                                color = Color.White,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = product.description,
+                                text = product.slogan,
                                 style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                color = Color.White.copy(alpha = 0.9f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }

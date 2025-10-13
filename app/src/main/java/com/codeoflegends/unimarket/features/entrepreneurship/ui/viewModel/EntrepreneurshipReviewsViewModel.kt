@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.util.UUID
 import javax.inject.Inject
 
@@ -73,27 +74,52 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
 
     fun loadReviewDetails(entrepreneurshipId: UUID){
         viewModelScope.launch {
-            val reviewRating = getEntrepreneurshipRatingUseCase(entrepreneurshipId)
-            _reviewsUiState.value = _reviewsUiState.value.copy(
-                averageRating = reviewRating.avgReview,
-                totalReviews = reviewRating.totalReviews
-            )
-
-            val ownReview = getOwnEntrepreneurshipReviewUseCase(
-                entrepreneurshipId = entrepreneurshipId,
-                authorId = authRepository.getCurrentUserId()!!
-            )
-            if (ownReview != null) {
+            try {
+                val reviewRating = getEntrepreneurshipRatingUseCase(entrepreneurshipId)
                 _reviewsUiState.value = _reviewsUiState.value.copy(
-                    ownReview = CommentData(
-                        userId = ownReview.id,
-                        userName = ownReview.userCreated.firstName + " " + ownReview.userCreated.lastName,
-                        userImageUrl = ownReview.userCreated.profile.profilePicture,
-                        rating = ownReview.rating,
-                        comment = ownReview.comment,
-                        date = ownReview.dateCreated
-                    )
+                    averageRating = reviewRating.avgReview,
+                    totalReviews = reviewRating.totalReviews
                 )
+
+                try {
+                    val ownReview = getOwnEntrepreneurshipReviewUseCase(
+                        entrepreneurshipId = entrepreneurshipId,
+                        authorId = authRepository.getCurrentUserId()!!
+                    )
+                    if (ownReview != null) {
+                        _reviewsUiState.value = _reviewsUiState.value.copy(
+                            ownReview = CommentData(
+                                userId = ownReview.id,
+                                userName = ownReview.userCreated.firstName + " " + ownReview.userCreated.lastName,
+                                userImageUrl = ownReview.userCreated.profile.profilePicture,
+                                rating = ownReview.rating,
+                                comment = ownReview.comment,
+                                date = ownReview.dateCreated
+                            )
+                        )
+                    }
+                } catch (e: retrofit2.HttpException) {
+                    when (e.code()) {
+                        403 -> {
+                            Log.w("EntrepreneurshipReviewsViewModel", "User doesn't have permission to view own review: ${e.message()}")
+                            // Continue without setting ownReview - this is not a critical error
+                        }
+                        401 -> {
+                            Log.e("EntrepreneurshipReviewsViewModel", "Authentication failed: ${e.message()}")
+                            _reviewsActionState.value = EntrepreneurshipReviewsActionState.Error("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.")
+                        }
+                        else -> {
+                            Log.e("EntrepreneurshipReviewsViewModel", "Error loading own review: ${e.code()} - ${e.message()}")
+                            _reviewsActionState.value = EntrepreneurshipReviewsActionState.Error("Error al cargar tu reseña: ${e.message()}")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("EntrepreneurshipReviewsViewModel", "Unexpected error loading own review: ${e.message}", e)
+                    _reviewsActionState.value = EntrepreneurshipReviewsActionState.Error("Error inesperado al cargar tu reseña: ${e.message}")
+                }
+            } catch (e: Exception) {
+                Log.e("EntrepreneurshipReviewsViewModel", "Error loading review details: ${e.message}", e)
+                _reviewsActionState.value = EntrepreneurshipReviewsActionState.Error("Error al cargar los detalles de las reseñas: ${e.message}")
             }
         }
     }
