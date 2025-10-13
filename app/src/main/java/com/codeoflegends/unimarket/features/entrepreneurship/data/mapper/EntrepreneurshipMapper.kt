@@ -32,24 +32,40 @@ object EntrepreneurshipMapper {
             category = dto.category,
             deletedAt = dto.deletedAt,
             partners = dto.partners.map { partnerDto ->
+                val firstUser = partnerDto.user?.firstOrNull()
                 EntrepreneurshipPartner(
                     id = partnerDto.id,
-                    role = partnerDto.role,
-                    user = User(
-                        id = UUID.fromString(partnerDto.user[0].id),
-                        firstName = partnerDto.user[0].firstName,
-                        lastName = partnerDto.user[0].lastName,
-                        email = partnerDto.user[0].email,
-                        profile = UserProfile(
-                            profilePicture = partnerDto.user[0].profile?.profilePicture ?: "",
-                            userRating = partnerDto.user[0].profile?.userRating ?: 0.0F,
-                            partnerRating = partnerDto.user[0].profile?.partnerRating ?: 0.0F,
-                            registrationDate = LocalDateTime.parse(
-                                partnerDto.user[0].profile?.registrationDate ?: LocalDateTime.now().toString(),
-                                DateTimeFormatter.ISO_DATE_TIME
+                    role = partnerDto.role ?: "",
+                    user = if (firstUser != null) {
+                        User(
+                            id = UUID.fromString(firstUser.id),
+                            firstName = firstUser.firstName,
+                            lastName = firstUser.lastName,
+                            email = firstUser.email,
+                            profile = UserProfile(
+                                profilePicture = firstUser.profile?.profilePicture ?: "",
+                                userRating = firstUser.profile?.userRating ?: 0.0F,
+                                partnerRating = firstUser.profile?.partnerRating ?: 0.0F,
+                                registrationDate = LocalDateTime.parse(
+                                    firstUser.profile?.registrationDate ?: LocalDateTime.now().toString(),
+                                    DateTimeFormatter.ISO_DATE_TIME
+                                )
                             )
                         )
-                    )
+                    } else {
+                        User(
+                            id = UUID.randomUUID(),
+                            firstName = "",
+                            lastName = "",
+                            email = "",
+                            profile = UserProfile(
+                                profilePicture = "",
+                                userRating = 0.0F,
+                                partnerRating = 0.0F,
+                                registrationDate = LocalDateTime.now()
+                            )
+                        )
+                    }
                 )
             },
             products = dto.products.map { productDto ->

@@ -38,7 +38,7 @@ fun EntrepreneurshipMembersPreview(
     ) {
         Text(
             text = "Nuestro Equipo",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
