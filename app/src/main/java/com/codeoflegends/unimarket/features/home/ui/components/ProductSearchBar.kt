@@ -28,7 +28,7 @@ fun ProductSearchBar(onClick: () -> Unit) {
             .padding(16.dp)
     ) {
         Text(
-            text = "Buscar productos o emprendimientos...",
+            text = "Buscar productos...",
             color = Color.Gray,
             style = MaterialTheme.typography.bodyLarge
         )

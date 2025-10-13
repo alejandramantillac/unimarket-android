@@ -46,10 +46,12 @@ fun ProductHeader(
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            ProductImage(
-                imageUrl = selectedImage!!.imageUrl,
-                modifier = Modifier.fillMaxSize()
-            )
+            selectedImage?.let {
+                ProductImage(
+                    imageUrl = it.imageUrl,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
         // Miniaturas
         if (images.size > 1) {
@@ -112,4 +114,4 @@ fun ProductHeader(
             modifier = Modifier.padding(top = 1.dp)
         )
     }
-} 
+}

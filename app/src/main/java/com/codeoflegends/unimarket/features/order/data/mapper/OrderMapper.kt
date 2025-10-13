@@ -37,12 +37,18 @@ object OrderMapper {
                 firstName = dto.userCreated.firstName,
                 lastName = dto.userCreated.lastName,
                 email = dto.userCreated.email,
-                profile = UserProfile(
-                    profilePicture = dto.userCreated.profile.profilePicture,
-                    userRating = dto.userCreated.profile.userRating,
-                    partnerRating = dto.userCreated.profile.partnerRating,
-                    registrationDate = LocalDateTime.parse(dto.userCreated.profile.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
-                )
+                profile = dto.userCreated.profile?.let { p ->
+                    UserProfile(
+                        profilePicture = p.profilePicture,
+                        userRating = p.userRating,
+                        partnerRating = p.partnerRating,
+                        registrationDate = try {
+                            LocalDateTime.parse(p.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                        } catch (e: Exception) {
+                            LocalDateTime.now()
+                        }
+                    )
+                } ?: UserProfile()
             ),
             payments = dto.payments.map { PaymentsMapper.mapFromDto(it) },
             orderDetails = dto.orderDetails.map { OrderDetailsMapper.mapFromDto(it) },

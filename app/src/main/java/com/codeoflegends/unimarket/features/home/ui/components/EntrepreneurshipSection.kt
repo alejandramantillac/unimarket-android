@@ -51,7 +51,7 @@ fun EntrepreneurshipSection(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+            modifier = Modifier.padding(start = 4.dp, bottom = 16.dp)
         )
         
         if (orientation == Orientation.Vertical) {

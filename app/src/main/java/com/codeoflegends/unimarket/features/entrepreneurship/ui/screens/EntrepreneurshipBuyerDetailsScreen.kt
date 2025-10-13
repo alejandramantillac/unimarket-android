@@ -31,13 +31,16 @@ import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.Entrep
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSendReviewActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipReviewsViewModel
 import java.util.*
+import com.codeoflegends.unimarket.core.constant.Routes
+import com.codeoflegends.unimarket.core.navigation.NavigationManager
 
 @Composable
 fun EntrepreneurshipBuyerDetailsScreen(
     viewModel: EntrepreneurshipBuyerDetailsViewModel = hiltViewModel(),
     reviewsViewModel: EntrepreneurshipReviewsViewModel = hiltViewModel(),
     entrepreneurshipId: UUID,
-    onProductClick: () -> Unit = {},
+    manager: NavigationManager,
+    onProductClick: (UUID) -> Unit = {},
 ) {
     // UI states
     val entrepreneurship by viewModel.entrepreneurshipUiState.collectAsState()
@@ -165,7 +168,12 @@ fun EntrepreneurshipBuyerDetailsScreen(
 
                         EntrepreneurshipProductsPreview(
                             products = products.products,
-                            onProductClick = {}
+                            onProductClick = { productPreview ->
+                                onProductClick(productPreview.id)
+                                manager.navController.navigate(
+                                    Routes.ProductBuyerView.createRoute(productPreview.id.toString())
+                                )
+                            }
                         )
                     }
                 }

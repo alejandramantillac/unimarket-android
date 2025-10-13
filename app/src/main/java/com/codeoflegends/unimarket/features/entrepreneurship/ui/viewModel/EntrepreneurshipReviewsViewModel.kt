@@ -91,7 +91,7 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
                             ownReview = CommentData(
                                 userId = ownReview.id,
                                 userName = ownReview.userCreated.firstName + " " + ownReview.userCreated.lastName,
-                                userImageUrl = ownReview.userCreated.profile.profilePicture,
+                                userImageUrl = ownReview.userCreated.profile.profilePicture.orEmpty(),
                                 rating = ownReview.rating,
                                 comment = ownReview.comment,
                                 date = ownReview.dateCreated
@@ -145,7 +145,7 @@ class EntrepreneurshipReviewsViewModel @Inject constructor(
                             CommentData(
                                 userId = review.id,
                                 userName = review.userCreated.firstName + " " + review.userCreated.lastName,
-                                userImageUrl = review.userCreated.profile.profilePicture,
+                                userImageUrl = review.userCreated.profile.profilePicture.orEmpty(),
                                 rating = review.rating,
                                 comment = review.comment,
                                 date = review.dateCreated

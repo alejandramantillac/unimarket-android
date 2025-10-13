@@ -77,7 +77,8 @@ fun NavGraphBuilder.entrepreneurNavigation(
         val entrepreneurshipId = backStackEntry.arguments?.getString("id")
         entrepreneurshipId?.let {
             EntrepreneurshipBuyerDetailsScreen(
-                entrepreneurshipId = UUID.fromString(it)
+                entrepreneurshipId = UUID.fromString(it),
+                manager = manager
             )
         }
     }

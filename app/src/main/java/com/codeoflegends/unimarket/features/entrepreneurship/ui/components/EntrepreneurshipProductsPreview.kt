@@ -31,7 +31,7 @@ import com.codeoflegends.unimarket.features.product.data.model.Product
 @Composable
 fun EntrepreneurshipProductsPreview(
     products : List<ProductPreview>,
-    onProductClick: () -> Unit,
+    onProductClick: (ProductPreview) -> Unit,
 ){
     Column(
         modifier = Modifier.padding(24.dp),
@@ -48,12 +48,14 @@ fun EntrepreneurshipProductsPreview(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
+            /*
             TextButton (onClick = { /* Ver todos los productos */ }) {
                 Text(
                     text = "Ver todos",
                     color = Color(0xFF9C27B0)
                 )
             }
+            */
         }
 
         LazyRow(
@@ -67,7 +69,7 @@ fun EntrepreneurshipProductsPreview(
                     colors = CardDefaults.cardColors(
                         containerColor = Color(0xFF1A1A1A)
                     ),
-                    onClick = { onProductClick() }
+                    onClick = { onProductClick(product) }
                 ) {
                     Column(
                         modifier = Modifier.padding(12.dp),

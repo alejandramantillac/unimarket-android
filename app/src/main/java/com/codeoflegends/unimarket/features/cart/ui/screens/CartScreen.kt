@@ -35,12 +35,12 @@ fun CartScreen(
     val state by cartViewModel.uiState.collectAsState()
     val cart = state.cart
 
-    // Effect to handle successful order creation
-    LaunchedEffect(state.lastCreatedOrder) {
-        state.lastCreatedOrder?.let { order ->
-            onOrderCreated(order.id)
-        }
-    }
+    // Effect to handle successful order creation - commented out to stay on cart screen
+    // LaunchedEffect(state.lastCreatedOrder) {
+    //     state.lastCreatedOrder?.let { order ->
+    //         onOrderCreated(order.id)
+    //     }
+    // }
 
     MainLayout(
         barOptions = AppBarOptions(

@@ -61,7 +61,7 @@ class BuyerOrderHistoryViewModel @Inject constructor(
                         OrderItemUiState(
                             id = order.id,
                             clientName = order.userCreated.firstName,
-                            clientPhoto = order.userCreated.profile.profilePicture,
+                            clientPhoto = order.userCreated.profile.profilePicture.orEmpty(),
                             productCount = order.orderDetails.sumOf { it.amount },
                             totalPrice = order.total,
                             date = order.date.toString(),

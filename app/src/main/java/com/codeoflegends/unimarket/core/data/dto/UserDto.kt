@@ -12,7 +12,7 @@ data class UserDto(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val profile: UserProfileDto
+    val profile: UserProfileDto? = null
 ){
     companion object {
         fun query(): DirectusQuery {
@@ -27,18 +27,18 @@ data class UserDto(
             firstName = firstName.orEmpty(),
             lastName = lastName.orEmpty(),
             email = email.orEmpty(),
-            profile = profile.let {
+            profile = profile?.let {
                 UserProfile(
                     profilePicture = it.profilePicture.orEmpty(),
-                    userRating = it.userRating ?: 0f,
-                    partnerRating = it.partnerRating ?: 0f,
+                    userRating = it.userRating,
+                    partnerRating = it.partnerRating,
                     registrationDate = try {
                         LocalDateTime.parse(it.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
                     } catch (e: Exception) {
                         LocalDateTime.now()
                     }
                 )
-            }
+            } ?: UserProfile()
         )
     }
 }

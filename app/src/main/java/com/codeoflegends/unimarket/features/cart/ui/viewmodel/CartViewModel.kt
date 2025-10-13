@@ -27,7 +27,8 @@ class CartViewModel @Inject constructor(
     private val addToCartUseCase: AddToCartUseCase,
     private val removeFromCartUseCase: RemoveFromCartUseCase,
     private val updateCartItemQuantityUseCase: UpdateCartItemQuantityUseCase,
-    private val createOrderFromCartUseCase: CreateOrderFromCartUseCase
+    private val createOrderFromCartUseCase: CreateOrderFromCartUseCase,
+    private val clearCartUseCase: ClearCartUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
@@ -104,7 +105,21 @@ class CartViewModel @Inject constructor(
                         Log.d("TEST_LOG", "Order created successfully with ID: ${order.id}")
                         _uiState.update { it.copy(lastCreatedOrder = order) }
                         MessageManager.showSuccess("Orden creada exitosamente")
-                        loadCart() // Reload cart to clear it after successful order creation
+                        // Clear cart after successful order creation
+                        clearCartUseCase()
+                            .onSuccess {
+                                Log.d("TEST_LOG", "Cart cleared successfully")
+                                loadCart() // Reload cart to update UI
+                                // Reset lastCreatedOrder to null after clearing cart
+                                _uiState.update { it.copy(lastCreatedOrder = null) }
+                            }
+                            .onFailure { e ->
+                                Log.e("TEST_LOG", "Error clearing cart: ${e.message}", e)
+                                // Still reload cart even if clearing failed
+                                loadCart()
+                                // Reset lastCreatedOrder to null
+                                _uiState.update { it.copy(lastCreatedOrder = null) }
+                            }
                     }
                     .onFailure { e ->
                         Log.e("TEST_LOG", "Error creating order: ${e.message}", e)
