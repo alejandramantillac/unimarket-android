@@ -1,12 +1,17 @@
 package com.codeoflegends.unimarket.core.data.dto
 
+import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 data class UserProfileDto(
     val id: String,
-    val profilePicture: String = "",
+    @SerializedName("profile_picture")
+    val profilePicture: String,
+    @SerializedName("user_rating")
     val userRating: Float = 0f,
+    @SerializedName("partner_rating")
     val partnerRating: Float = 0f,
-    val registrationDate: String = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+    @SerializedName("registration_date")
+    val registrationDate: String? = null
 )

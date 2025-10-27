@@ -116,7 +116,7 @@ fun RoleSelectionScreen(
                     
                     // Emprendedor Image
                     RequirePermission(
-                        "Entrepreneur",
+                        "Emprendedor",
                         manager,
                         fallback = { 
                             Box(
@@ -136,7 +136,7 @@ fun RoleSelectionScreen(
                                 .fillMaxWidth()
                                 .height(140.dp)
                                 .clickable {
-                                    manager.authViewModel.selectRole("Entrepreneur")
+                                    manager.authViewModel.selectRole("Emprendedor")
                                     manager.navController.navigate(Routes.EntrepreneurProfile.route)
                                 }
                         )

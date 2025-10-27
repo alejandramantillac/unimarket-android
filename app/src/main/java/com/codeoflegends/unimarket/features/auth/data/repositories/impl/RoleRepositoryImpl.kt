@@ -35,10 +35,21 @@ class RoleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRolName(rolId: String): String {
+        android.util.Log.d("RoleRepository", "=== getRolName ===")
+        android.util.Log.d("RoleRepository", "Buscando rol con ID: '$rolId'")
+        
         ensureRolesCached()
         val cachedRolesJson = dataStoreManager.get(PreferenceKeys.ROLES).first()
+        android.util.Log.d("RoleRepository", "Roles en cache (JSON): $cachedRolesJson")
+        
         val type = object : TypeToken<Map<String, String>>() {}.type
         val cachedRoles: Map<String, String> = Gson().fromJson(cachedRolesJson, type)
-        return cachedRoles[rolId] ?: "undefined"
+        android.util.Log.d("RoleRepository", "Roles parseados: $cachedRoles")
+        
+        val roleName = cachedRoles[rolId] ?: "undefined"
+        android.util.Log.d("RoleRepository", "Rol encontrado para ID '$rolId': '$roleName'")
+        android.util.Log.d("RoleRepository", "=== FIN getRolName ===")
+        
+        return roleName
     }
 }

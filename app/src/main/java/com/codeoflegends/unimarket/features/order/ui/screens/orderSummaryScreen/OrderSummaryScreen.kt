@@ -18,6 +18,7 @@ import com.codeoflegends.unimarket.features.order.ui.screens.common.pages.Paymen
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryViewModel
+import com.codeoflegends.unimarket.features.order.ui.viewModel.OrderSummaryActionState
 
 @Composable
 fun OrderSummaryScreen(
@@ -34,9 +35,45 @@ fun OrderSummaryScreen(
 
     // Observar el estado de la UI
     val uiState by viewModel.uiState.collectAsState()
+    val actionState by viewModel.actionState.collectAsState()
 
+    // Mostrar loading mientras se carga la orden
+    if (actionState is OrderSummaryActionState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Cargando orden...",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
+        return
+    }
+
+    // Mostrar mensaje de error si la orden no se pudo cargar
+    if (actionState is OrderSummaryActionState.Error) {
+        val errorState = actionState as OrderSummaryActionState.Error
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Error al cargar la orden: ${errorState.message}",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+            )
+        }
+        return
+    }
+
+    // Mostrar mensaje si la orden no existe (solo después de que termine la carga)
     if (uiState.id == null) {
-        // Mostrar mensaje si la orden no existe
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

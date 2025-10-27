@@ -79,14 +79,40 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
         }
 
     override suspend fun getAllEntrepreneurships(): Result<List<Entrepreneurship>> = try {
+        Log.d("EmprendimientosPropios", "*** Repository: Obteniendo ID del usuario actual ***")
+        val currentUserId = authRepository.getCurrentUserId()
+        Log.d("EmprendimientosPropios", "*** Repository: User ID = $currentUserId ***")
+        
+        if (currentUserId == null) {
+            Log.e("EmprendimientosPropios", "*** Repository: ERROR - Usuario no autenticado (ID es null) ***")
+        }
+        
+        Log.d("EmprendimientosPropios", "*** Repository: Construyendo query con filtro user_founder = $currentUserId ***")
         val query = EntrepreneurshipDto.query()
-            .filter("user_founder", "eq", authRepository.getCurrentUserId()!!.toString()).build()
-        val entrepreneurshipDtos = entrepreneurshipService.getMyEntrepreneurships(query).data
+            .filter("user_founder", "eq", currentUserId.toString()).build()
+        
+        Log.d("EmprendimientosPropios", "*** Repository: Query construido: $query ***")
+        Log.d("EmprendimientosPropios", "*** Repository: Ejecutando llamada al servicio... ***")
+        
+        val response = entrepreneurshipService.getMyEntrepreneurships(query)
+        val entrepreneurshipDtos = response.data
+        
+        Log.d("EmprendimientosPropios", "*** Repository: Respuesta recibida - ${entrepreneurshipDtos.size} DTOs ***")
+        entrepreneurshipDtos.forEachIndexed { index, dto ->
+            Log.d("EmprendimientosPropios", "*** Repository: DTO[$index] - ID: ${dto.id}, Name: ${dto.name} ***")
+        }
+        
         val entrepreneurshipList = entrepreneurshipDtos.map { entrepreneurshipDto ->
             EntrepreneurshipMapper.entrepreneurshipDtoToEntrepreneurship(entrepreneurshipDto)
         }
+        
+        Log.d("EmprendimientosPropios", "*** Repository: ${entrepreneurshipList.size} emprendimientos mapeados exitosamente ***")
         Result.success(entrepreneurshipList)
     } catch (e: Exception) {
+        Log.e("EmprendimientosPropios", "*** Repository: EXCEPCIÓN capturada ***")
+        Log.e("EmprendimientosPropios", "*** Repository: Tipo: ${e.javaClass.simpleName} ***")
+        Log.e("EmprendimientosPropios", "*** Repository: Mensaje: ${e.message} ***")
+        Log.e("EmprendimientosPropios", "*** Repository: Stack trace: ***", e)
         Result.failure(e)
     }
 

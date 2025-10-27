@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Scaffold
@@ -24,7 +23,6 @@ import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.state.ToastHandler
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.NavigationBar
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.NavigationItem
-import com.codeoflegends.unimarket.features.entrepreneurship.ui.screen.PartnerScreen
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipDetailPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipMembersPage
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages.EntrepreneurshipProductsPage
@@ -66,11 +64,6 @@ fun EntrepreneurshipSellerScreen(
             route = "products",
             icon = Icons.Default.ShoppingCart,
             label = "Productos"
-        ),
-        NavigationItem(
-            route = "people",
-            icon = Icons.Default.People,
-            label = "Personas"
         ),
         NavigationItem(
             route = "orders",
@@ -143,10 +136,6 @@ fun EntrepreneurshipSellerScreen(
                         )
                         "products" -> EntrepreneurshipProductsPage(
                             entrepreneurshipViewModel = viewModel,
-                            manager = manager
-                        )
-                        "people" -> PartnerScreen(
-                            entrepreneurshipId = state.id,
                             manager = manager
                         )
                         "orders" -> OrderListScreen(manager = manager, basicState = state)

@@ -67,13 +67,22 @@ fun ProductFormScreen(
         }
     }
 
-    // Show loading indicator during initial data loading
+    // Show loading indicator during initial data loading or product creation
     if (actionState is ProductActionState.Loading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = if (isEdit) "Guardando cambios..." else "Creando producto...",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
         return
     }
@@ -118,7 +127,7 @@ fun ProductFormScreen(
                 MainButton(
                     text = if (isEdit) "Guardar Cambios" else "Crear Producto",
                     onClick = { viewModel.saveProduct() },
-                    enabled = canSaveProduct
+                    enabled = canSaveProduct && actionState !is ProductActionState.Loading
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -131,7 +140,8 @@ fun ProductFormScreen(
                         } else {
                             manager?.navController?.popBackStack()
                         }
-                    }
+                    },
+                    enabled = actionState !is ProductActionState.Loading
                 )
             }
         }

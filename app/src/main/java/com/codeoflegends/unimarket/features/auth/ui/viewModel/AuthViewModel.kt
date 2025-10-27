@@ -54,19 +54,31 @@ class AuthViewModel @Inject constructor(
     }
 
     private suspend fun updateAuthState(isAuthenticated: Boolean) {
+        Log.d("AuthViewModel", "=== INICIO updateAuthState ===")
+        Log.d("AuthViewModel", "isAuthenticated: $isAuthenticated")
+        
         val tokenPayload = if (isAuthenticated) {
             val token = tokenRepository.getAccessToken()
-            Log.d("AuthViewModel", "Token: $token")
-            token?.let { jwtDecoder.decodePayload(it) } ?: JwtDecoder.JwtPayload()
+            Log.d("AuthViewModel", "Token recuperado: ${token?.take(50)}...")
+            val payload = token?.let { jwtDecoder.decodePayload(it) } ?: JwtDecoder.JwtPayload()
+            Log.d("AuthViewModel", "Token Payload - userId: ${payload.userId}, roleId: ${payload.userRole}")
+            payload
         } else {
+            Log.d("AuthViewModel", "Usuario no autenticado, usando payload vacío")
             JwtDecoder.JwtPayload()
         }
 
+        val roleName = roleRepository.getRolName(tokenPayload.userRole)
+        Log.d("AuthViewModel", "Nombre del rol obtenido: '$roleName'")
+        
         _authState.value = AuthState(
             state = if (isAuthenticated) AuthStateType.AUTHENTICATED else AuthStateType.ANONYMOUS,
-            authorities = roleRepository.getRolName(tokenPayload.userRole),
+            authorities = roleName,
             userId = tokenPayload.userId
         )
+        
+        Log.d("AuthViewModel", "AuthState actualizado - authorities: '${_authState.value.authorities}', userId: ${_authState.value.userId}")
+        Log.d("AuthViewModel", "=== FIN updateAuthState ===")
     }
 
     suspend fun sendForgotPasswordRequest(email: String): AuthResult<Unit> {

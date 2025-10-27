@@ -32,9 +32,14 @@ class AuthInterceptorImpl @Inject constructor(
 
         val token = runBlocking { tokenRepository.getAccessToken() }
         Log.d("AuthInterceptor", "Token present: ${!token.isNullOrEmpty()}")
+        
+        if (!token.isNullOrEmpty()) {
+            Log.d("AuthInterceptor", "🔑 Token (primeros 50 chars): ${token.take(50)}...")
+            Log.d("AuthInterceptor", "🔑 Token (últimos 20 chars): ...${token.takeLast(20)}")
+        }
 
         return if (token.isNullOrEmpty()) {
-            Log.d("AuthInterceptor", "No token available - proceeding without authentication")
+            Log.d("AuthInterceptor", "❌ No token available - proceeding without authentication")
             chain.proceed(originalRequest)
         } else {
             val authenticatedRequest = originalRequest.newBuilder()
@@ -42,14 +47,19 @@ class AuthInterceptorImpl @Inject constructor(
                 .build()
             
             // Log the final request
-            Log.d("AuthInterceptor", "Final request headers: ${authenticatedRequest.headers}")
+            Log.d("AuthInterceptor", "✅ Adding token to request")
+            Log.d("AuthInterceptor", "Authorization header: Bearer ${token.take(30)}...${token.takeLast(10)}")
             
             val response = chain.proceed(authenticatedRequest)
             
             // Log response details
-            Log.d("AuthInterceptor", "Response Code: ${response.code}")
-            Log.d("AuthInterceptor", "Response Message: ${response.message}")
-            Log.d("AuthInterceptor", "Response Headers: ${response.headers}")
+            Log.d("AuthInterceptor", "📨 Response Code: ${response.code}")
+            Log.d("AuthInterceptor", "📨 Response Message: ${response.message}")
+            
+            if (response.code == 401) {
+                Log.e("AuthInterceptor", "🚨 401 UNAUTHORIZED! El token puede estar expirado o ser inválido")
+                Log.e("AuthInterceptor", "🚨 URL que falló: ${originalRequest.url}")
+            }
             
             response
         }

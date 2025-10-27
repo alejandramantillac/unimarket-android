@@ -87,10 +87,10 @@ object EntrepreneurshipMapper {
             },
              customization = EntrepreneurshipCustomization(
                 id = UUID.fromString(dto.customization.id),
-                profileImg = dto.customization.profile_img,
-                bannerImg = dto.customization.banner_img,
-                color1 = dto.customization.color1,
-                color2 = dto.customization.color2
+                profileImg = dto.customization.profile_img ?: "",
+                bannerImg = dto.customization.banner_img ?: "",
+                color1 = dto.customization.color1 ?: "#000000",
+                color2 = dto.customization.color2 ?: "#FFFFFF"
             )
         )
     }

@@ -48,6 +48,17 @@ fun EntrepreneurshipProfileScreen(
     val state = viewModel.uiState.collectAsState().value
     val actionState = viewModel.actionState.collectAsState().value
 
+    android.util.Log.d("UserProfile", ">>> UI: Renderizando EntrepreneurshipProfileScreen <<<")
+    android.util.Log.d("UserProfile", ">>> UI: ActionState = $actionState <<<")
+    android.util.Log.d("UserProfile", ">>> UI: Usuario - firstName: '${state.user.firstName}' <<<")
+    android.util.Log.d("UserProfile", ">>> UI: Usuario - lastName: '${state.user.lastName}' <<<")
+    android.util.Log.d("UserProfile", ">>> UI: Usuario - email: '${state.user.email}' <<<")
+    android.util.Log.d("UserProfile", ">>> UI: Usuario - profilePicture: '${state.user.profile.profilePicture}' <<<")
+    android.util.Log.d("EmprendimientosPropios", ">>> UI: Número de emprendimientos en state = ${state.entrepreneurships.size} <<<")
+    state.entrepreneurships.forEachIndexed { index, entrepreneurship ->
+        android.util.Log.d("EmprendimientosPropios", ">>> UI: Emprendimiento[$index] = ${entrepreneurship.name} (${entrepreneurship.id}) <<<")
+    }
+
     MainLayout(
         barOptions = AppBarOptions(
             show = true,
@@ -57,6 +68,7 @@ fun EntrepreneurshipProfileScreen(
         addPadding = true
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+            android.util.Log.d("EmprendimientosPropios", ">>> UI: Pasando ${state.entrepreneurships.size} items a InfiniteScrollList <<<")
             InfiniteScrollList(
                 items = state.entrepreneurships,
                 onLoadMore = { },
@@ -101,8 +113,9 @@ fun EntrepreneurshipProfileScreen(
                                         modifier = Modifier.weight(1f),
                                         verticalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
+                                        val fullName = "${state.user.firstName} ${state.user.lastName}".trim()
                                         Text(
-                                            text = state.user.firstName + " " + state.user.lastName,
+                                            text = if (fullName.isNotEmpty()) fullName else "Usuario sin nombre",
                                             style = MaterialTheme.typography.titleLarge,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
@@ -182,17 +195,6 @@ fun EntrepreneurshipProfileScreen(
                                         }
                                     }
                                 }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                MainButton(
-                                    onClick = {
-                                        manager.navController.navigate(Routes.EditProfile.createRoute("id_del_emprendimiento"))
-                                    },
-                                    text = "Editar Perfil",
-                                    fillMaxWidth = true,
-                                    leftIcon = Icons.Default.Edit
-                                )
                             }
                         }
 

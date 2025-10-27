@@ -58,31 +58,48 @@ class UserProfileViewModel @Inject constructor(
         _actionState.value = UserProfileActionState.Loading
         viewModelScope.launch {
             try {
+                Log.d("UserProfile", "=== INICIO loadUserData ===")
                 val userDto = getUserDataUseCase()
-                Log.d("UserProfileViewModel", "User data loaded: $userDto")
-                _uiState.value = _uiState.value.copy(
-                    user = User(
-                        id = UUID.fromString(userDto.id),
-                        firstName = userDto.firstName.orEmpty(),
-                        lastName = userDto.lastName.orEmpty(),
-                        email = userDto.email.orEmpty(),
-                        profile = userDto.profile?.let { profileDto ->
-                            UserProfile(
-                                profilePicture = profileDto.profilePicture.orEmpty(),
-                                userRating = profileDto.userRating ?: 0f,
-                                partnerRating = profileDto.partnerRating ?: 0f,
-                                registrationDate = try {
-                                    LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
-                                } catch (e: Exception) {
-                                    LocalDateTime.now()
-                                }
-                            )
-                        } ?: UserProfile()
-                    )
+                Log.d("UserProfile", "UserDTO recibido: id=${userDto.id}")
+                Log.d("UserProfile", "firstName: '${userDto.firstName}'")
+                Log.d("UserProfile", "lastName: '${userDto.lastName}'")
+                Log.d("UserProfile", "email: '${userDto.email}'")
+                Log.d("UserProfile", "profile: ${userDto.profile}")
+                Log.d("UserProfile", "profilePicture: '${userDto.profile?.profilePicture}'")
+                
+                val user = User(
+                    id = UUID.fromString(userDto.id),
+                    firstName = userDto.firstName.orEmpty(),
+                    lastName = userDto.lastName.orEmpty(),
+                    email = userDto.email.orEmpty(),
+                    profile = userDto.profile?.let { profileDto ->
+                        UserProfile(
+                            profilePicture = profileDto.profilePicture.orEmpty(),
+                            userRating = profileDto.userRating ?: 0f,
+                            partnerRating = profileDto.partnerRating ?: 0f,
+                            registrationDate = try {
+                                LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)
+                            } catch (e: Exception) {
+                                LocalDateTime.now()
+                            }
+                        )
+                    } ?: UserProfile()
                 )
+                
+                Log.d("UserProfile", "Usuario mapeado:")
+                Log.d("UserProfile", "  - Nombre completo: '${user.firstName} ${user.lastName}'")
+                Log.d("UserProfile", "  - Foto perfil: '${user.profile.profilePicture}'")
+                
+                _uiState.value = _uiState.value.copy(user = user)
+                
+                Log.d("UserProfile", "UI State actualizado - nombre: '${_uiState.value.user.firstName} ${_uiState.value.user.lastName}'")
+                Log.d("UserProfile", "=== FIN loadUserData ===")
+                
                 _actionState.value = UserProfileActionState.Idle
             } catch (e: Exception) {
-                Log.e("UserProfileViewModel", "Error loading user data", e)
+                Log.e("UserProfile", "!!! ERROR al cargar datos del usuario !!!")
+                Log.e("UserProfile", "Mensaje: ${e.message}")
+                Log.e("UserProfile", "Stack trace:", e)
                 _actionState.value = UserProfileActionState.Error("Error al cargar el usuario: ${e.message}")
             }
         }
@@ -91,14 +108,27 @@ class UserProfileViewModel @Inject constructor(
     private fun loadAllEntrepreneurships() {
         viewModelScope.launch {
             try {
+                Log.d("EmprendimientosPropios", "=== INICIO loadAllEntrepreneurships ===")
+                Log.d("EmprendimientosPropios", "Llamando a getAllEntrepreneurshipUseCase...")
+                
                 val list = getAllEntrepreneurshipUseCase()
+                
+                Log.d("EmprendimientosPropios", "Emprendimientos obtenidos: ${list.size}")
+                list.forEachIndexed { index, entrepreneurship ->
+                    Log.d("EmprendimientosPropios", "[$index] ID: ${entrepreneurship.id}, Nombre: ${entrepreneurship.name}")
+                }
 
                 _uiState.value = _uiState.value.copy(
                     entrepreneurships = list
                 )
-                Log.d("UserProfileViewModel", "Emprendimeintos: $list")
+                
+                Log.d("EmprendimientosPropios", "UI State actualizado con ${list.size} emprendimientos")
+                Log.d("EmprendimientosPropios", "=== FIN loadAllEntrepreneurships ===")
             } catch (e: Exception) {
-                Log.e("UserProfileViewModel", "Error loading all entrepreneurships", e)
+                Log.e("EmprendimientosPropios", "!!! ERROR al cargar emprendimientos !!!")
+                Log.e("EmprendimientosPropios", "Tipo de error: ${e.javaClass.simpleName}")
+                Log.e("EmprendimientosPropios", "Mensaje: ${e.message}")
+                Log.e("EmprendimientosPropios", "Stack trace:", e)
             }
         }
     }

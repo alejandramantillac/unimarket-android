@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicUiState
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipSellerViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun EntrepreneurshipProductsPage(
@@ -40,6 +41,14 @@ fun EntrepreneurshipProductsPage(
 
     LaunchedEffect(entrepreneurshipUiState.id) {
         viewModel.initialize(entrepreneurshipUiState.id)
+    }
+
+    // Refresh products when returning from product creation
+    LaunchedEffect(Unit) {
+        // This will trigger when the screen is composed/returned to
+        // We use a small delay to ensure the navigation is complete
+        kotlinx.coroutines.delay(100)
+        viewModel.refreshProducts()
     }
 
     Box(

@@ -50,52 +50,6 @@ fun OrderListScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // Card: Clientes recurrentes
-        Card(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.Gray)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Clientes recurrentes",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "75%", // Cambiar por el valor real
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "Porcentaje de clientes que han comprado más de una vez",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-
-        // Card: Promedio por orden
-        Card(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.Gray)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "Promedio por orden",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "$50.00", // Cambiar por el valor real
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
         // Botón: Ver análisis completo
         /*MainButton(
             text = "Ver análisis completo",
