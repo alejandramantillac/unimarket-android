@@ -110,15 +110,13 @@ class CartViewModel @Inject constructor(
                             .onSuccess {
                                 Log.d("TEST_LOG", "Cart cleared successfully")
                                 loadCart() // Reload cart to update UI
-                                // Reset lastCreatedOrder to null after clearing cart
-                                _uiState.update { it.copy(lastCreatedOrder = null) }
+                                // Don't reset lastCreatedOrder immediately - let the UI handle navigation first
                             }
                             .onFailure { e ->
                                 Log.e("TEST_LOG", "Error clearing cart: ${e.message}", e)
                                 // Still reload cart even if clearing failed
                                 loadCart()
-                                // Reset lastCreatedOrder to null
-                                _uiState.update { it.copy(lastCreatedOrder = null) }
+                                // Don't reset lastCreatedOrder immediately - let the UI handle navigation first
                             }
                     }
                     .onFailure { e ->
@@ -132,5 +130,9 @@ class CartViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false) }
             }
         }
+    }
+
+    fun resetLastCreatedOrder() {
+        _uiState.update { it.copy(lastCreatedOrder = null) }
     }
 }

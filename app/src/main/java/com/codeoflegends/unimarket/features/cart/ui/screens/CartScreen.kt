@@ -22,6 +22,7 @@ import com.codeoflegends.unimarket.core.ui.components.*
 import com.codeoflegends.unimarket.features.cart.ui.viewmodel.CartViewModel
 import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.features.auth.data.model.domain.AuthStateType
+import com.codeoflegends.unimarket.core.constant.Routes
 import java.text.NumberFormat
 import java.util.*
 
@@ -35,12 +36,18 @@ fun CartScreen(
     val state by cartViewModel.uiState.collectAsState()
     val cart = state.cart
 
-    // Effect to handle successful order creation - commented out to stay on cart screen
-    // LaunchedEffect(state.lastCreatedOrder) {
-    //     state.lastCreatedOrder?.let { order ->
-    //         onOrderCreated(order.id)
-    //     }
-    // }
+    // Effect to handle successful order creation
+    LaunchedEffect(state.lastCreatedOrder) {
+        if (state.lastCreatedOrder != null) {
+            android.util.Log.d("CartScreen", "Order created successfully, navigating to home")
+            // Navegar al home y resetear la pila de navegación
+            manager.navController.navigate(Routes.Home.route) {
+                popUpTo(0) { inclusive = true }
+            }
+            // Reset lastCreatedOrder after navigation
+            cartViewModel.resetLastCreatedOrder()
+        }
+    }
 
     MainLayout(
         barOptions = AppBarOptions(
