@@ -179,4 +179,12 @@ class ProductRepositoryDirectus @Inject constructor(
         Log.e("ProductRepositoryDirectus", "Error fetching products by filters: ", e)
         Result.failure(e)
     }
+
+    override suspend fun deleteReview(reviewId: UUID): Result<Unit> = try {
+        productService.deleteReview(reviewId.toString())
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("ProductRepositoryDirectus", "Error deleting review: ${e.message}")
+        Result.failure(e)
+    }
 }

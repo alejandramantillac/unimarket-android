@@ -15,6 +15,16 @@ sealed class ProductActionState {
     object Success : ProductActionState()
     
     /**
+     * Review created successfully
+     */
+    object ReviewCreated : ProductActionState()
+    
+    /**
+     * Review deleted successfully
+     */
+    object ReviewDeleted : ProductActionState()
+    
+    /**
      * Action failed with an error message
      */
     data class Error(val message: String) : ProductActionState()

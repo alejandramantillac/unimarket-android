@@ -17,6 +17,7 @@ import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsB
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.RateProductUseCase
+import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductReviewUseCase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -69,5 +70,10 @@ abstract class ProductModule {
         @Singleton
         fun provideRateProductUseCase(repository: ProductRepository): RateProductUseCase =
             RateProductUseCase(repository)
+
+        @Provides
+        @Singleton
+        fun provideDeleteProductReviewUseCase(repository: ProductRepository): DeleteProductReviewUseCase =
+            DeleteProductReviewUseCase(repository)
     }
 } 

@@ -25,6 +25,7 @@ import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductAc
 import com.codeoflegends.unimarket.features.cart.ui.viewmodel.CartViewModel
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.constant.Routes
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,9 +35,11 @@ fun ProductBuyerViewScreen(
 ) {
     val viewModel: ProductViewModel = hiltViewModel()
     val cartViewModel: CartViewModel = hiltViewModel()
+    val userProfileViewModel: UserProfileViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsState()
     val cartState by cartViewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
+    val userState by userProfileViewModel.uiState.collectAsState()
     var selectedTab by remember { mutableStateOf(0) }
     val context = LocalContext.current
 
@@ -54,12 +57,15 @@ fun ProductBuyerViewScreen(
     }
 
     LaunchedEffect(actionState) {
-        when (actionState) {
-            is ProductActionState.Success -> {
+        when (val asn = actionState) {
+            is ProductActionState.ReviewCreated -> {
                 MessageManager.showSuccess("Reseña creada exitosamente")
             }
+            is ProductActionState.ReviewDeleted -> {
+                MessageManager.showSuccess("Reseña eliminada exitosamente")
+            }
             is ProductActionState.Error -> {
-                MessageManager.showError((actionState as ProductActionState.Error).message)
+                MessageManager.showError(asn.message)
             }
             else -> {}
         }
@@ -145,7 +151,14 @@ fun ProductBuyerViewScreen(
                                         }
                                     }
                                 },
-                                Tab("Reseñas") { ProductBuyerReviewsPage(reviews, onRateClick = { viewModel.showRatingModal() }) }
+                                Tab("Reseñas") { 
+                                    ProductBuyerReviewsPage(
+                                        reviews = reviews, 
+                                        onRateClick = { viewModel.showRatingModal() },
+                                        currentUserProfileId = userState.user.id,
+                                        onDeleteReview = { reviewId -> viewModel.deleteReview(reviewId) }
+                                    ) 
+                                }
                             ),
                             selectedTabIndex = selectedTab,
                             onTabSelected = { selectedTab = it }

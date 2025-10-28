@@ -9,6 +9,7 @@ import com.codeoflegends.unimarket.features.product.data.usecase.GetProductUseCa
 import com.codeoflegends.unimarket.features.product.data.usecase.GetAllProductsUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.RateProductUseCase
 import com.codeoflegends.unimarket.features.product.data.usecase.GetProductReviewsUseCase
+import com.codeoflegends.unimarket.features.product.data.usecase.DeleteProductReviewUseCase
 import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductActionState
 import com.codeoflegends.unimarket.features.product.ui.viewModel.state.ProductUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,8 @@ class ProductViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val getAllProductsUseCase: GetAllProductsUseCase,
     private val rateProductUseCase: RateProductUseCase,
-    private val getProductReviewsUseCase: GetProductReviewsUseCase
+    private val getProductReviewsUseCase: GetProductReviewsUseCase,
+    private val deleteProductReviewUseCase: DeleteProductReviewUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -147,7 +149,7 @@ class ProductViewModel @Inject constructor(
                 val productId = _uiState.value.selectedProduct?.id
                     ?: throw Exception("No hay producto seleccionado")
                 rateProductUseCase(productId, rating.toInt(), comment)
-                _actionState.value = ProductActionState.Success
+                _actionState.value = ProductActionState.ReviewCreated
                 hideRatingModal()
                 loadProductReviews(productId, 1, 10)
             } catch (e: Exception) {
@@ -169,6 +171,27 @@ class ProductViewModel @Inject constructor(
                 Log.d("ProductViewModel", "Updated state with reviews: ${_uiState.value.reviews}")
             } catch (e: Exception) {
                 Log.e("ProductViewModel", "Error loading product reviews: ${e.message}", e)
+                // Actualizar el estado de error para notificar al usuario
+                _actionState.value = ProductActionState.Error("Error al cargar las reseñas: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteReview(reviewId: UUID) {
+        viewModelScope.launch {
+            try {
+                _actionState.value = ProductActionState.Loading
+                deleteProductReviewUseCase(reviewId)
+                _actionState.value = ProductActionState.ReviewDeleted
+                
+                // Recargar las reseñas después de eliminar
+                val productId = _uiState.value.selectedProduct?.id
+                if (productId != null) {
+                    loadProductReviews(productId, 1, 10)
+                }
+            } catch (e: Exception) {
+                Log.e("ProductViewModel", "Error deleting review: ${e.message}", e)
+                _actionState.value = ProductActionState.Error("Error al eliminar la reseña: ${e.message}")
             }
         }
     }

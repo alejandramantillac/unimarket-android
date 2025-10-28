@@ -9,6 +9,7 @@ import com.codeoflegends.unimarket.features.product.data.dto.get.ProductListDto
 import com.codeoflegends.unimarket.features.product.data.dto.update.UpdateProductDto
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductReviewDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -53,4 +54,9 @@ interface ProductService {
     suspend fun getProductReviews(
         @QueryMap query: Map<String, String>
     ): DirectusDto<List<ProductReviewDto>>
+
+    @DELETE("/items/Review/{reviewId}")
+    suspend fun deleteReview(
+        @Path("reviewId") reviewId: String
+    )
 }
