@@ -6,8 +6,13 @@ import com.codeoflegends.unimarket.features.auth.data.repositories.impl.TokenRep
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.RoleRepository
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.TokenRepository
+import com.codeoflegends.unimarket.features.auth.data.repositories.impl.VerificationRepositoryImpl
+import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.VerificationRepository
+import com.codeoflegends.unimarket.core.factory.ApiServiceFactory
+import com.codeoflegends.unimarket.features.auth.data.service.VerificationService
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -33,4 +38,22 @@ abstract class AuthRepositoryModule {
     abstract fun bindRoleRepository(
         roleRepositoryImpl: RoleRepositoryImpl
     ): RoleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindVerificationRepository(
+        impl: VerificationRepositoryImpl
+    ): VerificationRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object VerificationServiceModule {
+    @Provides
+    @Singleton
+    fun provideVerificationService(
+        apiServiceFactory: ApiServiceFactory
+    ): VerificationService {
+        return apiServiceFactory.create()
+    }
 }

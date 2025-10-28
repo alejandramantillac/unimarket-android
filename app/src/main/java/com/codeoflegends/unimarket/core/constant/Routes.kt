@@ -97,6 +97,8 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
 
         data object EntrepreneurProfile : Routes("/entrepreneur")
 
+        data object UniversityVerification : Routes("/university_verification")
+
         data object Collaborators : Routes("/entrepreneurship/{id}/collaborators", "partner.read") {
             val base get() = "/entrepreneurship/"
             fun createRoute(id: String): String {
@@ -119,6 +121,7 @@ sealed class Routes(val route: String, val requiredPermission: String? = null) {
                 EntrepreneurshipView.route -> EntrepreneurshipView
                 EntrepreneurshipForm.route -> EntrepreneurshipForm
                 EntrepreneurProfile.route -> EntrepreneurProfile
+                UniversityVerification.route -> UniversityVerification
                 Collaborators.route -> Collaborators
                 HomeSearch.route -> HomeSearch
                 else -> {

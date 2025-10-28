@@ -125,7 +125,7 @@ fun RoleSelectionScreen(
                                     .height(140.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                VerifyButton()
+                                VerifyButton(manager)
                             }
                         }
                     ) {
@@ -163,10 +163,10 @@ fun RoleSelectionScreen(
 }
 
 @Composable
-fun VerifyButton() {
+fun VerifyButton(manager: NavigationManager) {
     ClickableTextLink("¿Deseas comenzar a emprender?",
         onClick = {
-            //TODO: Navegar a las pantallas de navegación
+            manager.navController.navigate(Routes.UniversityVerification.route)
         },
     )
 }

@@ -9,6 +9,7 @@ import com.codeoflegends.unimarket.features.auth.ui.screens.ForgotPasswordScreen
 import com.codeoflegends.unimarket.features.auth.ui.screens.LoginScreen
 import com.codeoflegends.unimarket.features.auth.ui.screens.RegisterScreen
 import com.codeoflegends.unimarket.features.auth.ui.screens.RoleSelectionScreen
+import com.codeoflegends.unimarket.features.auth.ui.screens.UniversityVerificationScreen
 
 fun NavGraphBuilder.authNavigation(
     manager: NavigationManager
@@ -32,5 +33,12 @@ fun NavGraphBuilder.authNavigation(
         route = Routes.RoleSelection.route
     ) {
         RoleSelectionScreen(manager)
+    }
+
+    secureComposable(
+        manager = manager,
+        route = Routes.UniversityVerification.route
+    ) {
+        UniversityVerificationScreen(manager)
     }
 }
