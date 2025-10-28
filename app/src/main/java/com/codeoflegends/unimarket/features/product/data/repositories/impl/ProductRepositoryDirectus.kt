@@ -128,17 +128,26 @@ class ProductRepositoryDirectus @Inject constructor(
         val formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
         val reviews = reviewsDto.data.mapNotNull { dto ->
             try {
-                Log.d("ProductRepositoryDirectus", "Mapping review DTO: ${'$'}dto")
+                val creationDate = if (dto.creation_date != null) {
+                    try {
+                        java.time.LocalDateTime.parse(dto.creation_date, formatter)
+                    } catch (e: Exception) {
+                        java.time.LocalDateTime.now()
+                    }
+                } else {
+                    java.time.LocalDateTime.now()
+                }
+                
                 Review(
                     id = UUID.fromString(dto.id),
                     productId = UUID.fromString(dto.product),
                     userProfileId = UUID.fromString(dto.user_profile),
                     rating = dto.rating,
                     comment = dto.comment,
-                    creationDate = java.time.LocalDateTime.parse(dto.creation_date, formatter)
+                    creationDate = creationDate
                 )
             } catch (e: Exception) {
-                Log.e("ProductRepositoryDirectus", "Error mapping review DTO: ${'$'}dto, error: ${'$'}{e.message}")
+                Log.e("ProductRepositoryDirectus", "Error mapping review DTO: ${'$'}dto, error: ${'$'}{e.message}", e)
                 null
             }
         }

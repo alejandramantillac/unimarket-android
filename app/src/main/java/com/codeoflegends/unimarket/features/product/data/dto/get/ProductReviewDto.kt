@@ -10,7 +10,7 @@ data class ProductReviewDto(
     val product: String,
     val rating: Int,
     val comment: String,
-    val creation_date: String
+    val creation_date: String?
 ) {
     companion object {
         fun query(productId: UUID, page: Int, limit: Int): DirectusQuery {

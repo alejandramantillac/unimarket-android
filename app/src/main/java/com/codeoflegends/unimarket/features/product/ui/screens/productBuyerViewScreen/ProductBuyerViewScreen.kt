@@ -43,7 +43,13 @@ fun ProductBuyerViewScreen(
     LaunchedEffect(productId) {
         if (productId != null) {
             viewModel.loadProduct(productId)
-            viewModel.loadProductReviews(UUID.fromString(productId), 1, 10)
+            runCatching { UUID.fromString(productId) }
+                .onSuccess { uuid ->
+                    viewModel.loadProductReviews(uuid, 1, 10)
+                }
+                .onFailure { e ->
+                    MessageManager.showError("ID de producto inválido")
+                }
         }
     }
 
