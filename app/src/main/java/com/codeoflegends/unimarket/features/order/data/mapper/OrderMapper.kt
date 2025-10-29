@@ -34,9 +34,9 @@ object OrderMapper {
             total = dto.total,
             userCreated = User(
                 id = UUID.fromString(dto.userCreated.id),
-                firstName = dto.userCreated.firstName,
-                lastName = dto.userCreated.lastName,
-                email = dto.userCreated.email,
+                firstName = dto.userCreated.firstName ?: "Usuario",
+                lastName = dto.userCreated.lastName ?: "",
+                email = dto.userCreated.email ?: "",
                 profile = dto.userCreated.profile?.let { p ->
                     UserProfile(
                         profilePicture = p.profilePicture,

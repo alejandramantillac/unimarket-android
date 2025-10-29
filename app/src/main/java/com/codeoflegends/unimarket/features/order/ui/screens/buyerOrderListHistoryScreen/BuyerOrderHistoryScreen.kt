@@ -33,6 +33,20 @@ fun BuyerOrderHistoryScreen(
     val uiState by viewModel.uiState.collectAsState()
     val actionState by viewModel.actionState.collectAsState()
 
+    // Cargar órdenes cuando se inicializa la pantalla
+    LaunchedEffect(Unit) {
+        Log.d("BuyerOrderHistoryScreen", "Loading orders...")
+        viewModel.loadOrders()
+    }
+
+    // Debug: Log del estado de las órdenes
+    LaunchedEffect(uiState.orders) {
+        Log.d("BuyerOrderHistoryScreen", "Orders updated: ${uiState.orders.size} orders")
+        uiState.orders.forEach { order ->
+            Log.d("BuyerOrderHistoryScreen", "Order: ${order.id} - ${order.clientName} - ${order.status}")
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize().padding(top = 48.dp, start = 16.dp, end = 16.dp)) {
         // Título: Pedidos
         Text(

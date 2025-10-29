@@ -19,14 +19,23 @@ class OrderRepositoryDirectus @Inject constructor(
 ) : OrderRepository{
 
     override suspend fun getAllOrdersByBuyer(buyerId: UUID): Result<List<Order>> = try {
+        Log.d("OrderRepositoryDirectus", "Fetching orders for buyer: $buyerId")
         val ordersDto = orderService.getAllOrders(
             OrderListDto.query().build()
         ).data
 
-        val filteredOrders = ordersDto.filter { it.userCreated.id == buyerId.toString() }
-            .map { OrderListMapper.fromDto(it) }
+        Log.d("OrderRepositoryDirectus", "Total orders from API: ${ordersDto.size}")
+        ordersDto.forEach { order ->
+            Log.d("OrderRepositoryDirectus", "Order ${order.id} - User: ${order.userCreated.id} - Name: ${order.userCreated.firstName}")
+        }
 
-        Result.success(filteredOrders)
+        val filteredOrders = ordersDto.filter { it.userCreated.id == buyerId.toString() }
+        Log.d("OrderRepositoryDirectus", "Filtered orders for buyer: ${filteredOrders.size}")
+        
+        val mappedOrders = filteredOrders.map { OrderListMapper.fromDto(it) }
+        Log.d("OrderRepositoryDirectus", "Successfully mapped orders: ${mappedOrders.size}")
+
+        Result.success(mappedOrders)
     } catch (e: Exception) {
         Log.e("OrderRepositoryDirectus", "Error fetching orders by buyer: ${e.message}")
         Result.failure(e)

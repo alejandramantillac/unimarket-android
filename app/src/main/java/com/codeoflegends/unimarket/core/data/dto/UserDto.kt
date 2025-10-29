@@ -11,11 +11,11 @@ import java.util.UUID
 data class UserDto(
     val id: String,
     @SerializedName("first_name")
-    val firstName: String,
+    val firstName: String?,
     @SerializedName("last_name")
-    val lastName: String,
-    val email: String,
-    val profile: UserProfileDto
+    val lastName: String?,
+    val email: String?,
+    val profile: UserProfileDto?
 ){
     companion object {
         fun query(): DirectusQuery {

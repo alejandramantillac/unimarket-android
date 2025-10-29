@@ -39,9 +39,9 @@ object EntrepreneurshipMapper {
                     user = if (firstUser != null) {
                         User(
                             id = UUID.fromString(firstUser.id),
-                            firstName = firstUser.firstName,
-                            lastName = firstUser.lastName,
-                            email = firstUser.email,
+                            firstName = firstUser.firstName ?: "",
+                            lastName = firstUser.lastName ?: "",
+                            email = firstUser.email ?: "",
                             profile = UserProfile(
                                 profilePicture = firstUser.profile?.profilePicture ?: "",
                                 userRating = firstUser.profile?.userRating ?: 0.0F,
