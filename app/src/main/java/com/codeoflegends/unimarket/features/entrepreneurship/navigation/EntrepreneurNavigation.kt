@@ -30,7 +30,7 @@ fun NavGraphBuilder.entrepreneurNavigation(
         )
     ) { backStackEntry ->
         val id = backStackEntry.arguments?.getString("id")
-        EntrepreneurshipFormScreen()
+        EntrepreneurshipFormScreen(manager = manager)
     }
 
     composable(Routes.EntrepreneurProfile.route) {

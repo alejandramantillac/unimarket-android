@@ -100,15 +100,16 @@ object EntrepreneurshipMapper {
             name = entrepreneurship.name,
             slogan = entrepreneurship.slogan,
             description = entrepreneurship.description,
+            email = entrepreneurship.email,
+            phone = entrepreneurship.phone,
+            category = entrepreneurship.category,
+            userFounder = userId,
             customization = NewEntrepreneurshipCustomizationDto(
                 profileImg = entrepreneurship.customization.profileImg,
                 bannerImg = entrepreneurship.customization.bannerImg,
                 color1 = entrepreneurship.customization.color1,
                 color2 = entrepreneurship.customization.color2
-            ),
-            email = entrepreneurship.email,
-            phone = entrepreneurship.phone,
-            category = entrepreneurship.category
+            )
         )
     }
 

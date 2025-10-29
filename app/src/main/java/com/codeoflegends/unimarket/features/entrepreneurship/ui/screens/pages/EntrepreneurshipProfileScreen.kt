@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +42,9 @@ import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileActionState
 import java.time.format.DateTimeFormatter
 import java.util.*
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 
 @Composable
 fun EntrepreneurshipProfileScreen(
@@ -69,6 +74,16 @@ fun EntrepreneurshipProfileScreen(
         addPadding = true
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+            val lifecycleOwner = LocalLifecycleOwner.current
+            DisposableEffect(lifecycleOwner) {
+                val observer = LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_RESUME) {
+                        viewModel.refreshEntrepreneurships()
+                    }
+                }
+                lifecycleOwner.lifecycle.addObserver(observer)
+                onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+            }
             android.util.Log.d("EmprendimientosPropios", ">>> UI: Pasando ${state.entrepreneurships.size} items a InfiniteScrollList <<<")
             InfiniteScrollList(
                 items = state.entrepreneurships,

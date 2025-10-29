@@ -54,6 +54,10 @@ class UserProfileViewModel @Inject constructor(
         loadAllEntrepreneurships()
     }
 
+    fun refreshEntrepreneurships() {
+        loadAllEntrepreneurships()
+    }
+
     private fun loadUserData() {
         _actionState.value = UserProfileActionState.Loading
         viewModelScope.launch {
