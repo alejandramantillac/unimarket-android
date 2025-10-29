@@ -17,3 +17,7 @@ annotation class MainOkHttpClient
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class MainRetrofit
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class UploadRetrofit

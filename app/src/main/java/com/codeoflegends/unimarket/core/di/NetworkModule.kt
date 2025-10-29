@@ -6,6 +6,7 @@ import com.codeoflegends.unimarket.config.TokenAuthenticator
 import com.codeoflegends.unimarket.core.annotation.AuthRetrofit
 import com.codeoflegends.unimarket.core.annotation.MainOkHttpClient
 import com.codeoflegends.unimarket.core.annotation.MainRetrofit
+import com.codeoflegends.unimarket.core.annotation.UploadRetrofit
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -72,6 +73,20 @@ object NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(RetrofitConfig.URL)
+            .client(okHttpClient)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @UploadRetrofit
+    fun provideUploadRetrofit(
+        @MainOkHttpClient okHttpClient: OkHttpClient,
+        gsonConverterFactory: GsonConverterFactory
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://unimarket-api-210876120903.us-central1.run.app")
             .client(okHttpClient)
             .addConverterFactory(gsonConverterFactory)
             .build()

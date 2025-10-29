@@ -87,6 +87,7 @@ object ProductMapper {
 
     fun toNewProductDto(product: NewProduct): NewProductDto {
         return NewProductDto(
+            id = product.id?.toString(),
             category = product.category.name,
             name = product.name,
             description = product.description,

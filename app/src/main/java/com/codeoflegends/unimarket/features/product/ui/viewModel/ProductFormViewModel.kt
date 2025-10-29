@@ -1,8 +1,10 @@
 package com.codeoflegends.unimarket.features.product.ui.viewModel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.core.usecase.UploadImageUseCase
 import com.codeoflegends.unimarket.features.product.data.model.ProductCategory
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
@@ -40,6 +42,7 @@ class ProductFormViewModel @Inject constructor(
     private val deleteProductUseCase: DeleteProductUseCase,
     private val getProductUseCase: GetProductUseCase,
     private val getAllProductCategoriesUseCase: GetAllProductCategoriesUseCase,
+    private val uploadImageUseCase: UploadImageUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -223,17 +226,40 @@ class ProductFormViewModel @Inject constructor(
         val formData = state.formData
         val isEdit = state.uiState.isEdit
         
-        // Build the product object for saving
-        val product = buildProductFromForm(formData, isEdit)
-        if (product == null) {
-            return
-        }
+        _actionState.value = ProductActionState.Loading
 
         viewModelScope.launch {
             try {
                 if (isEdit) {
+                    // For edit mode: upload images with product ID, then update
+                    val productId = formData.id ?: throw Exception("Product ID is required for editing")
+                    val updatedVariants = uploadVariantImages(formData.variants, productId)
+                    val updatedFormData = formData.copy(variants = updatedVariants)
+                    val product = buildProductFromForm(updatedFormData, isEdit)
+                    if (product == null) {
+                        return@launch
+                    }
                     updateProductUseCase(product)
                 } else {
+                    // For create mode: generate ID, upload images first, then create product with URLs
+                    val productId = UUID.randomUUID()
+                    
+                    // Upload images using the product ID as filename
+                    val updatedVariants = uploadVariantImages(formData.variants, productId)
+                    
+                    // Create form data with the product ID and uploaded image URLs
+                    val formDataWithId = formData.copy(
+                        id = productId,
+                        variants = updatedVariants
+                    )
+                    
+                    // Build the product object with generated ID and image URLs
+                    val product = buildProductFromForm(formDataWithId, isEdit)
+                    if (product == null) {
+                        return@launch
+                    }
+                    
+                    // Create the product with all data including image URLs
                     createProductUseCase(product)
                 }
                 _actionState.value = ProductActionState.Success
@@ -241,6 +267,42 @@ class ProductFormViewModel @Inject constructor(
                 Log.e(TAG, "Error saving product: ${e.message}")
                 _actionState.value = ProductActionState.Error(e.message ?: "Error desconocido")
             }
+        }
+    }
+    
+    /**
+     * Uploads all images from variants that have local URIs and returns updated variants
+     * with server URLs
+     * @param variants List of variants to process
+     * @param productId The product ID to use as the filename for uploaded images
+     */
+    private suspend fun uploadVariantImages(variants: List<ProductVariant>, productId: UUID): List<ProductVariant> {
+        var imageCounter = 0
+        
+        return variants.mapIndexed { variantIndex, variant ->
+            // Upload each image in the variant
+            val uploadedImages = variant.variantImages.mapIndexed { imageIndex, variantImage ->
+                // Check if this is a local URI (starts with content:// or file://)
+                val imageUrl = variantImage.imageUrl
+                if (imageUrl.startsWith("content://") || imageUrl.startsWith("file://")) {
+                    try {
+                        val uri = Uri.parse(imageUrl)
+                        // Use productId as the filename base
+                        val fileName = "${productId}_${imageCounter}"
+                        imageCounter++
+                        val serverUrl = uploadImageUseCase(uri, fileName)
+                        variantImage.copy(imageUrl = serverUrl)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error uploading image: ${e.message}")
+                        throw Exception("Error al subir imagen: ${e.message}")
+                    }
+                } else {
+                    // Already a server URL, keep it
+                    variantImage
+                }
+            }
+            
+            variant.copy(variantImages = uploadedImages)
         }
     }
     

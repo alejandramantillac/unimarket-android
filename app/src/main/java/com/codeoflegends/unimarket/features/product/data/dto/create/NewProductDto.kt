@@ -5,6 +5,7 @@ package com.codeoflegends.unimarket.features.product.data.dto.create
  * Used only at the data layer for API communication
  */
 data class NewProductDto(
+    val id: String? = null,
     val category: String,
     val name: String,
     val description: String,
