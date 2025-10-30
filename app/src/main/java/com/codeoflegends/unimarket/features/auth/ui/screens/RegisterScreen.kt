@@ -63,6 +63,8 @@ fun RegisterScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
 
     manager.authViewModel.registerEvent.CollectAsEventEffect {
         when (it) {
@@ -172,6 +174,30 @@ fun RegisterScreen(
                             .padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        // First Name Field
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            SimpleTextField(
+                                value = firstName,
+                                onValueChange = { firstName = it },
+                                label = "Nombre",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Last Name Field
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            SimpleTextField(
+                                value = lastName,
+                                onValueChange = { lastName = it },
+                                label = "Apellido",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
                         // Email Field
                         Box(modifier = Modifier.fillMaxWidth()) {
                             SimpleTextField(
@@ -196,7 +222,9 @@ fun RegisterScreen(
                         // Register Button
                         MainButton(
                             text = "Crear Cuenta",
-                            onClick = { manager.authViewModel.register(email, password) },
+                            onClick = { 
+                                manager.authViewModel.register(email, password, firstName, lastName) 
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             height = 50
                         )

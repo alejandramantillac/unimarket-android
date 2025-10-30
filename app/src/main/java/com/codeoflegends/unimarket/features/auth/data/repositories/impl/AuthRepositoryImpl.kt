@@ -43,10 +43,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun register(
         email: String,
-        password: String
+        password: String,
+        firstName: String,
+        lastName: String
     ): AuthResult<Unit> {
         return try {
-            authService.register(RegisterRequest(email, password))
+            authService.register(RegisterRequest(email, password, firstName, lastName))
             AuthResult.Success(Unit)
         } catch (e: Exception) {
             AuthResult.Error(e)

@@ -7,7 +7,7 @@ import java.util.UUID
 
 interface AuthRepository {
     suspend fun login(email: String, password: String): AuthResult<Unit>
-    suspend fun register(email: String, password: String): AuthResult<Unit>
+    suspend fun register(email: String, password: String, firstName: String, lastName: String): AuthResult<Unit>
     suspend fun logout(): AuthResult<Unit>
     fun observeAuthState(): Flow<AuthState>
     suspend fun isUserLoggedIn(): Boolean

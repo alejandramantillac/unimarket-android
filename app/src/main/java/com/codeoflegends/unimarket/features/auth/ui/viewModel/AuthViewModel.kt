@@ -95,10 +95,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun register(email: String, password: String){
+    fun register(email: String, password: String, firstName: String, lastName: String){
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true)
-            val result = authRepository.register(email, password)
+            val result = authRepository.register(email, password, firstName, lastName)
             Log.d("AuthViewModel", "Register result: $result")
             _authState.value = _authState.value.copy(isLoading = false)
             _registerEvent.emit(result)
