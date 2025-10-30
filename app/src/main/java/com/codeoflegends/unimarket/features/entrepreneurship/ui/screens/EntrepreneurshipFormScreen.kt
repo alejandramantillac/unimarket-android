@@ -14,6 +14,7 @@ import com.codeoflegends.unimarket.core.navigation.NavigationManager
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.core.ui.components.MainButton
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.ImageUploadCard
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicFormViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.EntrepreneurshipBasicFormActionState
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCategory
@@ -161,6 +162,35 @@ fun EntrepreneurshipFormScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+                // Sección de imágenes
+                Text(
+                    text = "Personalización",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                // Banner
+                ImageUploadCard(
+                    title = "Imagen de Banner",
+                    imageUri = state.bannerImageUri,
+                    onImageSelected = { viewModel.updateBannerImage(it) },
+                    aspectRatio = 16f / 9f,
+                    height = 180
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Profile Image
+                ImageUploadCard(
+                    title = "Imagen de Perfil",
+                    imageUri = state.profileImageUri,
+                    onImageSelected = { viewModel.updateProfileImage(it) },
+                    aspectRatio = 1f,
+                    height = 200
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
 
                 MainButton(
                     text = "Crear Emprendimiento",
