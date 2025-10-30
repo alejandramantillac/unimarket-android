@@ -90,7 +90,7 @@ object NetworkModule {
         gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://unimarket-api-210876120903.us-central1.run.app")
+            .baseUrl("https://storage.googleapis.com/unimarket-images")
             .client(okHttpClient)
             .addConverterFactory(gsonConverterFactory)
             .build()
