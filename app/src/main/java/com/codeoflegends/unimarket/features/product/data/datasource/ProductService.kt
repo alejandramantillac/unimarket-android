@@ -39,10 +39,9 @@ interface ProductService {
         @Body product: UpdateProductDto
     )
 
-    @PATCH("/items/Product/{productId}")
+    @DELETE("/items/Product/{productId}")
     suspend fun deleteProduct(
-        @Path("productId") productId: String,
-        @Body product: DeleteDto
+        @Path("productId") productId: String
     )
 
     @POST("/items/Review")

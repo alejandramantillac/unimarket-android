@@ -1,7 +1,6 @@
 package com.codeoflegends.unimarket.features.product.data.repositories.impl
 
 import android.util.Log
-import com.codeoflegends.unimarket.core.dto.DeleteDto
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import com.codeoflegends.unimarket.features.product.data.datasource.ProductService
 import com.codeoflegends.unimarket.features.product.data.dto.create.NewProductDto
@@ -14,8 +13,6 @@ import com.codeoflegends.unimarket.features.product.data.repositories.interfaces
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import com.codeoflegends.unimarket.features.auth.data.repositories.interfaces.AuthRepository
 import java.sql.Timestamp
-import java.time.Instant
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -51,12 +48,7 @@ class ProductRepositoryDirectus @Inject constructor(
     }
 
     override suspend fun deleteProduct(productId: UUID): Result<Unit> = try {
-        val isoTimestamp = Instant.now().atOffset(ZoneOffset.UTC)
-            .format(DateTimeFormatter.ISO_INSTANT)
-
-        productService.deleteProduct(productId.toString(), DeleteDto(
-            deletedAt = isoTimestamp
-        ))
+        productService.deleteProduct(productId.toString())
         Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(e)
