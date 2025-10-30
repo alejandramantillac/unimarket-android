@@ -40,6 +40,7 @@ import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.MainButton
 import com.codeoflegends.unimarket.core.ui.components.MainLayout
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileActionState
+import com.codeoflegends.unimarket.core.utils.DirectusImageUrl
 import java.time.format.DateTimeFormatter
 import java.util.*
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -118,13 +119,12 @@ fun EntrepreneurshipProfileScreen(
                                         color = MaterialTheme.colorScheme.primaryContainer
                                     ) {
                                         AsyncImage(
-                                            model = state.user.profile.profilePicture,
+                                            model = DirectusImageUrl.buildFullUrl(state.user.profile.profilePicture),
                                             contentDescription = "Foto de perfil",
                                             modifier = Modifier.fillMaxSize(),
                                             contentScale = ContentScale.Crop
                                         )
                                     }
-
                                     Column(
                                         modifier = Modifier.weight(1f),
                                         verticalArrangement = Arrangement.spacedBy(4.dp)

@@ -14,6 +14,8 @@ import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepre
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipCustomization
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.EntrepreneurshipPartner
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.ProductPreview
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.SimpleOrder
+import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import com.codeoflegends.unimarket.features.product.data.model.Product
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -21,6 +23,13 @@ import java.util.UUID
 
 object EntrepreneurshipMapper {
     fun entrepreneurshipDtoToEntrepreneurship(dto: EntrepreneurshipDto): Entrepreneurship {
+        // Log temporal para debugging
+        android.util.Log.d("EntrepreneurshipMapper", "=== Mapeando emprendimiento: ${dto.name} ===")
+        android.util.Log.d("EntrepreneurshipMapper", "Orders recibidas del backend: ${dto.orders.size}")
+        dto.orders.forEachIndexed { index, order ->
+            android.util.Log.d("EntrepreneurshipMapper", "  Order[$index]: id=${order.id}, status.id=${order.status?.id}, status.name=${order.status?.name}")
+        }
+        
         return Entrepreneurship(
             id = dto.id,
             name = dto.name,
@@ -77,7 +86,26 @@ object EntrepreneurshipMapper {
                 )
             },
             //collaborations = dto.collaborations,
-            //orders = dto.orders,
+            orders = dto.orders.mapNotNull { orderDto ->
+                // Solo crear SimpleOrder si tenemos status válido (el id puede ser null)
+                if (orderDto.status != null) {
+                    try {
+                        SimpleOrder(
+                            id = orderDto.id,
+                            status = OrderStatus(
+                                id = orderDto.status.id,
+                                name = orderDto.status.name
+                            )
+                        )
+                    } catch (e: Exception) {
+                        android.util.Log.w("EntrepreneurshipMapper", "Error mapeando orden: ${e.message}")
+                        null
+                    }
+                } else {
+                    android.util.Log.w("EntrepreneurshipMapper", "Orden sin status encontrada, ignorando")
+                    null
+                }
+            },
             //socialNetworks = dto.social_networks.map { SocialNetwork(1,it,"") },
             tags = dto.tags.map {
                 Tag(

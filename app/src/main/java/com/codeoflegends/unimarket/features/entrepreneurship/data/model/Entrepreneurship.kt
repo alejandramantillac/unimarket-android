@@ -4,6 +4,7 @@ import com.codeoflegends.unimarket.core.data.model.User
 import com.codeoflegends.unimarket.core.data.model.UserProfile
 import com.codeoflegends.unimarket.features.entrepreneurship.data.dto.get.EntrepreneurshipReviewDto
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -22,7 +23,7 @@ data class Entrepreneurship(
     val partners: List<EntrepreneurshipPartner> = emptyList(),
     val products: List<ProductPreview> = emptyList(),
     val collaborations: List<UUID> = emptyList(),
-    val orders: List<UUID> = emptyList(),
+    val orders: List<SimpleOrder> = emptyList(),
     val socialNetworks: List<SocialNetwork> = emptyList(),
     val tags: List<Tag> = emptyList(),
     val reviews: List<EntrepreneurshipReview> = emptyList()
@@ -61,4 +62,9 @@ data class EntrepreneurshipCreate(
     val phone: String,
     val category: Int,
     val customization: EntrepreneurshipCustomization,
+)
+
+data class SimpleOrder(
+    val id: UUID?,
+    val status: OrderStatus
 )

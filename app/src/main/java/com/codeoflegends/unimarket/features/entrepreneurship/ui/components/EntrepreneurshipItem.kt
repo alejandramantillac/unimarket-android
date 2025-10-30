@@ -14,13 +14,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
+import com.codeoflegends.unimarket.core.utils.DirectusImageUrl
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 
 @Composable
 fun EntrepreneurshipItem(
     entrepreneurship: Entrepreneurship,
     onClick: () -> Unit
 ) {
+    // Construir URL completa de la imagen
+    val imageUrl = DirectusImageUrl.buildFullUrl(entrepreneurship.customization.profileImg)
+    
+    // Calcular número de ventas (órdenes con status "completado")
+    val deliveredOrders = entrepreneurship.orders.count { order ->
+        order.status.name.equals("completado", ignoreCase = true)
+    }
+    
+    // Log para debugging
+    android.util.Log.d("EntrepreneurshipItem", "=== Cargando emprendimiento: ${entrepreneurship.name} ===")
+    android.util.Log.d("EntrepreneurshipItem", "profileImg original: '${entrepreneurship.customization.profileImg}'")
+    android.util.Log.d("EntrepreneurshipItem", "profileImg URL completa: '$imageUrl'")
+    android.util.Log.d("EntrepreneurshipItem", "Total órdenes: ${entrepreneurship.orders.size}, Entregadas: $deliveredOrders")
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -47,11 +64,36 @@ fun EntrepreneurshipItem(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
-                    AsyncImage(
-                        model = entrepreneurship.customization.profileImg,
+                    SubcomposeAsyncImage(
+                        model = imageUrl,
                         contentDescription = "Imagen del emprendimiento",
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        loading = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    strokeWidth = 2.dp
+                                )
+                            }
+                        },
+                        error = {
+                            android.util.Log.e("EntrepreneurshipItem", "Error cargando imagen: $imageUrl")
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Storefront,
+                                    contentDescription = "Sin imagen",
+                                    modifier = Modifier.size(40.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     )
                 }
 
@@ -133,7 +175,7 @@ fun EntrepreneurshipItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "${entrepreneurship.orders.size}",
+                        text = "$deliveredOrders",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )

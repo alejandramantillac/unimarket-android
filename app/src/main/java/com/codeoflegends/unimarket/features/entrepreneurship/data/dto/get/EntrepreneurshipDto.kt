@@ -4,6 +4,7 @@ import android.util.Log
 import com.codeoflegends.unimarket.core.utils.DirectusQuery
 import com.codeoflegends.unimarket.features.product.data.dto.get.ProductDto
 import com.codeoflegends.unimarket.features.product.data.model.Product
+import com.codeoflegends.unimarket.features.order.data.dto.get.OrderDto
 import java.util.UUID
 
 data class EntrepreneurshipDto(
@@ -22,7 +23,7 @@ data class EntrepreneurshipDto(
     val partners: List<EntrepreneurshipPartnerDto>,
     val products: List<ProductDto>,
     //val collaborations: List<UUID>,
-    //val orders: List<UUID>,
+    val orders: List<SimpleOrderDto> = emptyList(),
     val socialNetworks: List<Map<String, String>>,
     val tags: List<TagRelationDto>,
 ) {
@@ -35,6 +36,7 @@ data class EntrepreneurshipDto(
                 .join("partners.user")
                 .join("partners.user.profile")
                 .join("products")
+                .join("orders.status")
         }
 
 

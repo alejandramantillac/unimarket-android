@@ -88,10 +88,12 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
         }
         
         Log.d("EmprendimientosPropios", "*** Repository: Construyendo query con filtro user_founder = $currentUserId ***")
-        val query = EntrepreneurshipDto.query()
-            .filter("user_founder", "eq", currentUserId.toString()).build()
+        val queryBuilder = EntrepreneurshipDto.query()
+        Log.d("EmprendimientosPropios", "*** Repository: Query base (antes de filtro): ${queryBuilder.build()} ***")
         
-        Log.d("EmprendimientosPropios", "*** Repository: Query construido: $query ***")
+        val query = queryBuilder.filter("user_founder", "eq", currentUserId.toString()).build()
+        
+        Log.d("EmprendimientosPropios", "*** Repository: Query completo construido: $query ***")
         Log.d("EmprendimientosPropios", "*** Repository: Ejecutando llamada al servicio... ***")
         
         val response = entrepreneurshipService.getMyEntrepreneurships(query)
@@ -99,7 +101,7 @@ class EntrepreneurshipRepositoryDirectus @Inject constructor(
         
         Log.d("EmprendimientosPropios", "*** Repository: Respuesta recibida - ${entrepreneurshipDtos.size} DTOs ***")
         entrepreneurshipDtos.forEachIndexed { index, dto ->
-            Log.d("EmprendimientosPropios", "*** Repository: DTO[$index] - ID: ${dto.id}, Name: ${dto.name} ***")
+            Log.d("EmprendimientosPropios", "*** Repository: DTO[$index] - ID: ${dto.id}, Name: ${dto.name}, Orders: ${dto.orders.size} ***")
         }
         
         val entrepreneurshipList = entrepreneurshipDtos.map { entrepreneurshipDto ->
