@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.codeoflegends.unimarket.features.order.data.dto.get.DeliveryStatusDto
 import com.codeoflegends.unimarket.features.order.data.model.OrderStatus
 import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderUseCase
+import com.codeoflegends.unimarket.features.order.data.usecase.GetOrderStatusesUseCase
 import com.codeoflegends.unimarket.features.order.data.usecase.UpdateOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,8 @@ sealed class OrderSummaryActionState {
 @HiltViewModel
 class OrderSummaryViewModel @Inject constructor(
     private val getOrderUseCase: GetOrderUseCase,
-    private val updateOrderUseCase: UpdateOrderUseCase
+    private val updateOrderUseCase: UpdateOrderUseCase,
+    private val getOrderStatusesUseCase: GetOrderStatusesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OrderSummaryUiState())
@@ -33,6 +35,25 @@ class OrderSummaryViewModel @Inject constructor(
 
     private val _actionState = MutableStateFlow<OrderSummaryActionState>(OrderSummaryActionState.Idle)
     val actionState: StateFlow<OrderSummaryActionState> = _actionState.asStateFlow()
+
+    private val _availableStatuses = MutableStateFlow<List<OrderStatus>>(emptyList())
+    val availableStatuses: StateFlow<List<OrderStatus>> = _availableStatuses.asStateFlow()
+
+    init {
+        loadOrderStatuses()
+    }
+
+    private fun loadOrderStatuses() {
+        viewModelScope.launch {
+            try {
+                val statuses = getOrderStatusesUseCase().getOrNull() ?: emptyList()
+                _availableStatuses.value = statuses
+                Log.d(TAG, "Estados cargados: ${statuses.size}")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error cargando estados: ${e.message}", e)
+            }
+        }
+    }
 
     private fun validateAndGetUUID(orderId: String?): UUID? {
         if (orderId.isNullOrEmpty()) {
@@ -58,7 +79,7 @@ class OrderSummaryViewModel @Inject constructor(
 
                 _uiState.value = OrderSummaryUiState(
                     id = order.id ?: UUID.randomUUID(),
-                    status = order.status.toString(),
+                    status = order.status.name,
                     products = order.orderDetails.map { it },
                     payment = order.payments.firstOrNull(),
                     client = order.userCreated,
@@ -72,21 +93,34 @@ class OrderSummaryViewModel @Inject constructor(
         }
     }
 
-    fun updateOrderStatus(newStatus: String) {
+    fun updateOrderStatus(newStatusName: String) {
         val currentOrder = _uiState.value.order ?: return
 
         viewModelScope.launch {
             _actionState.value = OrderSummaryActionState.Loading
             try {
-                val updatedOrderStatus = OrderStatus(
-                    id = currentOrder.status.id,
-                    name = newStatus
-                )
-                val updatedOrder = currentOrder.copy(status = updatedOrderStatus)
+                // Buscar el estado correcto con su ID del backend
+                val newStatusWithId = _availableStatuses.value.find { it.name == newStatusName }
+                
+                if (newStatusWithId == null) {
+                    _actionState.value = OrderSummaryActionState.Error("Estado no encontrado: $newStatusName")
+                    Log.e(TAG, "Estado no encontrado en la lista de estados disponibles: $newStatusName")
+                    return@launch
+                }
+
+                Log.d(TAG, "Actualizando estado de ${currentOrder.status.name} (${currentOrder.status.id}) a ${newStatusWithId.name} (${newStatusWithId.id})")
+                
+                val updatedOrder = currentOrder.copy(status = newStatusWithId)
                 updateOrderUseCase(updatedOrder)
-                _uiState.value = _uiState.value.copy(order = updatedOrder)
+                
+                _uiState.value = _uiState.value.copy(
+                    order = updatedOrder,
+                    status = newStatusWithId.name
+                )
                 _actionState.value = OrderSummaryActionState.Success
+                Log.d(TAG, "Estado actualizado exitosamente a: ${newStatusWithId.name}")
             } catch (e: Exception) {
+                Log.e(TAG, "Error al actualizar el estado: ${e.message}", e)
                 _actionState.value = OrderSummaryActionState.Error("Error al actualizar el estado de la orden: ${e.message}")
             }
         }

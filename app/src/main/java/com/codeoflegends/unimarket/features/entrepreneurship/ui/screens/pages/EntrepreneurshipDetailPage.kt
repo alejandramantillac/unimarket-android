@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -131,10 +132,26 @@ fun EntrepreneurshipDetailPage(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.White),
+                        .padding(32.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No hay datos disponibles")
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Sin reseñas aún",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                        Text(
+                            text = "Este emprendimiento aún no tiene reseñas de clientes",
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             },
         )

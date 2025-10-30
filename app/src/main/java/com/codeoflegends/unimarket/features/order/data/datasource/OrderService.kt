@@ -37,7 +37,7 @@ interface OrderService {
     suspend fun updateOrder(
         @Path("orderId") orderId: String,
         @Body order: UpdateOrderDto
-    ): Response<DirectusDto<OrderDto>>
+    ): Response<Unit>
 
     @POST("/items/Order")
     suspend fun createOrder(
