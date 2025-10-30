@@ -26,6 +26,7 @@ data class EntrepreneurshipDto(
     val orders: List<SimpleOrderDto> = emptyList(),
     val socialNetworks: List<Map<String, String>>,
     val tags: List<TagRelationDto>,
+    val reviews: List<EntrepreneurshipReviewDto> = emptyList(),
 ) {
     companion object {
         fun query(): DirectusQuery {
@@ -37,6 +38,9 @@ data class EntrepreneurshipDto(
                 .join("partners.user.profile")
                 .join("products")
                 .join("orders.status")
+                .join("reviews")
+                .join("reviews.user_created")
+                .join("reviews.user_created.profile")
         }
 
 

@@ -32,6 +32,15 @@ fun EntrepreneurshipItem(
         order.status.name.equals("completado", ignoreCase = true)
     }
     
+    // Calcular rating promedio de las reseñas
+    val averageRating = if (entrepreneurship.reviews.isNotEmpty()) {
+        entrepreneurship.reviews.map { it.rating }.average().toFloat()
+    } else {
+        0f
+    }
+    
+    val reviewCount = entrepreneurship.reviews.size
+    
     // Log para debugging
     android.util.Log.d("EntrepreneurshipItem", "=== Cargando emprendimiento: ${entrepreneurship.name} ===")
     android.util.Log.d("EntrepreneurshipItem", "profileImg original: '${entrepreneurship.customization.profileImg}'")
@@ -125,10 +134,14 @@ fun EntrepreneurshipItem(
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
                 modifier = Modifier.padding(top = 8.dp),
             ) {
-                RatingStars(4.5f)
+                RatingStars(averageRating)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "(${entrepreneurship.reviews.count()} reseñas)",
+                    text = if (reviewCount == 0) {
+                        "sin reseñas"
+                    } else {
+                        "($reviewCount reseña${if (reviewCount != 1) "s" else ""})"
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

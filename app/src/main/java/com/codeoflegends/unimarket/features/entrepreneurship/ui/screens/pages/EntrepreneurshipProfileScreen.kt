@@ -136,9 +136,22 @@ fun EntrepreneurshipProfileScreen(
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
 
-                                        RatingStars(4.5f)
+                                        // Calcular rating y reseñas totales de todos los emprendimientos
+                                        val allReviews = state.entrepreneurships.flatMap { it.reviews }
+                                        val totalReviews = allReviews.size
+                                        val averageRating = if (allReviews.isNotEmpty()) {
+                                            allReviews.map { it.rating }.average().toFloat()
+                                        } else {
+                                            state.user.profile.partnerRating
+                                        }
+
+                                        RatingStars(averageRating)
                                         Text(
-                                            "(128 reseñas)",
+                                            text = if (totalReviews == 0) {
+                                                "sin reseñas"
+                                            } else {
+                                                "($totalReviews reseña${if (totalReviews != 1) "s" else ""})"
+                                            },
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )

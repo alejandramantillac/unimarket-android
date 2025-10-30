@@ -113,13 +113,21 @@ object EntrepreneurshipMapper {
                     name = it.tagsId.name
                 )
             },
-             customization = EntrepreneurshipCustomization(
+            customization = EntrepreneurshipCustomization(
                 id = UUID.fromString(dto.customization.id),
                 profileImg = dto.customization.profile_img ?: "",
                 bannerImg = dto.customization.banner_img ?: "",
                 color1 = dto.customization.color1 ?: "#000000",
                 color2 = dto.customization.color2 ?: "#FFFFFF"
-            )
+            ),
+            reviews = dto.reviews.mapNotNull { reviewDto ->
+                try {
+                    EntrepreneurshipReviewMapper.entrepreneurshipReviewDtoToEntrepreneurshipReview(reviewDto)
+                } catch (e: Exception) {
+                    android.util.Log.w("EntrepreneurshipMapper", "Error mapeando reseña: ${e.message}")
+                    null
+                }
+            }
         )
     }
 
