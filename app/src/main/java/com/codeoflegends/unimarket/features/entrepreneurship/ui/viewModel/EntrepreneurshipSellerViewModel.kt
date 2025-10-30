@@ -3,7 +3,9 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codeoflegends.unimarket.features.entrepreneurship.data.model.Entrepreneurship
 import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.GetEntrepreneurshipUseCase
+import com.codeoflegends.unimarket.features.entrepreneurship.data.usecase.UpdateEntrepreneurshipUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,11 +19,14 @@ sealed class EntrepreneurshipSellerActionState {
     object Success : EntrepreneurshipSellerActionState()
     data class Error(val message: String) : EntrepreneurshipSellerActionState()
     object Loading : EntrepreneurshipSellerActionState()
+    object Updating : EntrepreneurshipSellerActionState()
+    object UpdateSuccess : EntrepreneurshipSellerActionState()
 }
 
 @HiltViewModel
 class EntrepreneurshipSellerViewModel @Inject constructor(
-    private val getEntrepreneurshipUseCase: GetEntrepreneurshipUseCase
+    private val getEntrepreneurshipUseCase: GetEntrepreneurshipUseCase,
+    private val updateEntrepreneurshipUseCase: UpdateEntrepreneurshipUseCase
 ) : ViewModel() {
     // UI states
     private val _entrepreneurshipUiState = MutableStateFlow(EntrepreneurshipBasicUiState())
@@ -82,6 +87,74 @@ class EntrepreneurshipSellerViewModel @Inject constructor(
                 _actionState.value = EntrepreneurshipSellerActionState.Success
             } catch (e: Exception) {
                 _actionState.value = EntrepreneurshipSellerActionState.Error("Error al cargar el emprendimiento: ${e.message}")
+            }
+        }
+    }
+
+    // Edit state management
+    private val _isEditDialogOpen = MutableStateFlow(false)
+    val isEditDialogOpen: StateFlow<Boolean> = _isEditDialogOpen.asStateFlow()
+
+    fun openEditDialog() {
+        _isEditDialogOpen.value = true
+    }
+
+    fun closeEditDialog() {
+        _isEditDialogOpen.value = false
+    }
+
+    fun updateEntrepreneurship(
+        name: String,
+        slogan: String,
+        description: String,
+        email: String,
+        phone: String
+    ) {
+        viewModelScope.launch {
+            _actionState.value = EntrepreneurshipSellerActionState.Updating
+
+            try {
+                val currentState = _entrepreneurshipUiState.value
+                
+                // Obtener el emprendimiento completo del backend para tener todos los campos
+                val fullEntrepreneurship = getEntrepreneurshipUseCase(currentState.id)
+                
+                // Actualizar solo los campos editados
+                val updatedEntrepreneurship = fullEntrepreneurship.copy(
+                    name = name,
+                    slogan = slogan,
+                    description = description,
+                    email = email,
+                    phone = phone
+                )
+
+                updateEntrepreneurshipUseCase(updatedEntrepreneurship)
+
+                _entrepreneurshipUiState.value = _entrepreneurshipUiState.value.copy(
+                    name = name,
+                    slogan = slogan,
+                    description = description,
+                    email = email,
+                    phone = phone
+                )
+
+                _uiState.value = _uiState.value.copy(
+                    name = name,
+                    slogan = slogan,
+                    description = description,
+                    email = email,
+                    phone = phone
+                )
+
+                _actionState.value = EntrepreneurshipSellerActionState.UpdateSuccess
+                _isEditDialogOpen.value = false
+                
+                // Volver al estado Success después de 2 segundos
+                kotlinx.coroutines.delay(2000)
+                _actionState.value = EntrepreneurshipSellerActionState.Success
+            } catch (e: Exception) {
+                _actionState.value = EntrepreneurshipSellerActionState.Error("Error al actualizar el emprendimiento: ${e.message}")
+                Log.e("EntrepreneurshipSellerViewModel", "Error updating entrepreneurship", e)
             }
         }
     }

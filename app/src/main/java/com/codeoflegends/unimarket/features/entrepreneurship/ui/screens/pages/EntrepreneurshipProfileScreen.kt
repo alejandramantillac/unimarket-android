@@ -35,6 +35,7 @@ import com.codeoflegends.unimarket.core.ui.components.RatingStars
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.viewModel.UserProfileViewModel
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipItem
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.codeoflegends.unimarket.core.ui.components.AppBarOptions
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.MainButton
@@ -55,12 +56,16 @@ fun EntrepreneurshipProfileScreen(
     val state = viewModel.uiState.collectAsState().value
     val actionState = viewModel.actionState.collectAsState().value
 
+    // Construir URL completa de la imagen del usuario
+    val userProfileImageUrl = DirectusImageUrl.buildFullUrl(state.user.profile.profilePicture)
+
     android.util.Log.d("UserProfile", ">>> UI: Renderizando EntrepreneurshipProfileScreen <<<")
     android.util.Log.d("UserProfile", ">>> UI: ActionState = $actionState <<<")
     android.util.Log.d("UserProfile", ">>> UI: Usuario - firstName: '${state.user.firstName}' <<<")
     android.util.Log.d("UserProfile", ">>> UI: Usuario - lastName: '${state.user.lastName}' <<<")
     android.util.Log.d("UserProfile", ">>> UI: Usuario - email: '${state.user.email}' <<<")
-    android.util.Log.d("UserProfile", ">>> UI: Usuario - profilePicture: '${state.user.profile.profilePicture}' <<<")
+    android.util.Log.d("UserProfile", ">>> UI: Usuario - profilePicture original: '${state.user.profile.profilePicture}' <<<")
+    android.util.Log.d("UserProfile", ">>> UI: Usuario - profilePicture URL completa: '$userProfileImageUrl' <<<")
     android.util.Log.d("EmprendimientosPropios", ">>> UI: Número de emprendimientos en state = ${state.entrepreneurships.size} <<<")
     state.entrepreneurships.forEachIndexed { index, entrepreneurship ->
         android.util.Log.d("EmprendimientosPropios", ">>> UI: Emprendimiento[$index] = ${entrepreneurship.name} (${entrepreneurship.id}) <<<")
@@ -89,7 +94,7 @@ fun EntrepreneurshipProfileScreen(
             InfiniteScrollList(
                 items = state.entrepreneurships,
                 onLoadMore = { },
-                isLoading = actionState is UserProfileActionState.Loading,
+                isLoading = !state.entrepreneurshipsLoaded,
                 headerContent = {
                     Column {
                         // Profile Header Card
@@ -118,11 +123,36 @@ fun EntrepreneurshipProfileScreen(
                                         shape = MaterialTheme.shapes.small,
                                         color = MaterialTheme.colorScheme.primaryContainer
                                     ) {
-                                        AsyncImage(
-                                            model = DirectusImageUrl.buildFullUrl(state.user.profile.profilePicture),
+                                        SubcomposeAsyncImage(
+                                            model = userProfileImageUrl,
                                             contentDescription = "Foto de perfil",
                                             modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop
+                                            contentScale = ContentScale.Crop,
+                                            loading = {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    CircularProgressIndicator(
+                                                        modifier = Modifier.size(24.dp),
+                                                        strokeWidth = 2.dp
+                                                    )
+                                                }
+                                            },
+                                            error = {
+                                                android.util.Log.e("UserProfile", "Error cargando imagen de perfil: $userProfileImageUrl")
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Person,
+                                                        contentDescription = "Sin imagen",
+                                                        modifier = Modifier.size(40.dp),
+                                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                                    )
+                                                }
+                                            }
                                         )
                                     }
                                     Column(
@@ -165,7 +195,8 @@ fun EntrepreneurshipProfileScreen(
                             text = "Mis Emprendimientos",
                             style = MaterialTheme.typography.titleLarge,
                         )
-                        if (state.entrepreneurships.isEmpty()) {
+                        // Solo mostrar el mensaje de "sin emprendimientos" si ya terminó de cargar
+                        if (state.entrepreneurships.isEmpty() && state.entrepreneurshipsLoaded) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()

@@ -39,7 +39,7 @@ object OrderMapper {
                 email = dto.userCreated.email ?: "",
                 profile = dto.userCreated.profile?.let { p ->
                     UserProfile(
-                        profilePicture = p.profilePicture,
+                        profilePicture = p.profilePicture.orEmpty(),
                         userRating = p.userRating,
                         partnerRating = p.partnerRating,
                         registrationDate = try {

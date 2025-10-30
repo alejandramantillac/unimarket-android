@@ -20,7 +20,7 @@ data class UserDto(
     companion object {
         fun query(): DirectusQuery {
             return DirectusQuery()
-                .join("profile")
+                .join("profile.*")
         }
     }
 

@@ -24,7 +24,7 @@ object EntrepreneurshipReviewMapper {
                 email = dto.userCreated.email ?: "",
                 profile = dto.userCreated.profile?.let { profileDto ->
                     UserProfile(
-                        profilePicture = profileDto.profilePicture,
+                        profilePicture = profileDto.profilePicture.orEmpty(),
                         userRating = profileDto.userRating,
                         partnerRating = profileDto.partnerRating,
                         registrationDate = LocalDateTime.parse(profileDto.registrationDate, DateTimeFormatter.ISO_DATE_TIME)

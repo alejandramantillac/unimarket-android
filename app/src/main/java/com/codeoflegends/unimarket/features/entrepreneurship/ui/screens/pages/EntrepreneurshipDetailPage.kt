@@ -2,12 +2,19 @@ package com.codeoflegends.unimarket.features.entrepreneurship.ui.screens.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.codeoflegends.unimarket.core.ui.components.Comment
 import com.codeoflegends.unimarket.core.ui.components.InfiniteScrollList
 import com.codeoflegends.unimarket.core.ui.components.TagType
+import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EditEntrepreneurshipDialog
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipDescription
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeader
 import com.codeoflegends.unimarket.features.entrepreneurship.ui.components.EntrepreneurshipHeaderData
@@ -40,6 +48,10 @@ fun EntrepreneurshipDetailPage(
     // Action State
     val actionState by entrepreneurshipViewModel.actionState.collectAsState()
     val reviewActionState by reviewsViewModel.reviewsActionState.collectAsState()
+    val isEditDialogOpen by entrepreneurshipViewModel.isEditDialogOpen.collectAsState()
+
+    // Snackbar state
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val entrepreneurshipTags = entrepreneurshipState.tags.mapNotNull { tag ->
         TagType.entries.find { it.displayName.lowercase() == tag.name.lowercase() }
@@ -51,14 +63,24 @@ fun EntrepreneurshipDetailPage(
         }
     }
 
-    if (actionState is EntrepreneurshipSellerActionState.Loading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
+    // Show success message when update is successful
+    LaunchedEffect(actionState) {
+        if (actionState is EntrepreneurshipSellerActionState.UpdateSuccess) {
+            snackbarHostState.showSnackbar("Emprendimiento actualizado exitosamente")
+        } else if (actionState is EntrepreneurshipSellerActionState.Error) {
+            snackbarHostState.showSnackbar((actionState as EntrepreneurshipSellerActionState.Error).message)
         }
-    } else {
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (actionState is EntrepreneurshipSellerActionState.Loading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
         InfiniteScrollList(
             items = reviewState.reviews,
             onLoadMore = { reviewsViewModel.loadMoreReviews(entrepreneurshipState.id) },
@@ -115,6 +137,51 @@ fun EntrepreneurshipDetailPage(
                     Text("No hay datos disponibles")
                 }
             },
+        )
+        }
+
+        // Floating Action Button for editing
+        FloatingActionButton(
+            onClick = { entrepreneurshipViewModel.openEditDialog() },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            containerColor = Color(0xFF6200EE)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Editar emprendimiento",
+                tint = Color.White
+            )
+        }
+
+        // Edit Dialog
+        EditEntrepreneurshipDialog(
+            isOpen = isEditDialogOpen,
+            currentName = entrepreneurshipState.name,
+            currentSlogan = entrepreneurshipState.slogan,
+            currentDescription = entrepreneurshipState.description,
+            currentEmail = entrepreneurshipState.email,
+            currentPhone = entrepreneurshipState.phone,
+            onDismiss = { entrepreneurshipViewModel.closeEditDialog() },
+            onConfirm = { name, slogan, description, email, phone ->
+                entrepreneurshipViewModel.updateEntrepreneurship(
+                    name = name,
+                    slogan = slogan,
+                    description = description,
+                    email = email,
+                    phone = phone
+                )
+            },
+            isUpdating = actionState is EntrepreneurshipSellerActionState.Updating
+        )
+
+        // Snackbar Host
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 80.dp)
         )
     }
 }

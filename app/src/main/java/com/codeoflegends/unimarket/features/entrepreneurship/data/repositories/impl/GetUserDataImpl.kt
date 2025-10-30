@@ -23,7 +23,7 @@ class GetUserDataImpl @Inject constructor(
             Log.d("UserProfile", "🌐 Query enviado: $query")
             Log.d("UserProfile", "🌐 ====================================")
             
-            val response = getUserData.getUserData()
+            val response = getUserData.getUserData(query)
             
             Log.d("UserProfile", "🌐 Respuesta completa del servidor:")
             Log.d("UserProfile", "🌐 Response JSON: ${Gson().toJson(response)}")

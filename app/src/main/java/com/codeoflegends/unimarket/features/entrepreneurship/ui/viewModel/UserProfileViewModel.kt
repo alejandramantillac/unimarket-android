@@ -29,6 +29,7 @@ data class UserUiState(
         profile = UserProfile()
     ),
     val entrepreneurships: List<Entrepreneurship> = emptyList(),
+    val entrepreneurshipsLoaded: Boolean = false,
 )
 
 sealed class UserProfileActionState {
@@ -69,7 +70,10 @@ class UserProfileViewModel @Inject constructor(
                 Log.d("UserProfile", "lastName: '${userDto.lastName}'")
                 Log.d("UserProfile", "email: '${userDto.email}'")
                 Log.d("UserProfile", "profile: ${userDto.profile}")
-                Log.d("UserProfile", "profilePicture: '${userDto.profile?.profilePicture}'")
+                Log.d("UserProfile", "profile?.id: '${userDto.profile?.id}'")
+                Log.d("UserProfile", "profile?.profilePicture: '${userDto.profile?.profilePicture}'")
+                Log.d("UserProfile", "profile?.profilePicture is null: ${userDto.profile?.profilePicture == null}")
+                Log.d("UserProfile", "profile?.profilePicture is blank: ${userDto.profile?.profilePicture.isNullOrBlank()}")
                 
                 val user = User(
                     id = UUID.fromString(userDto.id),
@@ -123,7 +127,8 @@ class UserProfileViewModel @Inject constructor(
                 }
 
                 _uiState.value = _uiState.value.copy(
-                    entrepreneurships = list
+                    entrepreneurships = list,
+                    entrepreneurshipsLoaded = true
                 )
                 
                 Log.d("EmprendimientosPropios", "UI State actualizado con ${list.size} emprendimientos")
@@ -133,6 +138,7 @@ class UserProfileViewModel @Inject constructor(
                 Log.e("EmprendimientosPropios", "Tipo de error: ${e.javaClass.simpleName}")
                 Log.e("EmprendimientosPropios", "Mensaje: ${e.message}")
                 Log.e("EmprendimientosPropios", "Stack trace:", e)
+                _uiState.value = _uiState.value.copy(entrepreneurshipsLoaded = true)
             }
         }
     }

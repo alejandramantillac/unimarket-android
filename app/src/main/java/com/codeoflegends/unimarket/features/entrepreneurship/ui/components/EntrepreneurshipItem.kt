@@ -46,6 +46,9 @@ fun EntrepreneurshipItem(
     android.util.Log.d("EntrepreneurshipItem", "profileImg original: '${entrepreneurship.customization.profileImg}'")
     android.util.Log.d("EntrepreneurshipItem", "profileImg URL completa: '$imageUrl'")
     android.util.Log.d("EntrepreneurshipItem", "Total órdenes: ${entrepreneurship.orders.size}, Entregadas: $deliveredOrders")
+    entrepreneurship.orders.forEachIndexed { index, order ->
+        android.util.Log.d("EntrepreneurshipItem", "  Orden[$index]: status='${order.status.name}'")
+    }
     
     Card(
         modifier = Modifier
